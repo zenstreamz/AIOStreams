@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "resolveJsonModule": true
+  },
+  "references": [
+    {
+      "path": "../wrappers"
+    },
+    {
+      "path": "../formatters"
+    },
+    {
+      "path": "../types"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "references": [
+    {
+      "path": "./packages/addon"
+    },
+    {
+      "path": "./packages/wrappers"
+    },
+    {
+      "path": "./packages/parser"
+    },
+    {
+      "path": "./packages/formatters"
+    },
+    {
+      "path": "./packages/types"
+    }
+  ]
+}

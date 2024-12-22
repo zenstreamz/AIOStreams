@@ -1,0 +1,14 @@
+{
+  "name": "@aiostreams/wrappers",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "build": "tsc"
+  },
+  "description": "Library with wrappers for different addons",
+  "devDependencies": {
+    "@aiostreams/parser": "^1.0.0",
+    "@aiostreams/types": "^1.0.0"
+  }
+}
