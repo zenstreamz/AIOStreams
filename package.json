@@ -6,9 +6,9 @@
   "scripts": {
     "test": "npm run test --workspaces",
     "format": "prettier --write .",
-    "build": "npm -w packages/types run build && npm -w packages/parser run build && npm -w packages/formatters run build && npm -w packages/wrappers run build && npm -w packages/addon run build",
+    "build": "npm -w packages/frontend run build && npm -w packages/types run build && npm -w packages/parser run build && npm -w packages/formatters run build && npm -w packages/wrappers run build && npm -w packages/addon run build",
     "build:watch": "tsc --build --watch",
-    "start:addon": "npm -w packages/addon start",
+    "start:addon": "npm -w packages/frontend run build && npm -w packages/addon start",
     "start:addon:dev": "npm -w packages/addon run start:dev",
     "start:cloudflare-worker:dev": "npm -w packages/cloudflare-worker run dev",
     "deploy:beamup": "beamup",

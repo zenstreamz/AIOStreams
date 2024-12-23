@@ -43,7 +43,6 @@ export interface ParsedStream extends ParsedNameData {
   };
 }
 
-
 export interface Stream {
   url?: string;
   externalUrl?: string;
@@ -68,7 +67,6 @@ export interface Stream {
   };
 }
 
-
 export interface Subtitle {
   id: string;
   url: string;
@@ -89,25 +87,22 @@ interface SeriesRequest {
 
 export type StreamRequest = MovieRequest | SeriesRequest;
 
-
-
 export interface Config {
   resolutions: string[];
   qualities: string[];
   visualTags: string[];
   sortBy: string[];
   onlyShowCachedStreams: boolean;
-  considerHdrTagsAsEqual: boolean;
   prioritiseLanguage: string | null;
   addons: string[];
   formatter: string;
   apiKeys: {
-    realDebrid: string;
-    torbox: string;
-    debridLink: string;
-    allDebrid: string;
-    premiumize: string;
-    offcloud: string;
-    putIo: string;
+    realDebrid?: string;
+    torbox?: string;
+    debridLink?: string;
+    allDebrid?: string;
+    premiumize?: string;
+    offcloud?: string;
+    putIo?: string;
   };
 }

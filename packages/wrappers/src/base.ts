@@ -53,7 +53,12 @@ export class BaseWrapper {
       controller.abort();
     }, this.indexerTimeout);
 
-    console.log('Fetching streams from', this.getStreamUrl(streamRequest), 'with timeout', this.indexerTimeout);
+    console.log(
+      'Fetching streams from',
+      this.getStreamUrl(streamRequest),
+      'with timeout',
+      this.indexerTimeout
+    );
     let url = this.getStreamUrl(streamRequest);
     const response = await fetch(url, { signal: controller.signal });
 

@@ -1,10 +1,24 @@
-import express, { Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 import path from 'path';
 import { AIOStreams } from './addon';
-import { StreamRequest } from '@aiostreams/types';
+import { Config, StreamRequest } from '@aiostreams/types';
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const manifest = {
+  name: 'aiostreams',
+  id: 'viren070.aiostreams.com',
+  version: '1.0.0',
+  description: 'Combine your streams into one addon',
+  catalogs: [],
+  resources: ['stream'],
+  types: ['movie', 'series'],
+  behaviorHints: {
+    configurable: true,
+    configurationRequired: true,
+  },
+};
 
 // Built-in middleware for parsing JSON
 app.use(express.json());
@@ -12,19 +26,36 @@ app.use(express.json());
 // Built-in middleware for parsing URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use((req, res, next) => {
+  res.append('Access-Control-Allow-Origin', '*');
+  res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  next();
+});
 
 app.get('/', (req, res) => {
-  res.redirect('/configure');
+  res.send('Hello World!');
 });
 
-app.get('/configure', (req, res) => {
-  // Render a form for configuring the addon
-  res.sendFile(path.join(__dirname, '..', 'public', 'configure.html'));
+// Serve static files from the Next.js app
+// do this after the / route to avoid conflicts from the index.html file showing at /
+app.use(express.static(path.join(__dirname, '../../frontend/out')));
+
+app.get(['/configure', '/:config/configure'], (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/out/index.html'));
 });
 
-app.get('/stream/:type/:id', (req, res) => {
+app.get('/manifest.json', (req, res) => {
+  res.status(200).json(manifest);
+});
+
+app.get('/:config/manifest.json', (req, res) => {
+  let configuredManifest = manifest;
+  configuredManifest.behaviorHints.configurationRequired = false;
+  res.status(200).json(configuredManifest);
+});
+
+// Route for /stream
+app.get('/stream/:type/:id', (req: Request, res: Response) => {
   const response = {
     streams: [
       {
@@ -35,7 +66,7 @@ app.get('/stream/:type/:id', (req, res) => {
     ],
   };
 
-  res.send(JSON.stringify(response, null, 2)); // 2 spaces for indentation
+  res.status(200).json(response);
 });
 
 app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
@@ -43,11 +74,19 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
 
   // Decode Base64 encoded JSON config
   const decodedConfig = Buffer.from(config, 'base64').toString('utf-8');
-  const configJson = JSON.parse(decodedConfig);
+  let configJson: Config;
+  try {
+    configJson = JSON.parse(decodedConfig);
+  } catch (error: any) {
+    res.status(400).send('Invalid config');
+    return;
+  }
 
   console.log(`Config: ${JSON.stringify(configJson, null, 2)}`);
 
-  const streamMatch = new RegExp(`/${config}/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?\.json`).exec(req.path);
+  const streamMatch = new RegExp(
+    `/${config}/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?\.json`
+  ).exec(req.path);
 
   if (!streamMatch) {
     res.status(400).send('Invalid request');
@@ -56,7 +95,9 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
 
   const [type, id, season, episode] = streamMatch.slice(1);
 
-  console.log(`Type: ${type}, ID: ${id}, Season: ${season}, Episode: ${episode}`);
+  console.log(
+    `Type: ${type}, ID: ${id}, Season: ${season}, Episode: ${episode}`
+  );
 
   let streamRequest: StreamRequest;
 
@@ -90,13 +131,17 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
   try {
     const aioStreams = new AIOStreams(configJson);
 
-
     aioStreams.getStreams({ id, type, season, episode }).then((streams) => {
-      res.send(streams);
+      res.status(200).json({ streams: streams });
     });
   } catch (error: any) {
     res.status(500).send(error.message);
   }
+});
+
+// define 404
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, '../../frontend/out/404.html'));
 });
 
 app.listen(port, () => {

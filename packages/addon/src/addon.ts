@@ -4,7 +4,7 @@ import { gdriveFormat } from '@aiostreams/formatters';
 
 export class AIOStreams {
   private config: Config;
-  
+
   constructor(config: any) {
     this.config = config;
     this.configValidator();
@@ -25,61 +25,61 @@ export class AIOStreams {
     }
   }
 
-  public async getStreams (streamRequest: StreamRequest): Promise<Stream[]> {
+  public async getStreams(streamRequest: StreamRequest): Promise<Stream[]> {
     const streams: Stream[] = [];
 
     const parsedStreams = await this.getParsedStreams(streamRequest);
     console.log(`Got ${parsedStreams.length} streams`);
-    // Apply filtering  
-		const filteredResults = parsedStreams.filter(
-			(parsedStream) =>
-				this.config.resolutions.includes(parsedStream.resolution) &&
-				this.config.qualities.includes(parsedStream.quality) &&
-				parsedStream.visualTags.every((tag) => this.config.visualTags.includes(tag))// &&
-				//(!parsedStream.provider || this.config.onlyShowCachedStreams || parsedStream.provider.cached)
-		);
+    // Apply filtering
+    const filteredResults = parsedStreams.filter(
+      (parsedStream) =>
+        this.config.resolutions.includes(parsedStream.resolution) &&
+        this.config.qualities.includes(parsedStream.quality) &&
+        parsedStream.visualTags.every((tag) =>
+          this.config.visualTags.includes(tag)
+        ) // &&
+      //(!parsedStream.provider || this.config.onlyShowCachedStreams || parsedStream.provider.cached)
+    );
     console.log(`Filtered to ${filteredResults.length} streams`);
-		// Apply sorting
+    // Apply sorting
 
+    // initially sort by filename
+    filteredResults.sort((a, b) => a.filename.localeCompare(b.filename));
 
-		// initially sort by filename
-		filteredResults.sort((a, b) => a.filename.localeCompare(b.filename));
+    // then apply our this.config sorting
+    filteredResults.sort((a, b) => {
+      const languageComparison = this.compareLanguages(a, b);
+      if (languageComparison !== 0) return languageComparison;
 
-		// then apply our this.config sorting
-		filteredResults.sort((a, b) => {
-			const languageComparison = this.compareLanguages(a, b);
-			if (languageComparison !== 0) return languageComparison;
+      for (const sortByField of this.config.sortBy) {
+        const fieldComparison = this.compareByField(a, b, sortByField);
+        if (fieldComparison !== 0) return fieldComparison;
+      }
 
-			for (const sortByField of this.config.sortBy) {
-				const fieldComparison = this.compareByField(a, b, sortByField);
-				if (fieldComparison !== 0) return fieldComparison;
-			}
+      return 0;
+    });
 
-			return 0;
-		});
-
-    console.log("Sorted streams")
+    console.log('Sorted streams');
 
     // Create stream objects
     filteredResults.map((parsedStream) => {
       streams.push(this.createStreamObject(parsedStream));
     });
 
-    console.log("Created stream objects")
+    console.log('Created stream objects');
     return streams;
-    
-
-    
   }
 
   private createStreamObject(parsedStream: ParsedStream): Stream {
-    
     let name: string = '';
-    let description: string = ''; 
-    console.log(`Creating stream object for ${parsedStream.filename} with formatter ${this.config.formatter}`);
+    let description: string = '';
+    console.log(
+      `Creating stream object for ${parsedStream.filename} with formatter ${this.config.formatter}`
+    );
     switch (this.config.formatter) {
       case 'gdrive': {
-        const { name: _name, description: _description } = gdriveFormat(parsedStream);
+        const { name: _name, description: _description } =
+          gdriveFormat(parsedStream);
         name = _name;
         description = _description;
         break;
@@ -98,7 +98,7 @@ export class AIOStreams {
       ...parsedStream.languages,
     ];
 
-    let stream: Stream; 
+    let stream: Stream;
 
     stream = {
       url: parsedStream.url,
@@ -116,11 +116,9 @@ export class AIOStreams {
         proxyHeaders: parsedStream.stream?.behaviorHints?.proxyHeaders,
         notWebReady: parsedStream.stream?.behaviorHints?.notWebReady,
       },
-
-    }
+    };
 
     return stream;
-    
   }
 
   private compareLanguages(a: ParsedStream, b: ParsedStream) {
@@ -133,16 +131,16 @@ export class AIOStreams {
       );
       const aHasMultiLanguage = a.languages.includes('Multi');
       const bHasMultiLanguage = b.languages.includes('Multi');
-  
+
       if (aHasPrioritisedLanguage && !bHasPrioritisedLanguage) return -1;
       if (!aHasPrioritisedLanguage && bHasPrioritisedLanguage) return 1;
-  
+
       if (aHasMultiLanguage && !bHasMultiLanguage) return -1;
       if (!aHasMultiLanguage && bHasMultiLanguage) return 1;
     }
     return 0;
   }
-  
+
   private compareByField(a: ParsedStream, b: ParsedStream, field: string) {
     if (field === 'resolution') {
       return (
@@ -150,11 +148,11 @@ export class AIOStreams {
         this.config.resolutions.indexOf(b.resolution)
       );
     } else if (field === 'cached') {
-      let aCanbeCached = a.provider
+      let aCanbeCached = a.provider;
       let bCanbeCached = b.provider;
-      let aCached = a.provider?.cached
+      let aCached = a.provider?.cached;
       let bCached = b.provider?.cached;
-  
+
       // prioritise non debrid/usenet p2p over uncached
       if (aCanbeCached && !bCanbeCached && !aCached) return 1;
       if (!aCanbeCached && bCanbeCached && !bCached) return -1;
@@ -172,7 +170,7 @@ export class AIOStreams {
       // sort files with providers by name
       let aProvider = a.provider?.name;
       let bProvider = b.provider?.name;
-  
+
       if (aProvider && bProvider) {
         return aProvider.localeCompare(bProvider);
       }
@@ -184,19 +182,20 @@ export class AIOStreams {
       }
     } else if (field === 'quality') {
       return (
-        this.config.qualities.indexOf(a.quality) - this.config.qualities.indexOf(b.quality)
+        this.config.qualities.indexOf(a.quality) -
+        this.config.qualities.indexOf(b.quality)
       );
     } else if (field === 'visualTag') {
       // Find the highest priority visual tag in each file
       const getIndexOfTag = (tag: string) =>
-        this.config.considerHdrTagsAsEqual && tag.startsWith('HDR')
+        tag.startsWith('HDR')
           ? this.config.visualTags.indexOf('HDR10+')
           : this.config.visualTags.indexOf(tag);
       const aVisualTagIndex = a.visualTags.reduce(
         (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
         this.config.visualTags.length
       );
-  
+
       const bVisualTagIndex = b.visualTags.reduce(
         (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
         this.config.visualTags.length
@@ -206,16 +205,17 @@ export class AIOStreams {
     }
     return 0;
   }
-  
 
-  private async getParsedStreams(streamRequest: StreamRequest): Promise<ParsedStream[]> {
+  private async getParsedStreams(
+    streamRequest: StreamRequest
+  ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
     for (const addon of this.config.addons) {
       switch (addon) {
-        case ('gdrive'): {
+        case 'gdrive': {
           break;
         }
-        case ('torbox'): {
+        case 'torbox': {
           try {
             if (!this.config.apiKeys.torbox) {
               throw new Error('No torbox api key provided');
@@ -229,7 +229,7 @@ export class AIOStreams {
           }
           break;
         }
-        case ('torrentio'): {
+        case 'torrentio': {
           try {
             const wrapper = new Torrentio(this.config.apiKeys);
             const streams = await wrapper.getParsedStreams(streamRequest);
@@ -243,7 +243,7 @@ export class AIOStreams {
 
         default: {
           try {
-            const wrapper = new BaseWrapper("unknown", addon);
+            const wrapper = new BaseWrapper('unknown', addon);
             const streams = await wrapper.getParsedStreams(streamRequest);
             console.log(`Got streams from ${addon}: ${streams.length}`);
 
@@ -252,10 +252,8 @@ export class AIOStreams {
             console.error(`Error getting streams from ${addon}: ${e}`);
           }
         }
-      } 
+      }
     }
     return parsedStreams;
   }
-
-  
 }
