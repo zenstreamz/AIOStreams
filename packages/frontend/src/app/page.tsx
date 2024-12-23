@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 
 const predefinedResolutions = ['2160p', '1080p', '720p', '480p', 'Unknown'];
@@ -66,6 +66,18 @@ export default function Configure() {
 
   const [selectedDebridService, setSelectedDebridService] = useState('');
 
+  useEffect(() => {
+    const path = window.location.pathname;
+    const configMatch = path.match(/\/([^/]+)\/configure/);
+    if (configMatch) {
+      const decodedConfig = JSON.parse(atob(configMatch[1]));
+      setConfig((prevConfig) => ({
+        ...prevConfig,
+        ...decodedConfig,
+      }));
+    }
+  }, []);
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const filteredConfig = {
@@ -75,7 +87,11 @@ export default function Configure() {
       ),
     };
     const encodedConfig = btoa(JSON.stringify(filteredConfig));
-    window.location.href = `/${encodedConfig}/manifest.json`;
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const link = `${protocol}//${host}/${encodedConfig}/manifest.json`;
+    navigator.clipboard.writeText(link);
+    alert('Link copied to clipboard!');
   };
 
   const handleChange = (e: any) => {
@@ -103,6 +119,47 @@ export default function Configure() {
       ...prevConfig,
       [arrayName]: value.split(','),
     }));
+  };
+
+  const handleCopyLink = () => {
+    const filteredConfig = {
+      ...config,
+      apiKeys: Object.fromEntries(
+        Object.entries(config.apiKeys).filter(([_, value]) => value)
+      ),
+    };
+    const encodedConfig = btoa(JSON.stringify(filteredConfig));
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const link = `${protocol}//${host}/${encodedConfig}/manifest.json`;
+    navigator.clipboard.writeText(link);
+    alert('Link copied to clipboard!');
+  };
+
+  const handleInstallToWeb = () => {
+    const filteredConfig = {
+      ...config,
+      apiKeys: Object.fromEntries(
+        Object.entries(config.apiKeys).filter(([_, value]) => value)
+      ),
+    };
+    const encodedConfig = btoa(JSON.stringify(filteredConfig));
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const link = `https://web.stremio.com/#/addons?addon=${protocol}//${host}/${encodedConfig}/manifest.json`;
+    window.location.href = link;
+  };
+
+  const handleInstall = () => {
+    const filteredConfig = {
+      ...config,
+      apiKeys: Object.fromEntries(
+        Object.entries(config.apiKeys).filter(([_, value]) => value)
+      ),
+    };
+    const encodedConfig = btoa(JSON.stringify(filteredConfig));
+    const link = `stremio://${encodedConfig}/manifest.json`;
+    window.location.href = link;
   };
 
   return (
@@ -226,7 +283,29 @@ export default function Configure() {
               </label>
             </>
           )}
-          <button type="submit">Submit</button>
+          <div className={styles.buttonGroup}>
+            <button
+              type="button"
+              onClick={handleInstall}
+              className={styles.configButton}
+            >
+              ➕ Install
+            </button>
+            <button
+              type="button"
+              onClick={handleInstallToWeb}
+              className={styles.configButton}
+            >
+              🌐 Install to Web
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className={styles.configButton}
+            >
+              📋 Copy Link
+            </button>
+          </div>
         </form>
       </main>
     </div>

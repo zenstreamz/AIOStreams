@@ -1,6 +1,6 @@
 import { BaseWrapper, Torbox, Torrentio } from '@aiostreams/wrappers';
 import { Stream, ParsedStream, StreamRequest, Config } from '@aiostreams/types';
-import { gdriveFormat } from '@aiostreams/formatters';
+import { gdriveFormat, torrentioFormat } from '@aiostreams/formatters';
 
 export class AIOStreams {
   private config: Config;
@@ -80,6 +80,13 @@ export class AIOStreams {
       case 'gdrive': {
         const { name: _name, description: _description } =
           gdriveFormat(parsedStream);
+        name = _name;
+        description = _description;
+        break;
+      }
+      case 'torrentio': {
+        const { name: _name, description: _description } =
+          torrentioFormat(parsedStream);
         name = _name;
         description = _description;
         break;

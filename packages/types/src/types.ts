@@ -28,7 +28,7 @@ export interface ParsedStream extends ParsedNameData {
   };
   url?: string;
   externalUrl?: string;
-
+  indexers?: string;
   stream?: {
     subtitles?: Subtitle[];
     behaviorHints?: {

@@ -39,6 +39,9 @@ export class Torrentio extends BaseWrapper {
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.title!);
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
+    const indexerMatch = RegExp(/⚙️ ([a-zA-Z0-9]+)/).exec(stream.title!);
+    const indexer = indexerMatch ? indexerMatch[1] : undefined;
+
     return {
       ...parsedFilename,
       filename,
@@ -52,6 +55,7 @@ export class Torrentio extends BaseWrapper {
         seeders: seeders,
         sources: stream.sources,
       },
+      indexers: indexer,
       provider: debrid
         ? {
             name: debrid.provider,
