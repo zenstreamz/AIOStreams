@@ -126,7 +126,8 @@ export interface Config {
     },
     putio: {
       enabled: boolean;
-      apiKey: string;
+      clientId: string;
+      token: string;
     },
     easynews: {
       enabled: boolean;
