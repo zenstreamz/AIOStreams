@@ -32,16 +32,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
 
-// Serve static files from the Next.js app
-// do this after the / route to avoid conflicts from the index.html file showing at /
 app.use(express.static(path.join(__dirname, '../../frontend/out')));
 
 app.get(['/configure', '/:config/configure'], (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/out/index.html'));
+  res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
 });
 
 app.get('/manifest.json', (req, res) => {

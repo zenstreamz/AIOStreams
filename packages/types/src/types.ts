@@ -94,15 +94,46 @@ export interface Config {
   sortBy: string[];
   onlyShowCachedStreams: boolean;
   prioritiseLanguage: string | null;
-  addons: string[];
   formatter: string;
-  apiKeys: {
-    realDebrid?: string;
-    torbox?: string;
-    debridLink?: string;
-    allDebrid?: string;
-    premiumize?: string;
-    offcloud?: string;
-    putIo?: string;
-  };
+  addons: {
+    id: string;
+    options: { [key: string]: string };
+  }[];
+  services: {
+    realdebrid: {
+      enabled: boolean;
+      apiKey: string;
+    },
+    alldebrid: {
+      enabled: boolean;
+      apiKey: string;
+    },
+    premiumize: {
+      enabled: boolean;
+      apiKey: string;
+    },
+    debridlink: {
+      enabled: boolean;
+      apiKey: string;
+    }
+    torbox: {
+      enabled: boolean;
+      apiKey: string;
+    },
+    offcloud: {
+      enabled: boolean;
+      apiKey: string;
+    },
+    putio: {
+      enabled: boolean;
+      apiKey: string;
+    },
+    easynews: {
+      enabled: boolean;
+      username: string;
+      password: string;
+    }
+
+  }
+  
 }
