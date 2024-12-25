@@ -1,5 +1,8 @@
 # AIOStreams
 
+> [!WARNING]
+> This addon is currently still in development. Things may not work as expected.
+
 Combines streams from other addons into one and provides much greater customisation: 
 - Change the format of the resutls
 - Filter all results by resolution, quality, visual tags.
