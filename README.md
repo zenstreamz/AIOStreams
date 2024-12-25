@@ -24,22 +24,28 @@ Once it has all the parsed information for each result, it can apply your config
 
 ### From source 
 
-You need Node.js installed. Node v22 and npm v10.9 were used in the development of this project. I can not guarantee earlier versions will work.
+You need Node.js and git installed. Node v22 and npm v10.9 were used in the development of this project. I can not guarantee earlier versions will work.
 
-1. Install [Node.js](https://nodejs.org/en/download/prebuilt-installer/current)
-2. Install project dependencies
+1. Clone the project and set it as the current directory
+   ```
+   git clone https://github.com/Viren070/aiostreams.git
+   ```
+   ```
+   cd aiostreams
+   ```
+3. Install project dependencies
    ```
    npm i
    ```
-3. Build project
+4. Build project
    ```
    npm run build
    ```
-4. Run project
+5. Run project
    ```
    npm run start:addon
    ```
-5. Go to `http://localhost:3000/configure`
+6. Go to `http://localhost:3000/configure`
 
 You can change the PORT environment variable to change the port that the addon will listen on. 
 
