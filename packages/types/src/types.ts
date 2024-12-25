@@ -87,54 +87,34 @@ interface SeriesRequest {
 
 export type StreamRequest = MovieRequest | SeriesRequest;
 
+export type Resolution = { [key: string]: boolean };
+export type Quality = { [key: string]: boolean };
+export type VisualTag = { [key: string]: boolean };
+export type SortBy = { [key: string]: boolean };
+
 export interface Config {
-  resolutions: string[];
-  qualities: string[];
-  visualTags: string[];
-  sortBy: string[];
+  resolutions: Resolution[];
+  qualities: Quality[];
+  visualTags: VisualTag[];
+  sortBy: SortBy[];
   onlyShowCachedStreams: boolean;
   prioritiseLanguage: string | null;
   formatter: string;
+  maxSize: number | null;
+  minSize: number | null;
   addons: {
     id: string;
     options: { [key: string]: string };
   }[];
-  services: {
-    realdebrid: {
+  services: { 
+      name: string;
+      id: string;
       enabled: boolean;
-      apiKey: string;
-    },
-    alldebrid: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    premiumize: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    debridlink: {
-      enabled: boolean;
-      apiKey: string;
-    }
-    torbox: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    offcloud: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    putio: {
-      enabled: boolean;
-      clientId: string;
-      token: string;
-    },
-    easynews: {
-      enabled: boolean;
-      username: string;
-      password: string;
-    }
-
+      credentials: {
+        id: string;
+        label: string;
+        link: string;
+        value: string;
+        }[];
+    }[];
   }
-  
-}

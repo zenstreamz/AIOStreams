@@ -7,6 +7,20 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 10px;
+  transition: background-color 0.5s ease, opacity 0.5s ease, transform 0.3s ease, scale 0.3s ease, box-shadow 0.6s ease, max-height 0.8s ease;
+  max-height: 60px; /* Initial height for the card */
+  overflow: hidden;
+}
+
+.card.enabled {
+  max-height: 500px; /* Adjust this value based on the expected maximum height */
+}
+
+.card.disabled {
+  background-color: #222222; /* Greyed out */
+  box-shadow: none;
+  scale: 0.98;
+  opacity: 0.5;
 }
 
 .header {
@@ -38,6 +52,7 @@
 .field {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
 .field label {
@@ -46,8 +61,10 @@
 
 .field input {
   padding: 5px;
-  border-radius: 4px;
-  border: 1px solid #555;
-  background-color: #1a1a1a;
-  color: #fff;
+  border-radius: 6px;
+  font-size: 16px;
+  border: 1px solid #383838;
+  background-color: white;
+  height: 30px;
+  color: black;
 }

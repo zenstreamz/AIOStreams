@@ -5,13 +5,7 @@ import {
   ParsedNameData,
 } from '@aiostreams/types';
 import { parseFilename } from '@aiostreams/parser';
-/*
 
-1. wrapper gets the streams from the addon using the StreamRequest object which contains the type, id, season, and episode
-    This returns a dictionary with a streams key that contains an array of Stream objects
-
-2. wrapper parses each stream, and returns an object that contains all the necessary information
-*/
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/tt{id}.json';
   private indexerTimeout: number;
@@ -27,7 +21,6 @@ export class BaseWrapper {
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
     const streams: Stream[] = await this.getStreams(streamRequest);
-    console.log('Streams:', streams);
     const parsedStreams: ParsedStream[] = streams
       .map((stream) => this.parseStream(stream))
       .filter((parsedStream) => parsedStream !== undefined);

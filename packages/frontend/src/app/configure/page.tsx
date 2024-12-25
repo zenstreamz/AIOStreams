@@ -1,144 +1,125 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 'use client';
 
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
-import { Config } from '@aiostreams/types';
+import { Config, Resolution, SortBy, Quality, VisualTag } from '@aiostreams/types';
 import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 
-const allowedResolutions = ['2160p', '1080p', '720p', '480p', 'Unknown'];
-const allowedQualities = [
-  'BluRay REMUX',
-  'BluRay',
-  'WEB-DL',
-  'WEBRip',
-  'HDRip',
-  'HC HD-Rip',
-  'DVDRip',
-  'HDTV',
-  'CAM',
-  'TS',
-  'TC',
-  'SCR',
-  'Unknown',
+const defaultQualities: Quality[] = [
+  { 'BluRay REMUX': true },
+  { 'BluRay': true },
+  { 'WEB-DL': true },
+  { 'WEBRip': true },
+  { 'HDRip': true },
+  { 'HC HD-Rip': true },
+  { 'DVDRip': true },
+  { 'HDTV': true },
+  { 'CAM': true },
+  { 'TS': true },
+  { 'TC': true },
+  { 'SCR': true },
+  { 'Unknown': true },
 ];
-const allowedVisualTags = ['HDR10+', 'HDR10', 'HDR', 'DV', 'IMAX', 'AI'];
-const allowedSortCriteria = [
-  'resolution',
-  'visualTag',
-  'size',
-  'quality',
-  'seeders',
-  'cached',
+
+const defaultVisualTags: VisualTag[] = [
+  { 'HDR10+': true },
+  { 'HDR10': true },
+  { 'HDR': true },
+  { 'DV': true },
+  { 'IMAX': true },
+  { 'AI': true },
 ];
+
+const defaultSortCriteria: SortBy[] = [
+  { 'cached': true },
+  { 'resolution': true },
+  { 'visualTag': true },
+  { 'size': true },
+  { 'quality': false },
+  { 'seeders': false },
+];
+
 const allowedFormatters = ['gdrive', 'torrentio'];
 
-interface AddonOption {
-  required: boolean;
-  key: string;
-  label: string;
-  description?: string;
-  type: 'text' | 'checkbox';
-}
 
-const addonOptions: { [key: string]: AddonOption[] } = {
-  torrentio: [
-    {
-      required: false, 
-      key: 'overrideUrl',
-      label: 'Override URL',
-      description: 'Override the URL used to fetch streams from the torrentio addon',
-      type: 'text',
-    },
-    {
-      required: false,
-      key: 'useMultipleInstances',
-      label: 'Use Multiple Instances',
-      description: 'Use multiple instances of the torrentio addon to fetch streams when using multiple services',
-      type: 'checkbox',
-    }
-  ],
-  torbox: [],
-  gdrive: [
-    {
-      required: true,
-      key: 'addonUrl',
-      label: 'Addon URL',
-      type: 'text',
-    }
-  ],
-  custom: [
-    {
-      required: true,
-      key: 'url',
-      label: 'URL',
-      type: 'text',
-    }
-  ]
-}
-
-
-/*
-interface Config {
-  resolutions: string[];
-  qualities: string[];
-  visualTags: string[];
-  sortBy: string[];
-  onlyShowCachedStreams: boolean;
-  prioritiseLanguage: string | null;
-  formatter: string;
-  addons: {
+interface AddonDetail {
+  name: string;
+  id: string;
+  options?: {
     id: string;
-    options: { [key: string]: string };
+    required?: boolean;
+    label: string;
+    description?: string;
+    type: 'text' | 'checkbox';
   }[];
-  services: {
-    realdebrid: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    alldebrid: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    premiumize: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    debridlink: {
-      enabled: boolean;
-      apiKey: string;
-    }
-    torbox: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    offcloud: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    putio: {
-      enabled: boolean;
-      apiKey: string;
-    },
-    easynews: {
-      enabled: boolean;
-      username: string;
-      password: string;
-    }
-
-  }
-  
 }
-  */
+
+
+const addonDetails: AddonDetail[] = [
+  {
+    name: 'Torrentio',
+    id: 'torrentio',
+    options: [
+      {
+        id: 'overrideUrl',
+      required: false, 
+
+        label: 'Override URL',
+        description: 'Override the URL used to fetch streams from the torrentio addon',
+        type: 'text',
+      },
+      {
+        id: 'useMultipleInstances',
+      required: false,
+
+        label: 'Use Multiple Instances',
+        description: 'Use multiple instances of the torrentio addon to fetch streams when using multiple services',
+        type: 'checkbox',
+      },
+    ],
+  },
+  {
+    name: 'Torbox',
+    id: 'torbox',
+  },
+  {
+    name: 'Google Drive (Viren070)',
+    id: 'gdrive',
+    options: [
+      {
+        id: 'addonUrl',
+        required: true,
+        label: 'Addon URL',
+        description: 'The URL of the Google Drive addon',
+        type: 'text',
+      },
+    ]
+  },
+  {
+    name: 'Custom',
+    id: 'custom',
+    options: [
+      {
+        id: 'url',
+        required: true,
+        description: 'The URL of the custom addon',
+        label: 'URL',
+        type: 'text',
+      },
+    ],
+  },
+
+]
+
 
 
 const allowedLanguages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
 
 
-function showToast(message: string, type: 'success' | 'error' | 'info' | 'warning') {
+function showToast(message: string, type: 'success' | 'error' | 'info' | 'warning', id?: string) {
   toast[type](message, {
     autoClose: 5000,
     hideProgressBar: true,
@@ -147,47 +128,170 @@ function showToast(message: string, type: 'success' | 'error' | 'info' | 'warnin
     draggable: 'touch',
     style: {
       borderRadius: '8px',
-      backgroundColor: '#0b0b0b',
-      color: 'white',
-    }
+      backgroundColor: '#ededed',
+      color: 'black',
+    },
+    toastId: id,
   });
 }
 
+
+const defaultResolutions: Resolution[] = [
+  { '2160p': true },
+  { '1080p': true },
+  { '720p': true },
+  { '480p': true },
+  { 'Unknown': true },
+];
+
+const defaultServices = [
+  {
+    name: 'Real Debrid',
+    id: 'realdebrid',
+    enabled: false,
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://real-debrid.com/apitoken',
+        value: ''
+      }
+    ]
+  },
+  {
+    name: 'All Debrid',
+    id: 'alldebrid',
+    enabled: false,
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://alldebrid.com/api',
+        value: ''
+      }
+    ]
+  },
+  {
+    name: 'Premiumize',
+    id: 'premiumize',
+    enabled: false,
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://www.premiumize.me/account',
+        value: ''
+      }
+    ]
+  },
+  {
+    name: 'Debrid Link',
+    id: 'debridlink',
+    enabled: false,
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://debrid-link.com/webapp/apikey',
+        value: ''
+      }
+    ]
+  },
+  {
+    name: 'Torbox',
+    id: 'torbox',
+    enabled: false,
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://torbox.app/settings',
+        value: ''
+      }
+    ]
+  },
+  {
+    name: 'Offcloud',
+    id: 'offcloud',
+    enabled: false,
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://offcloud.com/#/account',
+        value: ''
+      }
+    ]
+  },
+  {
+    name: 'put.io',
+    id: 'putio',
+    enabled: false,
+    credentials: [
+      {
+        label: 'Client ID',
+        id: 'clientId',
+        link: 'https://put.io/oauth',
+        value: ''
+      },
+      {
+        label: 'Token',
+        id: 'token',
+        link: 'https://put.io/oauth',
+        value: ''
+      }
+    ]
+  },
+  {
+    name: 'Easynews',
+    id: 'easynews',
+    enabled: false,
+    credentials: [
+      {
+        label: 'Username',
+        id: 'username',
+        link: 'https://www.easynews.com/',
+        value: ''
+      },
+      {
+        label: 'Password',
+        id: 'password',
+        link: 'https://www.easynews.com/',
+        value: ''
+      }
+    ]
+  },
+];
+
 export default function Configure() {
-  const [resolutions, setResolutions] = useState<string[]>(allowedResolutions);
-  const [qualities, setQualities] = useState<string[]>(allowedQualities);
-  const [visualTags, setVisualTags] = useState<string[]>(allowedVisualTags);
-  const [sortCriteria, setSortCriteria] = useState<string[]>(allowedSortCriteria);
+  const [resolutions, setResolutions] = useState<Resolution[]>(defaultResolutions);
+  const [qualities, setQualities] = useState<Quality[]>(defaultQualities);
+  const [visualTags, setVisualTags] = useState<VisualTag[]>(defaultVisualTags);
+  const [sortCriteria, setSortCriteria] = useState<SortBy[]>(defaultSortCriteria);
   const [formatter, setFormatter] = useState<string>();
-  const [services, setServices] = useState<Config['services']>({
-    realdebrid: { enabled: false, apiKey: '' },
-    alldebrid: { enabled: false, apiKey: '' },
-    premiumize: { enabled: false, apiKey: '' },
-    debridlink: { enabled: false, apiKey: '' },
-    torbox: { enabled: false, apiKey: '' },
-    offcloud: { enabled: false, apiKey: '' },
-    putio: { enabled: false, clientId: '', token: '' },
-    easynews: { enabled: false, username: '', password: '' }
-  });
+  const [services, setServices] = useState<Config['services']>(defaultServices);
   const [onlyShowCachedStreams, setOnlyShowCachedStreams] = useState<boolean>(false);
   const [prioritiseLanguage, setPrioritiseLanguage] = useState<string | null>(null);
   const [addons, setAddons] = useState<Config['addons']>([]);
-
+  const [maxSize, setMaxSize] = useState<number|null>(null);
+  const [minSize, setMinSize] = useState<number|null>(null);
+  const [sizeUnit, setSizeUnit] = useState<'MB' | 'GB'>('GB');
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
-    const choosableAddons: string[] = [];
-    choosableAddons.push('torrentio');
-    choosableAddons.push('gdrive');
-    choosableAddons.push('custom');
-    if (services.torbox.enabled) {
+    const choosableAddons: string[] = ['torrentio', 'gdrive', 'custom'];
+    if (services.some(service => service.enabled && service.id === 'torbox')) {
       choosableAddons.push('torbox');
     }
     return choosableAddons;
   }
     
+  const convertToBytes = (size: number | null, unit: 'MB' | 'GB'): number | null => {
+    if (size === null) return null;
+    return unit === 'GB' ? size * 1000 * 1000 * 1000 : size * 1000 * 1000;
+  }
 
-  const createConfig = () => {
+  const createConfig = (): Config => {
     return {
       resolutions,
       qualities,
@@ -195,6 +299,8 @@ export default function Configure() {
       sortBy: sortCriteria,
       onlyShowCachedStreams,
       prioritiseLanguage,
+      maxSize: convertToBytes(maxSize, sizeUnit),
+      minSize: convertToBytes(minSize, sizeUnit),
       formatter: formatter || 'gdrive',
       addons,
       services,
@@ -211,87 +317,76 @@ export default function Configure() {
 
   const validateConfig = () => {
     const config = createConfig();
-    const addonIds = config.addons.map(addon => addon.id);
-    const duplicateAddons = addonIds.filter((id, index) => addonIds.indexOf(id) !== index);
-    if (duplicateAddons.length > 0) {
-      showToast(`Duplicate addons found: ${duplicateAddons.join(', ')}`, 'error');
-      return false;
-    }
+
 
     for (const addon of config.addons) {
       // if torbox addon is enabled, torbox service must be enabled and torbox api key must be set
-      if (addon.id === 'torbox' && (!services.torbox.enabled || !services.torbox.apiKey)) {
-        showToast('Torbox addon requires Torbox service to be enabled and API key to be set', 'error');
+      if (addon.id === 'torbox') {
+        const torboxService = config.services.find(service => service.id === 'torbox');
+        if (!torboxService || !torboxService.enabled || !torboxService.credentials.find(credential => credential.id === 'apiKey' && credential.value)) {
+          showToast('Torbox service must be enabled and API key must be set to use the Torbox addon', 'error', 'torboxServiceNotEnabled');
+          return false;
+        }
+      }
+      const details = addonDetails.find((detail) => detail.id === addon.id);
+      if (!details) {
+        showToast(`Invalid addon: ${addon.id}`, 'error', 'invalidAddon');
         return false;
       }
-      const options = addonOptions[addon.id];
-      for (const option of options) {
-        if (option.required && !addon.options[option.key]) {
-          showToast(`Required option "${option.label}" is missing for addon "${addon.id}"`, 'error');
-          return false;
+      if (details.options) {
+        for (const option of details.options) {
+          if (option.required && !addon.options[option.id]) {
+            showToast(`Option ${option.label} is required for addon ${addon.id}`, 'error', 'missingRequiredOption');
+            return false;
+          }
         }
       }
     }
 
-    if (services.putio.enabled && (!services.putio.clientId || !services.putio.token)) {
-      showToast('Put.io service requires client ID and token to be set', 'error');
-      return false;
+    for (const service of config.services) {
+      if (service.enabled) {
+        for (const credential of service.credentials) {
+          if (!credential.value) {
+            showToast(`${credential.label} is required for ${service.name}`, 'error', `missing${service.id}${credential.id}`);
+            return false;
+          }
+        }
+      }
     }
 
-    if (services.easynews.enabled && (!services.easynews.username || !services.easynews.password)) {
-      showToast('Easynews service requires username and password to be set', 'error');
-      return false;
-    }
-
-    if (services.realdebrid.enabled && !services.realdebrid.apiKey) {
-      showToast('Real Debrid service requires API key to be set', 'error');
-      return false;
-    }
-
-    if (services.alldebrid.enabled && !services.alldebrid.apiKey) {
-      showToast('All Debrid service requires API key to be set', 'error');
-      return false;
-    }
-
-    if (services.premiumize.enabled && !services.premiumize.apiKey) {
-      showToast('Premiumize service requires API key to be set', 'error');
-      return false;
-    }
-
-    if (services.debridlink.enabled && !services.debridlink.apiKey) {
-      showToast('Debrid Link service requires API key to be set', 'error');
-      return false;
-    }
-
-    if (services.torbox.enabled && !services.torbox.apiKey) {
-      showToast('Torbox service requires API key to be set', 'error');
-      return false;
-    }
-
-    if (services.offcloud.enabled && !services.offcloud.apiKey) {
-      showToast('Offcloud service requires API key to be set', 'error');
-      return false;
-    }
 
     // need at least one visual tag, resolution, quality 
     if (config.visualTags.length === 0) {
-      showToast('At least one visual tag must be selected', 'error');
+      showToast('At least one visual tag must be selected', 'error', 'noVisualTags');
       return false;
     }
 
     if (config.resolutions.length === 0) {
-      showToast('At least one resolution must be selected', 'error');
+      showToast('At least one resolution must be selected', 'error', 'noResolutions');
       return false;
     }
 
     if (config.qualities.length === 0) {
-      showToast('At least one quality must be selected', 'error');
+      showToast('At least one quality must be selected', 'error', 'noQualities');
       return false;
     }
 
+    if (config.minSize && config.maxSize ) {
+      if (config.minSize > config.maxSize) {
+        showToast('Your minimum size limit can\'t be greater than your maximum size limit', 'error', 'invalidSizeRange');
+        return false;
+      } else if (config.minSize === config.maxSize) { 
+        setTimeout(() => {
+          showToast('Your minimum and maximum size are the same, this will result in no streams being shown', 'warning', 'sameSize');
+        }, 500);
+      } 
+    }
 
-
-
+    if (config.addons.length < 1) {
+      showToast('At least one addon must be selected', 'error', 'noAddons');
+      return false;
+    }
+    
     return true;
   }
 
@@ -299,7 +394,11 @@ export default function Configure() {
     if (validateConfig()) {
       const manifestUrl = getManifestUrl();
       const stremioUrl = manifestUrl.replace(/^https?/, 'stremio');
-      window.location.href = stremioUrl;
+      showToast('Sending addon to Stremio. You need Stremio installed for this to work.', 'info', 'sendingToStremio');
+      // timeout to allow the toast to show
+      setTimeout(() => {
+        window.open(stremioUrl, '_blank');
+      }, 1000);
     }
   }
 
@@ -307,7 +406,11 @@ export default function Configure() {
     if (validateConfig()) {
       const manifestUrl = getManifestUrl();
       const encodedManifestUrl = encodeURIComponent(manifestUrl);
-      window.location.href = `https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`;
+      showToast('Opening Stremio Web with your addon', 'info', 'openingStremioWeb');
+      // timeout to allow the toast to show
+      setTimeout(() => {
+        window.open(`https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`, '_blank');
+      }, 1000);
     }
   }
 
@@ -315,7 +418,7 @@ export default function Configure() {
     if (validateConfig()) {
       const manifestUrl = getManifestUrl();
       navigator.clipboard.writeText(manifestUrl).then(() => {
-        showToast('Manifest URL copied to clipboard', 'success');
+        showToast('Manifest URL copied to clipboard', 'success', 'copiedManifestUrl');
       });
     }
   }
@@ -337,6 +440,17 @@ export default function Configure() {
         setFormatter(decodedConfig.formatter);
         setAddons(decodedConfig.addons);
         setServices(decodedConfig.services);
+        if (decodedConfig.maxSize) {
+          const unit = decodedConfig.maxSize > 1000 * 1000 * 1000 ? 'GB' : 'MB';
+          setSizeUnit(unit);
+          setMaxSize(unit === 'GB' ? decodedConfig.maxSize / 1000 / 1000 / 1000 : decodedConfig.maxSize / 1000 / 1000);
+        }
+        if (decodedConfig.minSize) {
+          const unit = decodedConfig.minSize > 1000 * 1000 * 1000 ? 'GB' : 'MB';
+          setSizeUnit(unit);
+          setMinSize(unit === 'GB' ? decodedConfig.minSize / 1000 / 1000 / 1000 : decodedConfig.minSize / 1000 / 1000);
+        }
+
         
       }
     } catch (error) {
@@ -349,13 +463,20 @@ export default function Configure() {
     <div className={styles.container}>
       <div className={styles.content}>
         <h1 style={{"textAlign": "center"}}>AIOStreams</h1>
+        <p style={{"textAlign": "center", "padding": "15px"}}>
+          AIOStreams, the all-in-one streaming addon for Stremio. Combine your streams from all your addons into one 
+          and filter them by resolution, quality, visual tags and more.
+        </p>
+        <p style={{"textAlign": "center", "padding": "15px"}}>
+          Made by Viren070. Source code on <a href="https://github.com/Viren070/AIOStreams" target="_blank" rel="noreferrer" style={{"textDecoration": "underline"}}>Github</a> 
+        </p>
+        
         <div className={styles.section}>
           <h2 style={{"padding": "5px"}}>Resolutions</h2>
           <p style={{"padding": "5px"}}>Choose which resolutions you want to see and reorder their priority if needed.</p>
           <SortableCardList
-            items={allowedResolutions}
-            selectedItems={resolutions}
-            onUpdate={setResolutions}
+            items={resolutions}
+            setItems={setResolutions}
           />
         </div>
 
@@ -363,9 +484,8 @@ export default function Configure() {
           <h2 style={{"padding": "5px"}}>Qualities</h2>
           <p style={{"padding": "5px"}}>Choose which qualities you want to see and reorder their priority if needed.</p>
           <SortableCardList
-            items={allowedQualities}
-            selectedItems={qualities}
-            onUpdate={setQualities}
+            items={qualities}
+            setItems={setQualities}
           />
         </div>
 
@@ -374,9 +494,8 @@ export default function Configure() {
           <h2 style={{"padding": "5px"}}>Visual Tags</h2>
           <p style={{"padding": "5px"}}>Choose which visual tags you want to see and reorder their priority if needed.</p>
           <SortableCardList
-            items={allowedVisualTags}
-            selectedItems={visualTags}
-            onUpdate={setVisualTags}
+            items={visualTags}
+            setItems={setVisualTags}
           />
         </div>
 
@@ -384,9 +503,8 @@ export default function Configure() {
           <h2 style={{"padding": "5px"}}>Sort By</h2>
           <p style={{"padding": "5px"}}>Choose the criteria by which to sort streams.</p>
           <SortableCardList
-            items={allowedSortCriteria}
-            selectedItems={sortCriteria}
-            onUpdate={setSortCriteria}
+            items={sortCriteria}
+            setItems={setSortCriteria}
           />
         </div>
 
@@ -394,7 +512,7 @@ export default function Configure() {
           <div className={styles.setting}>
             <div className={styles.settingDescription}>
               <h2 style={{"padding": "5px"}}>Prioritise Language</h2>
-              <p style={{"padding": "5px"}}>Choose a language to prioritise when selecting streams.</p>
+              <p style={{"padding": "5px"}}>Any results that are detected to have the prioritised language will be moved to the top, ignoring all other sort criteria</p>
             </div>
             <div className={styles.settingInput}>
               <select
@@ -417,7 +535,7 @@ export default function Configure() {
           <div className={styles.setting}>
             <div className={styles.settingDescription}>
               <h2 style={{"padding": "5px"}}>Formatter</h2>
-              <p style={{"padding": "5px"}}>Choose the formatter to use for streaming.</p>
+              <p style={{"padding": "5px"}}>Change how your stream results are formatted.</p>
             </div>
             <div className={styles.settingInput}>
               <select
@@ -434,128 +552,87 @@ export default function Configure() {
           </div>
         </div>
 
+        <div className={styles.section}>
+          <div className={styles.setting}>
+            <div className={styles.settingDescription}>
+              <h2 style={{"padding": "5px"}}>Size Filter</h2>
+              <p style={{"padding": "5px"}}>Filter streams by size. Leave empty to disable.</p>
+            </div>
+            <div className={styles.settingInput}>
+              <input
+                type="number"
+                placeholder="Min size"
+                value={minSize || ''}
+                onChange={(e) => {
+                  const value = e.target.value ? parseInt(e.target.value) : null;
+                  if (value && value <= 0) {
+                    setMinSize(null);
+                    return;
+                  }
+                  setMinSize(value);
+                }}
+              />
+              <input
+                type="number"
+                placeholder="Max size"
+                value={maxSize || ''}
+                onChange={(e) => {
+                  const value = e.target.value ? parseInt(e.target.value) : null;
+                  if (value && value <= 0) {
+                    setMaxSize(null);
+                    return;
+                  }
+                  setMaxSize(value);
+                }
+                }
+              />
+              <select
+                value={sizeUnit}
+                onChange={(e) => setSizeUnit(e.target.value as 'MB' | 'GB')}
+              >
+                <option value="MB">MB</option>
+                <option value="GB">GB</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
 
         <div className={styles.section}>
           <h2 style={{"padding": "5px"}}>Services</h2>
-          <ServiceInput
-            serviceName="Real Debrid"
-            enabled={services.realdebrid.enabled}
-            setEnabled={(enabled) => setServices({ ...services, realdebrid: { ...services.realdebrid, enabled } })}
-            fields={[
-              {
-                label: 'API Key',
-                value: services.realdebrid.apiKey,
-                setValue: (value) => setServices({ ...services, realdebrid: { ...services.realdebrid, apiKey: value } })
-              }
-            ]}
-          />
-          <ServiceInput
-            serviceName="All Debrid"
-            enabled={services.alldebrid.enabled}
-            setEnabled={(enabled) => setServices({ ...services, alldebrid: { ...services.alldebrid, enabled } })}
-            fields={[
-              {
-                label: 'API Key',
-                value: services.alldebrid.apiKey,
-                setValue: (value) => setServices({ ...services, alldebrid: { ...services.alldebrid, apiKey: value } })
-              }
-            ]}
-          />
-          <ServiceInput
-            serviceName="Premiumize"
-            enabled={services.premiumize.enabled}
-            setEnabled={(enabled) => setServices({ ...services, premiumize: { ...services.premiumize, enabled } })}
-            fields={[
-              {
-                label: 'API Key',
-                value: services.premiumize.apiKey,
-                setValue: (value) => setServices({ ...services, premiumize: { ...services.premiumize, apiKey: value } })
-              }
-            ]}
-          />
+          <p style={{"padding": "5px"}}>Enable the services you have accounts with and enter your credentials.</p>
+          {services.map((service) => (
+            <ServiceInput
+              key={service.id}
+              serviceName={service.name}
+              enabled={service.enabled}
+              setEnabled={(enabled) => {
+                const newServices = [...services];
+                const serviceIndex = newServices.findIndex((s) => s.id === service.id);
+                newServices[serviceIndex] = { ...service, enabled };
+                setServices(newServices);
+              }}
+              fields={service.credentials.map((credential) => ({
+                label: credential.label,
+                link: credential.link,
+                value: credential.value,
+                setValue: (value) => {
+                  const newServices = [...services];
+                  const serviceIndex = newServices.findIndex((s) => s.id === service.id);
+                  const newCredentials = [...newServices[serviceIndex].credentials];
+                  const credentialIndex = newCredentials.findIndex((c) => c.id === credential.id);
+                  newCredentials[credentialIndex] = { ...credential, value };
+                  newServices[serviceIndex] = { ...service, credentials: newCredentials };
+                  setServices(newServices);
+                },
+              }))}
+            />
+          ))}
 
-          <ServiceInput
-            serviceName="Debrid Link"
-            enabled={services.debridlink.enabled}
-            setEnabled={(enabled) => setServices({ ...services, debridlink: { ...services.debridlink, enabled } })}
-            fields={[
-              {
-                label: 'API Key',
-                value: services.debridlink.apiKey,
-                setValue: (value) => setServices({ ...services, debridlink: { ...services.debridlink, apiKey: value } })
-              }
-            ]}
-          />
-
-          <ServiceInput
-            serviceName="Torbox"
-            enabled={services.torbox.enabled}
-            setEnabled={(enabled) => setServices({ ...services, torbox: { ...services.torbox, enabled } })}
-            fields={[
-              {
-                label: 'API Key',
-                value: services.torbox.apiKey,
-                setValue: (value) => setServices({ ...services, torbox: { ...services.torbox, apiKey: value } })
-              }
-            ]}
-          />
-
-          <ServiceInput
-            serviceName="Offcloud"
-            enabled={services.offcloud.enabled}
-            setEnabled={(enabled) => setServices({ ...services, offcloud: { ...services.offcloud, enabled } })}
-            fields={[
-              {
-                label: 'API Key',
-                value: services.offcloud.apiKey,
-                setValue: (value) => setServices({ ...services, offcloud: { ...services.offcloud, apiKey: value } })
-              }
-            ]}
-          />
-
-          <ServiceInput
-            serviceName="put.io"
-            enabled={services['putio'].enabled}
-            setEnabled={(enabled) => setServices({ ...services, putio: { ...services['putio'], enabled } })}
-            fields={[
-              {
-                label: 'Client ID',
-                value: services['putio'].clientId,
-                setValue: (value) => setServices({ ...services, putio: { ...services['putio'], clientId: value } })
-              },
-              {
-                label: 'Token',
-                value: services['putio'].token,
-                setValue: (value) => setServices({ ...services, putio: { ...services['putio'], token: value } })
-              }
-            ]}
-          />
-
-          <ServiceInput
-            serviceName="Easynews"
-            enabled={services.easynews.enabled}
-            setEnabled={(enabled) => setServices({ ...services, easynews: { ...services.easynews, enabled } })}
-            fields={[
-              {
-                label: 'Username',
-                value: services.easynews.username,
-                setValue: (value) => setServices({ ...services, easynews: { ...services.easynews, username: value } })
-              },
-              {
-                label: 'Password',
-                value: services.easynews.password,
-                setValue: (value) => setServices({ ...services, easynews: { ...services.easynews, password: value } })
-              }
-            ]}
-          />
-
-          {Object.values(services).some(service => service.enabled) && (
-            <div className={styles.section}>
-            <div className={styles.setting}>
+          <div className={styles.setting}>
             <div className={styles.settingDescription}>
-              <h2 style={{ padding: '5px' }}>Only Show Cached Streams</h2>
-              <p style={{ padding: '5px' }}>Enable this option to only show cached streams and not show download to service links. Depending on your addons, you may still get P2P links</p>
+              <h2 style={{"padding": "5px"}}>Only Show Cached Streams</h2>
+              <p style={{"padding": "5px"}}>Only show streams that are cached by the enabled services.</p>
             </div>
             <div className={styles.settingInput}>
               <input
@@ -564,24 +641,30 @@ export default function Configure() {
                 onChange={(e) => setOnlyShowCachedStreams(e.target.checked)}
               />
             </div>
-            </div>
-            </div>
-          )}
+          </div>
         </div>
 
         <div className={styles.section}>
           <h2 style={{"padding": "5px"}}>Addons</h2>
           <AddonsList
             choosableAddons={getChoosableAddons()}
-            addonOptions={addonOptions}
+            addonDetails={addonDetails}
             addons={addons}
             setAddons={setAddons} 
           />
         </div>
+
+        <details>
+          <summary>Config</summary>
+          <pre>{JSON.stringify(createConfig(), null, 2)}</pre>
+        </details>
+
+        <div className={styles.installButtons}>
         
-        <button onClick={handleInstall} className={styles.installButton}>Install</button>
-        <button onClick={handleInstallToWeb} className={styles.installButton}>Install to Stremio Web</button>
-        <button onClick={handleCopyLink} className={styles.installButton}>Copy Link</button>
+          <button onClick={handleInstall} className={styles.installButton}>Install</button>
+          <button onClick={handleInstallToWeb} className={styles.installButton}>Install to Stremio Web</button>
+          <button onClick={handleCopyLink} className={styles.installButton}>Copy Link</button>
+        </div>
       </div>
       <ToastContainer 
       stacked

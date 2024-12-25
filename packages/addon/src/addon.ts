@@ -30,15 +30,40 @@ export class AIOStreams {
 
     const parsedStreams = await this.getParsedStreams(streamRequest);
     console.log(`Got ${parsedStreams.length} streams`);
-    // Apply filtering
+
     const filteredResults = parsedStreams.filter(
-      (parsedStream) =>
-        this.config.resolutions.includes(parsedStream.resolution) &&
-        this.config.qualities.includes(parsedStream.quality) &&
-        parsedStream.visualTags.every((tag) =>
-          this.config.visualTags.includes(tag)
-        ) // &&
-      //(!parsedStream.provider || this.config.onlyShowCachedStreams || parsedStream.provider.cached)
+      (parsedStream) => {
+        const resolutionFilter = this.config.resolutions.find(
+          (resolution) => resolution[parsedStream.resolution]
+        );
+        if (!resolutionFilter) return false;
+
+        const qualityFilter = this.config.qualities.find(
+          (quality) => quality[parsedStream.quality]
+        );
+        if (!qualityFilter) return false;
+
+        const visualTagFilter = parsedStream.visualTags.some(
+          (tag) => !this.config.visualTags.find((t) => t[tag])
+        );
+        if (visualTagFilter) return false;
+
+        if (
+          this.config.onlyShowCachedStreams &&
+          parsedStream.provider &&
+          !parsedStream.provider.cached
+        )
+          return false;
+
+        if (this.config.minSize && parsedStream.size && parsedStream.size < this.config.minSize)
+          return false;
+
+        if (this.config.maxSize && parsedStream.size && parsedStream.size > this.config.maxSize)
+          return false;
+
+
+        return true;
+      }
     );
     console.log(`Filtered to ${filteredResults.length} streams`);
     // Apply sorting
@@ -50,10 +75,16 @@ export class AIOStreams {
     filteredResults.sort((a, b) => {
       const languageComparison = this.compareLanguages(a, b);
       if (languageComparison !== 0) return languageComparison;
-
+      
       for (const sortByField of this.config.sortBy) {
-        const fieldComparison = this.compareByField(a, b, sortByField);
-        if (fieldComparison !== 0) return fieldComparison;
+
+        const field = Object.keys(sortByField)[0];
+        const value = sortByField[field];
+
+        if (value) {
+          const fieldComparison = this.compareByField(a, b, field);
+          if (fieldComparison !== 0) return fieldComparison;
+        }
       }
 
       return 0;
@@ -73,9 +104,6 @@ export class AIOStreams {
   private createStreamObject(parsedStream: ParsedStream): Stream {
     let name: string = '';
     let description: string = '';
-    console.log(
-      `Creating stream object for ${parsedStream.filename} with formatter ${this.config.formatter}`
-    );
     switch (this.config.formatter) {
       case 'gdrive': {
         const { name: _name, description: _description } =
@@ -151,8 +179,12 @@ export class AIOStreams {
   private compareByField(a: ParsedStream, b: ParsedStream, field: string) {
     if (field === 'resolution') {
       return (
-        this.config.resolutions.indexOf(a.resolution) -
-        this.config.resolutions.indexOf(b.resolution)
+        this.config.resolutions.findIndex(
+          (resolution) => resolution[a.resolution]
+        ) -
+        this.config.resolutions.findIndex(
+          (resolution) => resolution[b.resolution]
+        )
       );
     } else if (field === 'cached') {
       let aCanbeCached = a.provider;
@@ -189,15 +221,15 @@ export class AIOStreams {
       }
     } else if (field === 'quality') {
       return (
-        this.config.qualities.indexOf(a.quality) -
-        this.config.qualities.indexOf(b.quality)
+        this.config.qualities.findIndex((quality) => quality[a.quality]) -
+        this.config.qualities.findIndex((quality) => quality[b.quality])
       );
     } else if (field === 'visualTag') {
       // Find the highest priority visual tag in each file
       const getIndexOfTag = (tag: string) =>
         tag.startsWith('HDR')
-          ? this.config.visualTags.indexOf('HDR10+')
-          : this.config.visualTags.indexOf(tag);
+          ? this.config.visualTags.findIndex((t) => t['HDR10+'])
+          : this.config.visualTags.findIndex((t) => t[tag]);
       const aVisualTagIndex = a.visualTags.reduce(
         (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
         this.config.visualTags.length
@@ -218,49 +250,70 @@ export class AIOStreams {
   ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
     for (const addon of this.config.addons) {
-      switch (addon) {
+      switch (addon.id) {
         case 'gdrive': {
           break;
         }
         case 'torbox': {
           try {
-            if (!this.config.apiKeys.torbox) {
-              throw new Error('No torbox api key provided');
+            const torboxService = this.config.services.find( service => service.id === 'torbox');
+           
+            if (!torboxService) {
+              console.error('No torbox service found');
+              break;
             }
-            const wrapper = new Torbox(this.config.apiKeys.torbox);
+            const torboxApiKey = torboxService.credentials.find(cred => cred.id === 'apiKey')?.value;
+            if (!torboxApiKey) {
+              console.error('No torbox api key found');
+              break;
+            }
+            const wrapper = new Torbox(torboxApiKey);
             const streams = await wrapper.getParsedStreams(streamRequest);
-            console.log(`Got streams from ${addon}: ${streams.length}`);
+            console.log(`Got streams from ${addon.id}: ${streams.length}`);
             parsedStreams.push(...streams);
           } catch (e) {
-            console.error(`Error getting streams from ${addon}: ${e}`);
+            console.error(`Error getting streams from ${addon.id}: ${e}`);
           }
           break;
         }
         case 'torrentio': {
           try {
-            const wrapper = new Torrentio(this.config.apiKeys);
-            const streams = await wrapper.getParsedStreams(streamRequest);
-            console.log(`Got streams from ${addon}: ${streams.length}`);
-            parsedStreams.push(...streams);
+            if (addon.options.useMultipleInstances) {
+              for (const service of this.config.services) {
+                if (!service.enabled) {
+                  continue;
+                }
+                const wrapper = new Torrentio([service]);
+                const streams = await wrapper.getParsedStreams(streamRequest);
+                console.log(`Got streams from ${addon.id}: ${streams.length}`);
+                parsedStreams.push(...streams);
+              }
+            } else {
+              const wrapper = new Torrentio(this.config.services, addon.options.overrideUrl);
+              const streams = await wrapper.getParsedStreams(streamRequest);
+              console.log(`Got streams from ${addon.id}: ${streams.length}`);
+              parsedStreams.push(...streams);
+            }
           } catch (e) {
-            console.error(`Error getting streams from ${addon}: ${e}`);
+            console.error(`Error getting streams from ${addon.id}: ${e}`);
           }
           break;
         }
 
         default: {
           try {
-            const wrapper = new BaseWrapper('unknown', addon);
+            const wrapper = new BaseWrapper('unknown', addon.options.addonUrl);
             const streams = await wrapper.getParsedStreams(streamRequest);
-            console.log(`Got streams from ${addon}: ${streams.length}`);
+            console.log(`Got streams from ${addon.id}: ${streams.length}`);
 
             parsedStreams.push(...streams);
           } catch (e) {
-            console.error(`Error getting streams from ${addon}: ${e}`);
+            console.error(`Error getting streams from ${addon.id}: ${e}`);
           }
         }
       }
     }
     return parsedStreams;
   }
+
 }

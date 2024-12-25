@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import styles from './AddonsList.module.css';
 
-interface AddonOption {
-  required: boolean;
-  key: string;
-  label: string;
-  description?: string;
-  type: 'text' | 'checkbox';
+interface AddonDetail {
+  name: string;
+  id: string;
+  options?: {
+    id: string;
+    required?: boolean;
+    label: string;
+    description?: string;
+    type: 'text' | 'checkbox';
+  }[];
 }
 
 interface Addon {
@@ -16,12 +20,12 @@ interface Addon {
 
 interface AddonsListProps {
   choosableAddons: string[];
-  addonOptions: { [key: string]: AddonOption[] };
+  addonDetails: AddonDetail[];
   addons: Addon[];
   setAddons: (addons: Addon[]) => void;
 }
 
-const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonOptions, addons, setAddons }) => {
+const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonDetails, addons, setAddons }) => {
   const [selectedAddon, setSelectedAddon] = useState<string>('');
 
   const addAddon = () => {
@@ -48,46 +52,59 @@ const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonOptions, 
       <div className={styles.addonSelector}>
         <select value={selectedAddon} onChange={(e) => setSelectedAddon(e.target.value)}>
           <option value="">Select an addon</option>
-          {choosableAddons.map((addon) => (
-            <option key={addon} value={addon}>
-              {addon}
-            </option>
-          ))}
+          {choosableAddons.map((addon) => {
+            const addonDetail = addonDetails.find(detail => detail.id === addon);
+            if (addonDetail) {
+              return (
+                <option key={addon} value={addon}>
+                  {addonDetail.name}
+                </option>
+              );
+            }
+            return null;
+
+          })}
         </select>
         <button onClick={addAddon}>Add Addon</button>
       </div>
-      {addons.map((addon, index) => (
-        <div key={index} className={styles.card}>
-          <div className={styles.cardHeader}>
-            <span>{addon.id}</span>
-            <button onClick={() => removeAddon(index)} className={styles.deleteButton}>✖</button>
+      {addons.map((addon, index) => {
+        const details = addonDetails.find(detail => detail.id === addon.id);
+        return (
+          <div key={index} className={styles.card}>
+            <div className={styles.cardHeader}>
+              <span>{details?.name}</span>
+              <button onClick={() => removeAddon(index)} className={styles.deleteButton}>✖</button>
+            </div>
+            <div className={styles.cardBody}>
+              {details?.options?.map((option) => (
+                <div key={option.id} className={styles.option}>
+                  <label>
+                    {option.label}
+                    {option.required && <span className={styles.required}><small><em>*Required Field</em></small></span>}
+                    {option.type === 'checkbox' && (
+                      <input
+                        type="checkbox"
+                        checked={addon.options[option.id] === 'true'}
+                        onChange={(e) => updateOption(index, option.id, e.target.checked.toString())}
+                        className={styles.checkbox}
+                      />
+                    )}
+                  </label>
+                  {option.description && <small>{option.description}</small>}
+                  {option.type === 'text' && (
+                    <input
+                      type="text"
+                      value={addon.options[option.id] || ''}
+                      onChange={(e) => updateOption(index, option.id, e.target.value)}
+                      className={styles.textInput}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className={styles.cardBody}>
-            {addonOptions[addon.id].map((option) => (
-              <div key={option.key} className={styles.option}>
-                <label>
-                  {option.label}
-                  {option.required && <span className={styles.required}><small><em>*Required Field</em></small></span>}
-                </label>
-                {option.type === 'text' ? (
-                  <input
-                    type="text"
-                    value={addon.options[option.key] || ''}
-                    onChange={(e) => updateOption(index, option.key, e.target.value)}
-                  />
-                ) : (
-                  <input
-                    type="checkbox"
-                    checked={addon.options[option.key] === 'true'}
-                    onChange={(e) => updateOption(index, option.key, e.target.checked.toString())}
-                  />
-                )}
-                {option.description && <small>{option.description}</small>}
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

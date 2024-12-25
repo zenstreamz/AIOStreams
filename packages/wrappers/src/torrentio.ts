@@ -1,21 +1,46 @@
 import { ParsedNameData } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
-import { ParsedStream, Stream } from '@aiostreams/types';
+import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
+
+const supportedServices: string[] = ['realdebrid', 'alldebrid', 'premiumize', 'putio', 'torbox', 'offcloud', 'debridlink'];
 
 export class Torrentio extends BaseWrapper {
   private readonly name: string = 'Torrentio';
-
-  constructor(apiKeys: Record<string, string>) {
+  
+  constructor(services: Config['services'], overrideUrl?: string) {
     let configString = '';
-    if (apiKeys && Object.keys(apiKeys).length > 0) {
-      console.log('API keys:', apiKeys);
-      configString =
-        Object.entries(apiKeys)
-          .filter(([_, apiKey]) => apiKey)
-          .map(([name, apiKey]) => `${name.toLowerCase()}=${apiKey}`)
-          .join('|') + '/';
+  
+    if (!overrideUrl) {
+      let enabledServices: [string, string][] = [];
+      
+      for (const service of services) {
+        if (supportedServices.includes(service.id) && service.enabled) {
+          if (service.id === "putio") {
+            const clientId = service.credentials.find(cred => cred.id === 'clientId')?.value;
+            const token = service.credentials.find(cred => cred.id === 'token')?.value;
+            if (!clientId || !token) {
+              continue;
+            }
+            enabledServices.push([service.id, `${clientId}@${token}`]);
+          } else {
+            const apiKey = service.credentials.find(cred => cred.id === 'apiKey')?.value;
+            if (!apiKey) {
+              continue;
+            }
+            enabledServices.push([service.id, apiKey]);
+          }
+        }
+      }
+      if (enabledServices.length !== 0) {
+        configString = enabledServices.map(([id, value]) => `${id}=${value}`).join('|') + '/'
+      }
+      
+    } else {
+      configString = overrideUrl.replace('https://torrentio.strem.fun/', '').replace('manifest.json', '');
     }
+
+    console.log('Using config string', configString);
     super('Torrentio', 'https://torrentio.strem.fun/' + configString);
   }
 
