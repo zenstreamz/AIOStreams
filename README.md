@@ -20,6 +20,29 @@ It goes through each addon you selected and obtains the results with all the par
 
 Once it has all the parsed information for each result, it can apply your configured sorting and filtering options. 
 
+### What are the currently supported addons? 
+
+It currently supports: 
+- Torrentio
+- Torbox
+
+### What are the supported formatters? 
+
+The addon can display your results in different formats. The two formats available are: 
+
+- gdrive:
+  Uses the format from this [Stremio GDrive](https://github.com/Viren070/stremio-gdrive-addon) addon
+  
+  ![image](https://github.com/user-attachments/assets/9d9c74ab-afde-41f9-ba94-eaf8904b580b)
+
+  - Does not display the indexer
+
+- torrentio:
+  Uses the format from the Torrentio addon.
+  
+  ![image](https://github.com/user-attachments/assets/343dccb4-13c5-4b57-998a-82b763e9ebf9)
+
+
 ## Self-Hosting
 
 ### From source 
