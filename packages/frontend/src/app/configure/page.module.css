@@ -42,7 +42,7 @@
   width: 40%;
 }
 
-.settingInput input[type="checkbox"] {
+.settingInput input[type='checkbox'] {
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -51,7 +51,7 @@
 }
 
 .settingInput select,
-.settingInput input[type="number"] {
+.settingInput input[type='number'] {
   padding: 5px;
   border-radius: 8px;
   margin: 6px 0;
@@ -83,7 +83,10 @@
   cursor: pointer;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.111);
-  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    opacity 0.2s;
 }
 
 .installButton:hover {
@@ -98,7 +101,9 @@
 .cachedStreamsSection {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
+  transition:
+    max-height 0.5s ease,
+    opacity 0.5s ease;
   opacity: 0;
 }
 

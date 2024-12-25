@@ -29,7 +29,10 @@
   color: #000;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.041);
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  transition:
+    background-color 0.3s,
+    transform 0.2s,
+    box-shadow 0.3s;
 }
 
 .addonSelector button:hover {
@@ -87,7 +90,7 @@
   align-items: center;
 }
 
-.option input[type="text"] {
+.option input[type='text'] {
   padding: 5px;
   border-radius: 4px;
   border: 1px solid #555;
@@ -96,7 +99,7 @@
   width: 100%;
 }
 
-.option input[type="checkbox"] {
+.option input[type='checkbox'] {
   width: 20px;
   height: 20px;
   cursor: pointer;

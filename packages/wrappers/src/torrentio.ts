@@ -3,28 +3,42 @@ import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
 
-const supportedServices: string[] = ['realdebrid', 'alldebrid', 'premiumize', 'putio', 'torbox', 'offcloud', 'debridlink'];
+const supportedServices: string[] = [
+  'realdebrid',
+  'alldebrid',
+  'premiumize',
+  'putio',
+  'torbox',
+  'offcloud',
+  'debridlink',
+];
 
 export class Torrentio extends BaseWrapper {
   private readonly name: string = 'Torrentio';
-  
+
   constructor(services: Config['services'], overrideUrl?: string) {
     let configString = '';
-  
+
     if (!overrideUrl) {
       let enabledServices: [string, string][] = [];
-      
+
       for (const service of services) {
         if (supportedServices.includes(service.id) && service.enabled) {
-          if (service.id === "putio") {
-            const clientId = service.credentials.find(cred => cred.id === 'clientId')?.value;
-            const token = service.credentials.find(cred => cred.id === 'token')?.value;
+          if (service.id === 'putio') {
+            const clientId = service.credentials.find(
+              (cred) => cred.id === 'clientId'
+            )?.value;
+            const token = service.credentials.find(
+              (cred) => cred.id === 'token'
+            )?.value;
             if (!clientId || !token) {
               continue;
             }
             enabledServices.push([service.id, `${clientId}@${token}`]);
           } else {
-            const apiKey = service.credentials.find(cred => cred.id === 'apiKey')?.value;
+            const apiKey = service.credentials.find(
+              (cred) => cred.id === 'apiKey'
+            )?.value;
             if (!apiKey) {
               continue;
             }
@@ -33,11 +47,14 @@ export class Torrentio extends BaseWrapper {
         }
       }
       if (enabledServices.length !== 0) {
-        configString = enabledServices.map(([id, value]) => `${id}=${value}`).join('|') + '/'
+        configString =
+          enabledServices.map(([id, value]) => `${id}=${value}`).join('|') +
+          '/';
       }
-      
     } else {
-      configString = overrideUrl.replace('https://torrentio.strem.fun/', '').replace('manifest.json', '');
+      configString = overrideUrl
+        .replace('https://torrentio.strem.fun/', '')
+        .replace('manifest.json', '');
     }
 
     console.log('Using config string', configString);

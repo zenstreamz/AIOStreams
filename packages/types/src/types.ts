@@ -106,15 +106,15 @@ export interface Config {
     id: string;
     options: { [key: string]: string };
   }[];
-  services: { 
-      name: string;
+  services: {
+    name: string;
+    id: string;
+    enabled: boolean;
+    credentials: {
       id: string;
-      enabled: boolean;
-      credentials: {
-        id: string;
-        label: string;
-        link: string;
-        value: string;
-        }[];
+      label: string;
+      link: string;
+      value: string;
     }[];
-  }
+  }[];
+}

@@ -32,7 +32,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(express.static(path.join(__dirname, '../../frontend/out')));
 
 app.get(['/configure', '/:config/configure'], (req, res) => {

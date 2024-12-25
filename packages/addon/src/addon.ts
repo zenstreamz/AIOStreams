@@ -31,40 +31,45 @@ export class AIOStreams {
     const parsedStreams = await this.getParsedStreams(streamRequest);
     console.log(`Got ${parsedStreams.length} streams`);
 
-    const filteredResults = parsedStreams.filter(
-      (parsedStream) => {
-        const resolutionFilter = this.config.resolutions.find(
-          (resolution) => resolution[parsedStream.resolution]
-        );
-        if (!resolutionFilter) return false;
+    const filteredResults = parsedStreams.filter((parsedStream) => {
+      const resolutionFilter = this.config.resolutions.find(
+        (resolution) => resolution[parsedStream.resolution]
+      );
+      if (!resolutionFilter) return false;
 
-        const qualityFilter = this.config.qualities.find(
-          (quality) => quality[parsedStream.quality]
-        );
-        if (!qualityFilter) return false;
+      const qualityFilter = this.config.qualities.find(
+        (quality) => quality[parsedStream.quality]
+      );
+      if (!qualityFilter) return false;
 
-        const visualTagFilter = parsedStream.visualTags.some(
-          (tag) => !this.config.visualTags.find((t) => t[tag])
-        );
-        if (visualTagFilter) return false;
+      const visualTagFilter = parsedStream.visualTags.some(
+        (tag) => !this.config.visualTags.find((t) => t[tag])
+      );
+      if (visualTagFilter) return false;
 
-        if (
-          this.config.onlyShowCachedStreams &&
-          parsedStream.provider &&
-          !parsedStream.provider.cached
-        )
-          return false;
+      if (
+        this.config.onlyShowCachedStreams &&
+        parsedStream.provider &&
+        !parsedStream.provider.cached
+      )
+        return false;
 
-        if (this.config.minSize && parsedStream.size && parsedStream.size < this.config.minSize)
-          return false;
+      if (
+        this.config.minSize &&
+        parsedStream.size &&
+        parsedStream.size < this.config.minSize
+      )
+        return false;
 
-        if (this.config.maxSize && parsedStream.size && parsedStream.size > this.config.maxSize)
-          return false;
+      if (
+        this.config.maxSize &&
+        parsedStream.size &&
+        parsedStream.size > this.config.maxSize
+      )
+        return false;
 
-
-        return true;
-      }
-    );
+      return true;
+    });
     console.log(`Filtered to ${filteredResults.length} streams`);
     // Apply sorting
 
@@ -75,9 +80,8 @@ export class AIOStreams {
     filteredResults.sort((a, b) => {
       const languageComparison = this.compareLanguages(a, b);
       if (languageComparison !== 0) return languageComparison;
-      
-      for (const sortByField of this.config.sortBy) {
 
+      for (const sortByField of this.config.sortBy) {
         const field = Object.keys(sortByField)[0];
         const value = sortByField[field];
 
@@ -256,13 +260,17 @@ export class AIOStreams {
         }
         case 'torbox': {
           try {
-            const torboxService = this.config.services.find( service => service.id === 'torbox');
-           
+            const torboxService = this.config.services.find(
+              (service) => service.id === 'torbox'
+            );
+
             if (!torboxService) {
               console.error('No torbox service found');
               break;
             }
-            const torboxApiKey = torboxService.credentials.find(cred => cred.id === 'apiKey')?.value;
+            const torboxApiKey = torboxService.credentials.find(
+              (cred) => cred.id === 'apiKey'
+            )?.value;
             if (!torboxApiKey) {
               console.error('No torbox api key found');
               break;
@@ -289,7 +297,10 @@ export class AIOStreams {
                 parsedStreams.push(...streams);
               }
             } else {
-              const wrapper = new Torrentio(this.config.services, addon.options.overrideUrl);
+              const wrapper = new Torrentio(
+                this.config.services,
+                addon.options.overrideUrl
+              );
               const streams = await wrapper.getParsedStreams(streamRequest);
               console.log(`Got streams from ${addon.id}: ${streams.length}`);
               parsedStreams.push(...streams);
@@ -315,5 +326,4 @@ export class AIOStreams {
     }
     return parsedStreams;
   }
-
 }

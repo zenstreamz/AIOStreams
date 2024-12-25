@@ -25,7 +25,12 @@ interface AddonsListProps {
   setAddons: (addons: Addon[]) => void;
 }
 
-const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonDetails, addons, setAddons }) => {
+const AddonsList: React.FC<AddonsListProps> = ({
+  choosableAddons,
+  addonDetails,
+  addons,
+  setAddons,
+}) => {
   const [selectedAddon, setSelectedAddon] = useState<string>('');
 
   const addAddon = () => {
@@ -41,7 +46,11 @@ const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonDetails, 
     setAddons(newAddons);
   };
 
-  const updateOption = (addonIndex: number, optionKey: string, value: string) => {
+  const updateOption = (
+    addonIndex: number,
+    optionKey: string,
+    value: string
+  ) => {
     const newAddons = [...addons];
     newAddons[addonIndex].options[optionKey] = value;
     setAddons(newAddons);
@@ -50,10 +59,15 @@ const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonDetails, 
   return (
     <div className={styles.container}>
       <div className={styles.addonSelector}>
-        <select value={selectedAddon} onChange={(e) => setSelectedAddon(e.target.value)}>
+        <select
+          value={selectedAddon}
+          onChange={(e) => setSelectedAddon(e.target.value)}
+        >
           <option value="">Select an addon</option>
           {choosableAddons.map((addon) => {
-            const addonDetail = addonDetails.find(detail => detail.id === addon);
+            const addonDetail = addonDetails.find(
+              (detail) => detail.id === addon
+            );
             if (addonDetail) {
               return (
                 <option key={addon} value={addon}>
@@ -62,30 +76,46 @@ const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonDetails, 
               );
             }
             return null;
-
           })}
         </select>
         <button onClick={addAddon}>Add Addon</button>
       </div>
       {addons.map((addon, index) => {
-        const details = addonDetails.find(detail => detail.id === addon.id);
+        const details = addonDetails.find((detail) => detail.id === addon.id);
         return (
           <div key={index} className={styles.card}>
             <div className={styles.cardHeader}>
               <span>{details?.name}</span>
-              <button onClick={() => removeAddon(index)} className={styles.deleteButton}>✖</button>
+              <button
+                onClick={() => removeAddon(index)}
+                className={styles.deleteButton}
+              >
+                ✖
+              </button>
             </div>
             <div className={styles.cardBody}>
               {details?.options?.map((option) => (
                 <div key={option.id} className={styles.option}>
                   <label>
                     {option.label}
-                    {option.required && <span className={styles.required}><small><em>*Required Field</em></small></span>}
+                    {option.required && (
+                      <span className={styles.required}>
+                        <small>
+                          <em>*Required Field</em>
+                        </small>
+                      </span>
+                    )}
                     {option.type === 'checkbox' && (
                       <input
                         type="checkbox"
                         checked={addon.options[option.id] === 'true'}
-                        onChange={(e) => updateOption(index, option.id, e.target.checked.toString())}
+                        onChange={(e) =>
+                          updateOption(
+                            index,
+                            option.id,
+                            e.target.checked.toString()
+                          )
+                        }
                         className={styles.checkbox}
                       />
                     )}
@@ -95,7 +125,9 @@ const AddonsList: React.FC<AddonsListProps> = ({ choosableAddons, addonDetails, 
                     <input
                       type="text"
                       value={addon.options[option.id] || ''}
-                      onChange={(e) => updateOption(index, option.id, e.target.value)}
+                      onChange={(e) =>
+                        updateOption(index, option.id, e.target.value)
+                      }
                       className={styles.textInput}
                     />
                   )}
