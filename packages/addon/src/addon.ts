@@ -284,6 +284,10 @@ export class AIOStreams {
           streamRequest
         );
       }
+      case 'gdrive':
+        const addonUrl = addon.options.addonUrl.replace('/manifest.json', '/');
+        const wrapper = new BaseWrapper('GDrive', addonUrl);
+        return await wrapper.getParsedStreams(streamRequest);
       default: {
         console.log(
           `Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`
