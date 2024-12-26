@@ -6,9 +6,9 @@
 }
 
 .card {
-  background-color: #1f2123; /* Slightly lighter black */
+  background-color: #1a1a1a; 
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 8px rgb(0, 0, 0);
   padding: 10px;
   display: flex;
   justify-content: space-between;
@@ -23,10 +23,10 @@
 }
 
 .card.disabled {
-  background-color: #222222; /* Greyed out */
+  background-color: #131313;
   box-shadow: none;
   scale: 0.98;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .actions button {
@@ -59,6 +59,7 @@
   align-items: center;
   border-width: 0;
   transition: transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .arrowButton:hover {

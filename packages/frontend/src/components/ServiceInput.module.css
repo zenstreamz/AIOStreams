@@ -1,5 +1,5 @@
 .card {
-  background-color: #2a2a2a; /* Slightly lighter black */
+  background-color: #1a1a1a; /* Slightly lighter black */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 10px;
@@ -23,7 +23,7 @@
 }
 
 .card.disabled {
-  background-color: #222222; /* Greyed out */
+  background-color: #131313; /* Greyed out */
   box-shadow: none;
   scale: 0.98;
   opacity: 0.5;
