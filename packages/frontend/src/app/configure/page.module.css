@@ -49,6 +49,78 @@
   width: 40%;
 }
 
+.slidersContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.slidersSetting {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.sliderValue {
+  margin-right: auto;
+  padding: 5px;
+}
+
+
+.slider {
+  width: 100%;
+  margin: 10px 0;
+  cursor: pointer;
+  background: #1a1a1a;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  opacity: 0.7;
+  border-radius: 8px;
+  height: 15px;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.sliderMax {
+  background: linear-gradient(to right, #1b1b1b 0%, #d3d3d3 var(--maxValue), #1a1a1a var(--maxValue), #1a1a1a 100%);
+}
+
+.sliderMin {
+  background: linear-gradient(to right, #414141 0%, #ffffff var(--minValue), #1a1a1a var(--minValue), #1a1a1a 100%);
+}
+
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  background: #dfdfdf;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.slider::-moz-range-thumb {
+  width: 30px;
+  height: 30px;
+  background: #dfdfdf;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
 .settingInput input[type='checkbox'] {
   width: 20px;
   height: 20px;

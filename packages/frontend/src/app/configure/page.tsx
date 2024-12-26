@@ -137,6 +137,13 @@ const defaultServices = [
   },
 ];
 
+const formatSize = (size: number | null): string => {
+  if (size === null) return '';
+  return size >= 1000 * 1000 * 1000
+    ? `${(size / 1000 / 1000 / 1000).toFixed(2)} GB`
+    : `${(size / 1000 / 1000).toFixed(2)} MB`;
+};
+
 export default function Configure() {
   const [resolutions, setResolutions] =
     useState<Resolution[]>(defaultResolutions);
@@ -303,6 +310,21 @@ export default function Configure() {
     }
   }, []);
 
+  
+  useEffect(() => {
+    const slider = document.querySelector(`.${styles.sliderMin}`) as HTMLElement;
+    if (slider) {
+      slider.style.setProperty('--minValue', `${(minSize || 0) / 150000000000 * 100}%`);
+    }
+  }, [minSize]);
+
+  useEffect(() => {
+    const slider = document.querySelector(`.${styles.sliderMax}`) as HTMLElement;
+    if (slider) {
+      slider.style.setProperty('--maxValue', `${(maxSize || 0) / 150000000000 * 100}%`);
+    }
+  }, [maxSize]);
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -408,51 +430,38 @@ export default function Configure() {
         </div>
 
         <div className={styles.section}>
-          <div className={styles.setting}>
-            <div className={styles.settingDescription}>
+          <div className={styles.slidersSetting}>
+            <div>
               <h2 style={{ padding: '5px' }}>Size Filter</h2>
               <p style={{ padding: '5px' }}>
-                Filter streams by size. Leave empty to disable.
+                Filter streams by size. Leave both sliders at 0 to disable the filter.
               </p>
             </div>
-            <div className={styles.settingInput}>
+            <div className={styles.slidersContainer}>
               <input
-                type="number"
-                placeholder="Min size"
-                value={minSize || ''}
-                onChange={(e) => {
-                  const value = e.target.value
-                    ? parseInt(e.target.value)
-                    : null;
-                  if (value && value <= 0) {
-                    setMinSize(null);
-                    return;
-                  }
-                  setMinSize(value);
-                }}
+                type="range"
+                min="0"
+                max="150000000000"
+                step="50000000"
+                value={minSize || 0}
+                onChange={(e) => setMinSize(e.target.value === '0' ? null : parseInt(e.target.value))}
+                className={styles.slider + ' ' + styles.sliderMin}
               />
+              <div className={styles.sliderValue}>
+                Minimum size: {minSize ? formatSize(minSize) : 'Disabled'}
+              </div>
               <input
-                type="number"
-                placeholder="Max size"
-                value={maxSize || ''}
-                onChange={(e) => {
-                  const value = e.target.value
-                    ? parseInt(e.target.value)
-                    : null;
-                  if (value && value <= 0) {
-                    setMaxSize(null);
-                    return;
-                  }
-                  setMaxSize(value);
-                }}
+                type="range"
+                min="0"
+                max="150000000000"
+                step="50000000"
+                value={maxSize || 0}
+                onChange={(e) => setMaxSize(e.target.value === '0' ? null : parseInt(e.target.value))}
+                className={styles.slider + ' ' + styles.sliderMax}
               />
-              <select
-                value={sizeUnit}
-                onChange={(e) => setSizeUnit(e.target.value as 'MB' | 'GB')}
-              >
-                <option value="MB">MB</option>
-                <option value="GB">GB</option>
-              </select>
+              <div className={styles.sliderValue}>
+                Maximum size: {maxSize ? formatSize(maxSize) : 'Disabled'}
+              </div>
             </div>
           </div>
         </div>
