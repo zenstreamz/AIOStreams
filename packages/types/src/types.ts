@@ -125,4 +125,3 @@ export interface AddonDetail {
     type: 'text' | 'checkbox';
   }[];
 }
-

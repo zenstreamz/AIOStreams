@@ -85,14 +85,13 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
 
   const decodedPath = decodeURIComponent(req.path);
 
-
   const streamMatch = new RegExp(
     `/${config}/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?\.json`
   ).exec(decodedPath);
 
   if (!streamMatch) {
     // log after removing config if present
-    console.error(`Invalid request: ${decodedPath.replace(`/${config}`, '')}`); 
+    console.error(`Invalid request: ${decodedPath.replace(`/${config}`, '')}`);
     res.status(400).send('Invalid request');
     return;
   }
@@ -109,7 +108,9 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
     case 'series':
       if (!season || !episode) {
         res.status(400).send('Invalid request');
-        console.log(`Request type was series but season or episode was missing`);
+        console.log(
+          `Request type was series but season or episode was missing`
+        );
         return;
       }
       streamRequest = {
@@ -146,8 +147,8 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
             name: 'Invalid Config',
             description: errorMessage,
           },
-        ]
-      })
+        ],
+      });
     }
 
     const aioStreams = new AIOStreams(configJson);

@@ -1,6 +1,14 @@
-import { BaseWrapper, getTorboxStreams, getTorrentioStreams } from '@aiostreams/wrappers';
+import {
+  BaseWrapper,
+  getTorboxStreams,
+  getTorrentioStreams,
+} from '@aiostreams/wrappers';
 import { Stream, ParsedStream, StreamRequest, Config } from '@aiostreams/types';
-import { gdriveFormat, torrentioFormat, torboxFormat } from '@aiostreams/formatters';
+import {
+  gdriveFormat,
+  torrentioFormat,
+  torboxFormat,
+} from '@aiostreams/formatters';
 
 export class AIOStreams {
   private config: Config;
@@ -244,7 +252,7 @@ export class AIOStreams {
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
-  
+
     for (const addon of this.config.addons) {
       try {
         const streams = await this.getStreamsFromAddon(addon.id, streamRequest);
@@ -270,10 +278,16 @@ export class AIOStreams {
         return await getTorboxStreams(this.config, streamRequest);
       }
       case 'torrentio': {
-        return await getTorrentioStreams(this.config, addon.options, streamRequest);
+        return await getTorrentioStreams(
+          this.config,
+          addon.options,
+          streamRequest
+        );
       }
       default: {
-        console.log(`Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`);
+        console.log(
+          `Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`
+        );
         const wrapper = new BaseWrapper(addon.options.name, addon.options.url);
         return await wrapper.getParsedStreams(streamRequest);
       }

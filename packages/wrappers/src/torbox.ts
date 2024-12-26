@@ -1,5 +1,10 @@
 import { BaseWrapper } from './base';
-import { Config, ParsedNameData, ParsedStream, StreamRequest } from '@aiostreams/types';
+import {
+  Config,
+  ParsedNameData,
+  ParsedStream,
+  StreamRequest,
+} from '@aiostreams/types';
 import { parseFilename } from '@aiostreams/parser';
 
 interface TorboxStream {
@@ -93,9 +98,13 @@ export class Torbox extends BaseWrapper {
   }
 }
 
-export async function getTorboxStreams(config: Config, streamRequest: StreamRequest): Promise<ParsedStream[]> {
-
-  const torboxService = config.services.find((service) => service.id === 'torbox');
+export async function getTorboxStreams(
+  config: Config,
+  streamRequest: StreamRequest
+): Promise<ParsedStream[]> {
+  const torboxService = config.services.find(
+    (service) => service.id === 'torbox'
+  );
   if (!torboxService) {
     throw new Error('Torbox service not found');
   }
@@ -107,4 +116,4 @@ export async function getTorboxStreams(config: Config, streamRequest: StreamRequ
 
   const torbox = new Torbox(torboxApiKey);
   return await torbox.getParsedStreams(streamRequest);
-} 
+}

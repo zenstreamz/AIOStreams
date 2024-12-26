@@ -7,12 +7,14 @@ export class Torrentio extends BaseWrapper {
   private readonly name: string = 'Torrentio';
 
   constructor(configString: string | null, overrideUrl: string | null) {
-
     if (overrideUrl && overrideUrl.endsWith('/manifest.json')) {
       overrideUrl = overrideUrl.replace('/manifest.json', '/');
     }
 
-    let url = overrideUrl ? overrideUrl : 'https://torrentio.strem.fun/' + (configString ? configString + '/' : '');
+    let url = overrideUrl
+      ? overrideUrl
+      : 'https://torrentio.strem.fun/' +
+        (configString ? configString + '/' : '');
 
     super('Torrentio', url);
   }
@@ -64,7 +66,11 @@ export class Torrentio extends BaseWrapper {
   }
 }
 
-export async function getTorrentioStreams(config: Config, torrentioOptions: { [key: string]: string }, streamRequest: StreamRequest): Promise<ParsedStream[]> {
+export async function getTorrentioStreams(
+  config: Config,
+  torrentioOptions: { [key: string]: string },
+  streamRequest: StreamRequest
+): Promise<ParsedStream[]> {
   const supportedServices: string[] = [
     'realdebrid',
     'alldebrid',
@@ -75,7 +81,7 @@ export async function getTorrentioStreams(config: Config, torrentioOptions: { [k
     'debridlink',
   ];
   const parsedStreams: ParsedStream[] = [];
-  
+
   // If overrideUrl is provided, use it to get streams and skip all other steps
   if (torrentioOptions.overrideUrl) {
     const torrentio = new Torrentio(null, torrentioOptions.overrideUrl);
@@ -87,7 +93,6 @@ export async function getTorrentioStreams(config: Config, torrentioOptions: { [k
     supportedServices.includes(service.id)
   );
 
-
   // if no usable services found, use torrentio without any configuration
   if (usableServices.length < 0) {
     const torrentio = new Torrentio(null, null);
@@ -96,9 +101,14 @@ export async function getTorrentioStreams(config: Config, torrentioOptions: { [k
 
   // otherwise, depending on the configuration, create multiple instances of torrentio or use a single instance with all services
 
-  const getServicePair = (serviceId: string, credentials: { [key: string]: string }) => {
-    return serviceId === 'putio' ? `${serviceId}=${credentials.clientId}@${credentials.token}` : `${serviceId}=${credentials.apiKey}`;
-  }
+  const getServicePair = (
+    serviceId: string,
+    credentials: { [key: string]: string }
+  ) => {
+    return serviceId === 'putio'
+      ? `${serviceId}=${credentials.clientId}@${credentials.token}`
+      : `${serviceId}=${credentials.apiKey}`;
+  };
 
   if (torrentioOptions.useMultipleInstances) {
     for (const service of usableServices) {
@@ -123,8 +133,4 @@ export async function getTorrentioStreams(config: Config, torrentioOptions: { [k
     const torrentio = new Torrentio(configString, null);
     return await torrentio.getParsedStreams(streamRequest);
   }
-
-
-
-
 }

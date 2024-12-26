@@ -14,7 +14,13 @@ import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import addonPackage from '../../../package.json';
-import { allowedFormatters, allowedLanguages, addonDetails, validateConfig, serviceCredentials } from '@aiostreams/config';
+import {
+  allowedFormatters,
+  allowedLanguages,
+  addonDetails,
+  validateConfig,
+  serviceCredentials,
+} from '@aiostreams/config';
 
 const version = addonPackage.version;
 
@@ -85,62 +91,51 @@ const defaultServices = [
     name: 'Real Debrid',
     id: 'realdebrid',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
   {
     name: 'All Debrid',
     id: 'alldebrid',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
   {
     name: 'Premiumize',
     id: 'premiumize',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
   {
     name: 'Debrid Link',
     id: 'debridlink',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
   {
     name: 'Torbox',
     id: 'torbox',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
   {
     name: 'Offcloud',
     id: 'offcloud',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
   {
     name: 'put.io',
     id: 'putio',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
   {
     name: 'Easynews',
     id: 'easynews',
     enabled: false,
-    credentials: {
-    },
+    credentials: {},
   },
 ];
-
-
-
 
 export default function Configure() {
   const [resolutions, setResolutions] =
@@ -209,7 +204,11 @@ export default function Configure() {
 
     const { valid, errorCode, errorMessage } = validateConfig(config);
     if (!valid) {
-      showToast(errorMessage || 'Invalid config', 'error', errorCode || 'error');
+      showToast(
+        errorMessage || 'Invalid config',
+        'error',
+        errorCode || 'error'
+      );
       return false;
     }
     return true;
@@ -477,50 +476,59 @@ export default function Configure() {
                 newServices[serviceIndex] = { ...service, enabled };
                 setServices(newServices);
               }}
-              fields={serviceCredentials.find(
-                (detail) => detail.id === service.id
-              )?.credentials.map((credential) => ({
-                label: credential.label,
-                link: credential.link,
-                value: service.credentials[credential.id] || '',
-                setValue: (value) => {
-                  const newServices = [...services];
-                  const serviceIndex = newServices.findIndex(
-                    (s) => s.id === service.id
-                  );
-                  newServices[serviceIndex] = {
-                    ...service,
-                    credentials: {
-                      ...service.credentials,
-                      [credential.id]: value,
+              fields={
+                serviceCredentials
+                  .find((detail) => detail.id === service.id)
+                  ?.credentials.map((credential) => ({
+                    label: credential.label,
+                    link: credential.link,
+                    value: service.credentials[credential.id] || '',
+                    setValue: (value) => {
+                      const newServices = [...services];
+                      const serviceIndex = newServices.findIndex(
+                        (s) => s.id === service.id
+                      );
+                      newServices[serviceIndex] = {
+                        ...service,
+                        credentials: {
+                          ...service.credentials,
+                          [credential.id]: value,
+                        },
+                      };
+                      setServices(newServices);
                     },
-                  };
-                  setServices(newServices);
-                },
-              })) || []
+                  })) || []
               }
             />
           ))}
 
-          <div className={styles.section} style={{ marginTop: '20px', marginBottom: '0px' }}>
-          <div className={styles.setting}>
-            <div className={styles.settingDescription}>
-              <h2 style={{ padding: '5px' }}>Only Show Cached Streams</h2>
-              <p style={{ padding: '5px' }}>
-                Only show streams that are cached by the enabled services.
-              </p>
-            </div>
-            <div className={styles.settingInput}>
-              <input
-                type="checkbox"
-                checked={onlyShowCachedStreams}
-                onChange={(e) => setOnlyShowCachedStreams(e.target.checked)}
-                // move to the right
-                style={{ marginLeft: 'auto', marginRight: '20px', width: '25px', height: '25px' }}
-              />
+          <div
+            className={styles.section}
+            style={{ marginTop: '20px', marginBottom: '0px' }}
+          >
+            <div className={styles.setting}>
+              <div className={styles.settingDescription}>
+                <h2 style={{ padding: '5px' }}>Only Show Cached Streams</h2>
+                <p style={{ padding: '5px' }}>
+                  Only show streams that are cached by the enabled services.
+                </p>
+              </div>
+              <div className={styles.settingInput}>
+                <input
+                  type="checkbox"
+                  checked={onlyShowCachedStreams}
+                  onChange={(e) => setOnlyShowCachedStreams(e.target.checked)}
+                  // move to the right
+                  style={{
+                    marginLeft: 'auto',
+                    marginRight: '20px',
+                    width: '25px',
+                    height: '25px',
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
         </div>
 
         <div className={styles.section}>
