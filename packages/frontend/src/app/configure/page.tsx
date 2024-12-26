@@ -51,7 +51,7 @@ const defaultSortCriteria: SortBy[] = [
   { seeders: false },
 ];
 
-const allowedFormatters = ['gdrive', 'torrentio'];
+const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
 
 interface AddonDetail {
   name: string;
