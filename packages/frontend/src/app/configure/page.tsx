@@ -427,6 +427,15 @@ export default function Configure() {
       }
     }
 
+    if (!allowedFormatters.includes(config.formatter)) {
+      showToast(
+        `Invalid formatter: ${config.formatter}`,
+        'error',
+        'invalidFormatter'
+      );
+      return false;
+    }
+
     for (const service of config.services) {
       if (service.enabled) {
         const serviceDetail = serviceCredentials.find(
