@@ -38,12 +38,16 @@ The addon can display your results in different formats. The two formats availab
   
   ![image](https://github.com/user-attachments/assets/9d9c74ab-afde-41f9-ba94-eaf8904b580b)
 
-  - Does not display the indexer
-
 - torrentio:
   Uses the format from the Torrentio addon.
   
   ![image](https://github.com/user-attachments/assets/343dccb4-13c5-4b57-998a-82b763e9ebf9)
+
+- torbox:
+  Uses the format from the Torbox stremio addon.
+
+  ![image](https://github.com/user-attachments/assets/21f90ee2-e81d-4a56-9e64-8937fb7ab2bc)
+
 
 
 ## Self-Hosting
