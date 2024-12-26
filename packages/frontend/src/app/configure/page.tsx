@@ -385,6 +385,26 @@ export default function Configure() {
   const validateConfig = () => {
     const config = createConfig();
 
+    // check for any duplicate addons where both the ID and options are the same
+    const duplicateAddons = config.addons.filter(
+      (addon, index) =>
+        config.addons.findIndex(
+          (a) =>
+            a.id === addon.id &&
+            JSON.stringify(a.options) === JSON.stringify(addon.options)
+        ) !== index
+    );
+
+    if (duplicateAddons.length > 0) {
+      showToast(
+        'Duplicate addons found. Please remove any duplicates',
+        'error',
+        'duplicateAddons'
+      );
+      return false
+    }
+    
+
     for (const addon of config.addons) {
       // if torbox addon is enabled, torbox service must be enabled and torbox api key must be set
       if (addon.id === 'torbox') {
