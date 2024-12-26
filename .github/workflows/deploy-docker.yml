@@ -21,11 +21,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/aiostreams:${{ github.ref_name }}
-            ghcr.io/${{ github.repository_owner }}/aiostreams:latest
+            ghcr.io/viren070/aiostreams:${{ github.ref_name }}
+            ghcr.io/viren070/aiostreams:latest
