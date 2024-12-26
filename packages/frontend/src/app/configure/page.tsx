@@ -423,6 +423,19 @@ export default function Configure() {
             );
             return false;
           }
+          console.log(option.label);
+          if (option.id.toLowerCase().includes('url')) {
+            try {
+              new URL(addon.options[option.id]);
+            } catch (_) {
+              showToast(
+                `Invalid URL for ${option.label}`,
+                'error',
+                'invalidUrl'
+              );
+              return false;
+            }
+          }
         }
       }
     }
