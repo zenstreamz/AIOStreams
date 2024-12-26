@@ -19,7 +19,7 @@ export const PARSE_REGEX = {
     DVDRip: /(?<![^ [_\-.])(dvd[ .\-_]?(rip|mux|r|full|5|9))(?=[ \]_.-]|$)/i,
     HDTV: /(?<![^ [_\-.])((hd|pd)tv|tv[ .\-_]?rip|hdtv[ .\-_]?rip|dsr(ip)?|sat[ .\-_]?rip)(?=[ \]_.-]|$)/i,
     CAM: /(?<![^ [_\-.])(cam|hdcam|cam[ .\-_]?rip)(?=[ \]_.-]|$)/i,
-    TS: /(?<![^ [_\-.])(telesync|ts|hd[ .\-_]?ts|pdvd|predvdrip)(?=[ \]_.-]|$)/i,
+    TS: /(?<![^ [_\-.])(telesync|ts|hd[ .\-_]?ts|pdvd|predvd(rip)?)(?=[ \]_.-]|$)/i,
     TC: /(?<![^ [_\-.])(telecine|tc|hd[ .\-_]?tc)(?=[ \]_.-]|$)/i,
     SCR: /(?<![^ [_\-.])(((dvd|bd|web)?[ .\-_]?)?(scr(eener)?))(?=[ \]_.-]|$)/i,
   },
