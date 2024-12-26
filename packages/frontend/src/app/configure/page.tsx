@@ -510,6 +510,14 @@ export default function Configure() {
       return false;
     }
 
+    if (config.addons.length > 10) {
+      showToast(
+        'You can only select a maximum of 10 addons',
+        'error',
+        'tooManyAddons'
+      );
+    }
+
     return true;
   };
 
