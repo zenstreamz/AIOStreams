@@ -113,3 +113,16 @@ export interface Config {
     credentials: { [key: string]: string };
   }[];
 }
+
+export interface AddonDetail {
+  name: string;
+  id: string;
+  options?: {
+    id: string;
+    required?: boolean;
+    label: string;
+    description?: string;
+    type: 'text' | 'checkbox';
+  }[];
+}
+

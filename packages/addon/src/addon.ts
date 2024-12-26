@@ -9,21 +9,6 @@ export class AIOStreams {
     this.config = config;
   }
 
-  public configValidator() {
-    if (!this.config) {
-      throw new Error('No config provided');
-    }
-    if (!this.config.resolutions) {
-      throw new Error('No resolutions provided');
-    }
-    if (!this.config.qualities) {
-      throw new Error('No qualities provided');
-    }
-    if (!this.config.visualTags) {
-      throw new Error('No visualTags provided');
-    }
-  }
-
   public async getStreams(streamRequest: StreamRequest): Promise<Stream[]> {
     const streams: Stream[] = [];
 

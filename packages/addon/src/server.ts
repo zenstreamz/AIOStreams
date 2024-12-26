@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
+import { validateConfig } from './config';
 
 import { version, description } from '../package.json';
 
@@ -135,24 +136,21 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
       return;
   }
   try {
-    const aioStreams = new AIOStreams(configJson);
-
-    try {
-      aioStreams.configValidator();
-    } catch (error: any) {
-      console.log(`Invalid config: ${error.message}`);
+    const { valid, errorCode, errorMessage } = validateConfig(configJson);
+    if (!valid) {
+      console.error(`Invalid config: ${errorCode} - ${errorMessage}`);
       res.status(200).json({
         streams: [
           {
             url: 'https://example.com',
             name: 'Invalid Config',
-            description: error.message,
+            description: errorMessage,
           },
-        ],
+        ]
       })
-      return;
     }
 
+    const aioStreams = new AIOStreams(configJson);
     aioStreams.getStreams({ id, type, season, episode }).then((streams) => {
       res.status(200).json({ streams: streams });
     });

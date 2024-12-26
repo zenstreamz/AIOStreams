@@ -14,6 +14,7 @@ import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import addonPackage from '../../../package.json';
+import { allowedFormatters, allowedLanguages, addonDetails, validateConfig, serviceCredentials } from '@aiostreams/config';
 
 const version = addonPackage.version;
 
@@ -50,86 +51,6 @@ const defaultSortCriteria: SortBy[] = [
   { quality: false },
   { seeders: false },
 ];
-
-const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
-
-interface AddonDetail {
-  name: string;
-  id: string;
-  options?: {
-    id: string;
-    required?: boolean;
-    label: string;
-    description?: string;
-    type: 'text' | 'checkbox';
-  }[];
-}
-
-const addonDetails: AddonDetail[] = [
-  {
-    name: 'Torrentio',
-    id: 'torrentio',
-    options: [
-      {
-        id: 'overrideUrl',
-        required: false,
-
-        label: 'Override URL',
-        description:
-          'Override the URL used to fetch streams from the torrentio addon',
-        type: 'text',
-      },
-      {
-        id: 'useMultipleInstances',
-        required: false,
-
-        label: 'Use Multiple Instances',
-        description:
-          'Use multiple instances of the torrentio addon to fetch streams when using multiple services',
-        type: 'checkbox',
-      },
-    ],
-  },
-  {
-    name: 'Torbox',
-    id: 'torbox',
-  },
-  {
-    name: 'Google Drive (Viren070)',
-    id: 'gdrive',
-    options: [
-      {
-        id: 'addonUrl',
-        required: true,
-        label: 'Addon URL',
-        description: 'The URL of the Google Drive addon',
-        type: 'text',
-      },
-    ],
-  },
-  {
-    name: 'Custom',
-    id: 'custom',
-    options: [
-      {
-        id: 'url',
-        required: true,
-        description: 'The URL of the custom addon',
-        label: 'URL',
-        type: 'text',
-      },
-      {
-        id: 'name',
-        required: true,
-        description: 'The name of the custom addon',
-        label: 'Name',
-        type: 'text',
-      }
-    ],
-  },
-];
-
-const allowedLanguages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
 
 function showToast(
   message: string,
@@ -219,106 +140,7 @@ const defaultServices = [
 ];
 
 
-const serviceCredentials = [
-  {
-    name: 'Real Debrid',
-    id: 'realdebrid',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://real-debrid.com/apitoken',
-      }
-    ]
-  },
-  {
-    name: 'All Debrid',
-    id: 'alldebrid',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://alldebrid.com/api',
-      }
-    ]
-  },
-  {
-    name: 'Premiumize',
-    id: 'premiumize',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://www.premiumize.me/account',
-      }
-    ]
-  },
-  {
-    name: 'Debrid Link',
-    id: 'debridlink',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://debrid-link.com/webapp/apikey',
-      }
-    ]
-  },
-  {
-    name: 'Torbox',
-    id: 'torbox',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://torbox.app/settings',
-      }
-    ]
-  },
-  {
-    name: 'Offcloud',
-    id: 'offcloud',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://offcloud.com/#/account',
-      }
-    ]
-  },
-  {
-    name: 'put.io',
-    id: 'putio',
-    credentials: [
-      {
-        label: 'Client ID',
-        id: 'clientId',
-        link: 'https://put.io/oauth',
-      },
-      {
-        label: 'Token',
-        id: 'token',
-        link: 'https://put.io/oauth',
-      }
-    ]
-  },
-  {
-    name: 'Easynews',
-    id: 'easynews',
-    credentials: [
-      {
-        label: 'Username',
-        id: 'username',
-        link: 'https://www.easynews.com/',
-      },
-      {
-        label: 'Password',
-        id: 'password',
-        link: 'https://www.easynews.com/',
-      }
-    ]
-  },
-]
+
 
 export default function Configure() {
   const [resolutions, setResolutions] =
@@ -382,180 +204,19 @@ export default function Configure() {
     return `${protocol}//${root}/${encodedConfig}/manifest.json`;
   };
 
-  const validateConfig = () => {
+  const createAndValidateConfig = () => {
     const config = createConfig();
 
-    // check for any duplicate addons where both the ID and options are the same
-    const duplicateAddons = config.addons.filter(
-      (addon, index) =>
-        config.addons.findIndex(
-          (a) =>
-            a.id === addon.id &&
-            JSON.stringify(a.options) === JSON.stringify(addon.options)
-        ) !== index
-    );
-
-    if (duplicateAddons.length > 0) {
-      showToast(
-        'Duplicate addons found. Please remove any duplicates',
-        'error',
-        'duplicateAddons'
-      );
-      return false
-    }
-    
-
-    for (const addon of config.addons) {
-      // if torbox addon is enabled, torbox service must be enabled and torbox api key must be set
-      if (addon.id === 'torbox') {
-        const torboxService = config.services.find(
-          (service) => service.id === 'torbox'
-        );
-        if (!torboxService) {
-          showToast(
-            'Torbox service must be enabled to use the Torbox addon',
-            'error',
-            'torboxServiceNotEnabled'
-          );
-          return false;
-        }
-        if (!torboxService.credentials.apiKey) {
-          showToast(
-            'Torbox API Key must be set to use the Torbox addon',
-            'error',
-            'torboxApiKeyNotSet'
-          );
-          return false;
-        }
-      }
-      const details = addonDetails.find((detail) => detail.id === addon.id);
-      if (!details) {
-        showToast(`Invalid addon: ${addon.id}`, 'error', 'invalidAddon');
-        return false;
-      }
-      if (details.options) {
-        for (const option of details.options) {
-          if (option.required && !addon.options[option.id]) {
-            showToast(
-              `Option ${option.label} is required for addon ${addon.id}`,
-              'error',
-              'missingRequiredOption'
-            );
-            return false;
-          }
-          console.log(option.label);
-          if (option.id.toLowerCase().includes('url')) {
-            try {
-              new URL(addon.options[option.id]);
-            } catch (_) {
-              showToast(
-                `Invalid URL for ${option.label}`,
-                'error',
-                'invalidUrl'
-              );
-              return false;
-            }
-          }
-        }
-      }
-    }
-
-    if (!allowedFormatters.includes(config.formatter)) {
-      showToast(
-        `Invalid formatter: ${config.formatter}`,
-        'error',
-        'invalidFormatter'
-      );
+    const { valid, errorCode, errorMessage } = validateConfig(config);
+    if (!valid) {
+      showToast(errorMessage || 'Invalid config', 'error', errorCode || 'error');
       return false;
     }
-
-    for (const service of config.services) {
-      if (service.enabled) {
-        const serviceDetail = serviceCredentials.find(
-          (detail) => detail.id === service.id
-        );
-        if (!serviceDetail) {
-          showToast(`Invalid service: ${service.id}`, 'error', 'invalidService');
-          return false;
-        }
-        for (const credential of serviceDetail.credentials) {
-          if (!service.credentials[credential.id]) {
-            showToast(
-              `${credential.label} is required for ${service.name}`,
-              'error',
-              `missing${service.id}${credential.id}`
-            );
-            return false;
-          }
-        }
-      }
-    }
-
-    // need at least one visual tag, resolution, quality
-    if (config.visualTags.length === 0) {
-      showToast(
-        'At least one visual tag must be selected',
-        'error',
-        'noVisualTags'
-      );
-      return false;
-    }
-
-    if (config.resolutions.length === 0) {
-      showToast(
-        'At least one resolution must be selected',
-        'error',
-        'noResolutions'
-      );
-      return false;
-    }
-
-    if (config.qualities.length === 0) {
-      showToast(
-        'At least one quality must be selected',
-        'error',
-        'noQualities'
-      );
-      return false;
-    }
-
-    if (config.minSize && config.maxSize) {
-      if (config.minSize > config.maxSize) {
-        showToast(
-          "Your minimum size limit can't be greater than your maximum size limit",
-          'error',
-          'invalidSizeRange'
-        );
-        return false;
-      } else if (config.minSize === config.maxSize) {
-        setTimeout(() => {
-          showToast(
-            'Your minimum and maximum size are the same, this will result in no streams being shown',
-            'warning',
-            'sameSize'
-          );
-        }, 500);
-      }
-    }
-
-    if (config.addons.length < 1) {
-      showToast('At least one addon must be selected', 'error', 'noAddons');
-      return false;
-    }
-
-    if (config.addons.length > 10) {
-      showToast(
-        'You can only select a maximum of 10 addons',
-        'error',
-        'tooManyAddons'
-      );
-    }
-
     return true;
   };
 
   const handleInstall = () => {
-    if (validateConfig()) {
+    if (createAndValidateConfig()) {
       const manifestUrl = getManifestUrl();
       const stremioUrl = manifestUrl.replace(/^https?/, 'stremio');
       showToast(
@@ -571,7 +232,7 @@ export default function Configure() {
   };
 
   const handleInstallToWeb = () => {
-    if (validateConfig()) {
+    if (createAndValidateConfig()) {
       const manifestUrl = getManifestUrl();
       const encodedManifestUrl = encodeURIComponent(manifestUrl);
       showToast(
@@ -590,7 +251,7 @@ export default function Configure() {
   };
 
   const handleCopyLink = () => {
-    if (validateConfig()) {
+    if (createAndValidateConfig()) {
       const manifestUrl = getManifestUrl();
       navigator.clipboard.writeText(manifestUrl).then(() => {
         showToast(
