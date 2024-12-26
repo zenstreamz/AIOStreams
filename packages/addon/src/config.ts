@@ -213,7 +213,7 @@ export function validateConfig(config: Config): {
       const torboxService = config.services.find(
         (service) => service.id === 'torbox'
       );
-      if (!torboxService) {
+      if (!torboxService || !torboxService.enabled) {
         return createResponse(
           false,
           'torboxServiceNotEnabled',
