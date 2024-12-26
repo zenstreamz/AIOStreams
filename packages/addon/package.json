@@ -1,6 +1,6 @@
 {
   "name": "@aiostreams/addon",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
     "test": "vitest run --passWithNoTests",
@@ -12,9 +12,9 @@
   },
   "description": "Combine all your streams into one addon and display them with consistent formatting, sorting, and filtering.",
   "dependencies": {
-    "@aiostreams/wrappers": "0.0.0",
-    "@aiostreams/formatters": "0.0.0",
-    "@aiostreams/types": "0.0.0",
+    "@aiostreams/wrappers": "^1.0.0",
+    "@aiostreams/formatters": "^1.0.0",
+    "@aiostreams/types": "^1.0.0",
     "express": "^4.21.2"
   },
   "devDependencies": {

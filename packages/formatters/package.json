@@ -1,6 +1,6 @@
 {
   "name": "@aiostreams/formatters",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "scripts": {
     "test": "vitest run --passWithNoTests",
@@ -8,6 +8,6 @@
   },
   "description": "Library to take parsed information and return a formatted Stremio stream name and description",
   "dependencies": {
-    "@aiostreams/types": "0.0.0"
+    "@aiostreams/types": "^1.0.0"
   }
 }
