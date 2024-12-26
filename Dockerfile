@@ -19,14 +19,13 @@ RUN npm install
 
 # Copy source files.
 COPY tsconfig.*json ./
-COPY packages/api ./packages/api
+
 COPY packages/addon ./packages/addon
 COPY packages/formatters ./packages/formatters
 COPY packages/parser ./packages/parser
 COPY packages/types ./packages/types
 COPY packages/wrappers ./packages/wrappers
 COPY packages/frontend ./packages/frontend
-COPY packages
 
 # Build the project.
 RUN npm run build
@@ -41,6 +40,7 @@ WORKDIR /app
 # Copy the built files from the builder.
 # The package.json files must be copied as well for NPM workspace symlinks between local packages to work.
 COPY --from=builder /build/package*.json /build/LICENSE ./
+
 COPY --from=builder /build/packages/addon/package.*json ./packages/addon/
 COPY --from=builder /build/packages/frontend/package.*json ./packages/frontend/
 COPY --from=builder /build/packages/formatters/package.*json ./packages/formatters/
@@ -50,7 +50,6 @@ COPY --from=builder /build/packages/wrappers/package.*json ./packages/wrappers/
 
 
 COPY --from=builder /build/packages/addon/dist ./packages/addon/dist
-COPY --from=builder /build/packages/api/dist ./packages/api/dist
 COPY --from=builder /build/packages/frontend/out ./packages/frontend/out
 COPY --from=builder /build/packages/formatters/dist ./packages/formatters/dist
 COPY --from=builder /build/packages/parser/dist ./packages/parser/dist
