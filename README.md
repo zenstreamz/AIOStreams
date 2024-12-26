@@ -28,6 +28,10 @@ Once it has all the parsed information for each result, it can apply your config
 It currently supports: 
 - Torrentio
 - Torbox
+- Custom: You can input an addon URL and name and it will parse as much information as it can.
+> [!NOTE]
+> The URL can either be a URL to the manifest.json or the url without the manifest.json
+> e.g. `https://torrentio.strem.fun/` or `https://torrentio.strem.fun/manifest.json`
 
 ### What are the supported formatters? 
 
