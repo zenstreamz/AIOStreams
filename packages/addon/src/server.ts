@@ -82,13 +82,16 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
     return;
   }
 
-  console.log(`Config: ${JSON.stringify(configJson, null, 2)}`);
+  const decodedPath = decodeURIComponent(req.path);
+
 
   const streamMatch = new RegExp(
     `/${config}/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?\.json`
-  ).exec(req.path);
+  ).exec(decodedPath);
 
   if (!streamMatch) {
+    // log after removing config if present
+    console.error(`Invalid request: ${decodedPath.replace(`/${config}`, '')}`); 
     res.status(400).send('Invalid request');
     return;
   }
@@ -96,7 +99,7 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
   const [type, id, season, episode] = streamMatch.slice(1);
 
   console.log(
-    `Type: ${type}, ID: ${id}, Season: ${season}, Episode: ${episode}`
+    `Received /stream request with Type: ${type}, ID: ${id}, Season: ${season}, Episode: ${episode}`
   );
 
   let streamRequest: StreamRequest;
@@ -105,6 +108,7 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
     case 'series':
       if (!season || !episode) {
         res.status(400).send('Invalid request');
+        console.log(`Request type was series but season or episode was missing`);
         return;
       }
       streamRequest = {
@@ -116,6 +120,7 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
       break;
     case 'movie':
       if (season || episode) {
+        console.log(`Request type was movie but season or episode was present`);
         res.status(400).send('Invalid request');
         return;
       }
@@ -125,16 +130,34 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
       };
       break;
     default:
+      console.log(`Request type was invalid`);
       res.status(400).send('Invalid request');
       return;
   }
   try {
     const aioStreams = new AIOStreams(configJson);
 
+    try {
+      aioStreams.configValidator();
+    } catch (error: any) {
+      console.log(`Invalid config: ${error.message}`);
+      res.status(200).json({
+        streams: [
+          {
+            url: 'https://example.com',
+            name: 'Invalid Config',
+            description: error.message,
+          },
+        ],
+      })
+      return;
+    }
+
     aioStreams.getStreams({ id, type, season, episode }).then((streams) => {
       res.status(200).json({ streams: streams });
     });
   } catch (error: any) {
+    console.error(error);
     res.status(500).send(error.message);
   }
 });

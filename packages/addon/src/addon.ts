@@ -1,4 +1,4 @@
-import { BaseWrapper, Torbox, Torrentio } from '@aiostreams/wrappers';
+import { BaseWrapper, getTorboxStreams, getTorrentioStreams } from '@aiostreams/wrappers';
 import { Stream, ParsedStream, StreamRequest, Config } from '@aiostreams/types';
 import { gdriveFormat, torrentioFormat } from '@aiostreams/formatters';
 
@@ -7,10 +7,9 @@ export class AIOStreams {
 
   constructor(config: any) {
     this.config = config;
-    this.configValidator();
   }
 
-  private configValidator() {
+  public configValidator() {
     if (!this.config) {
       throw new Error('No config provided');
     }
@@ -73,7 +72,7 @@ export class AIOStreams {
     console.log(`Filtered to ${filteredResults.length} streams`);
     // Apply sorting
 
-    // initially sort by filename
+    // initially sort by filename to ensure consistent results
     filteredResults.sort((a, b) => a.filename.localeCompare(b.filename));
 
     // then apply our this.config sorting
@@ -253,77 +252,39 @@ export class AIOStreams {
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
+  
     for (const addon of this.config.addons) {
-      switch (addon.id) {
-        case 'gdrive': {
-          break;
-        }
-        case 'torbox': {
-          try {
-            const torboxService = this.config.services.find(
-              (service) => service.id === 'torbox'
-            );
-
-            if (!torboxService) {
-              console.error('No torbox service found');
-              break;
-            }
-            const torboxApiKey = torboxService.credentials.find(
-              (cred) => cred.id === 'apiKey'
-            )?.value;
-            if (!torboxApiKey) {
-              console.error('No torbox api key found');
-              break;
-            }
-            const wrapper = new Torbox(torboxApiKey);
-            const streams = await wrapper.getParsedStreams(streamRequest);
-            console.log(`Got streams from ${addon.id}: ${streams.length}`);
-            parsedStreams.push(...streams);
-          } catch (e) {
-            console.error(`Error getting streams from ${addon.id}: ${e}`);
-          }
-          break;
-        }
-        case 'torrentio': {
-          try {
-            if (addon.options.useMultipleInstances) {
-              for (const service of this.config.services) {
-                if (!service.enabled) {
-                  continue;
-                }
-                const wrapper = new Torrentio([service]);
-                const streams = await wrapper.getParsedStreams(streamRequest);
-                console.log(`Got streams from ${addon.id}: ${streams.length}`);
-                parsedStreams.push(...streams);
-              }
-            } else {
-              const wrapper = new Torrentio(
-                this.config.services,
-                addon.options.overrideUrl
-              );
-              const streams = await wrapper.getParsedStreams(streamRequest);
-              console.log(`Got streams from ${addon.id}: ${streams.length}`);
-              parsedStreams.push(...streams);
-            }
-          } catch (e) {
-            console.error(`Error getting streams from ${addon.id}: ${e}`);
-          }
-          break;
-        }
-
-        default: {
-          try {
-            const wrapper = new BaseWrapper('unknown', addon.options.addonUrl);
-            const streams = await wrapper.getParsedStreams(streamRequest);
-            console.log(`Got streams from ${addon.id}: ${streams.length}`);
-
-            parsedStreams.push(...streams);
-          } catch (e) {
-            console.error(`Error getting streams from ${addon.id}: ${e}`);
-          }
-        }
+      try {
+        const streams = await this.getStreamsFromAddon(addon.id, streamRequest);
+        parsedStreams.push(...streams);
+      } catch (error) {
+        console.error(`Failed to get streams from addon ${addon.id}: ${error}`);
       }
     }
     return parsedStreams;
+  }
+
+  private async getStreamsFromAddon(
+    addonId: string,
+    streamRequest: StreamRequest
+  ): Promise<ParsedStream[]> {
+    const addon = this.config.addons.find((addon) => addon.id === addonId);
+    if (!addon) {
+      throw new Error(`Addon ${addonId} not found`);
+    }
+
+    switch (addonId) {
+      case 'torbox': {
+        return await getTorboxStreams(this.config, streamRequest);
+      }
+      case 'torrentio': {
+        return await getTorrentioStreams(this.config, addon.options, streamRequest);
+      }
+      default: {
+        console.log(`Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`);
+        const wrapper = new BaseWrapper(addon.options.name, addon.options.url);
+        return await wrapper.getParsedStreams(streamRequest);
+      }
+    }
   }
 }

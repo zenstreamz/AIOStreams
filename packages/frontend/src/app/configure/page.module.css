@@ -5,8 +5,10 @@
   min-height: 100vh;
 }
 
+
+
 .content {
-  background-color: #1a1a1a; /* Slightly lighter black */
+  background-color: #000000; /* Slightly lighter black */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
@@ -15,13 +17,20 @@
   margin: 20px;
 }
 
+@media (max-width: 1000px) {
+  .content {
+    margin: 0;
+    border-radius: 0;
+    width: 100%;
+  }
+}
 .section {
   margin-bottom: 20px;
   border-width: 1px;
   border-style: solid;
   border-radius: 8px;
   padding: 10px;
-  border-color: #353535;
+  border-color: #777777;
 }
 
 .setting {

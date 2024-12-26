@@ -118,6 +118,13 @@ const addonDetails: AddonDetail[] = [
         label: 'URL',
         type: 'text',
       },
+      {
+        id: 'name',
+        required: true,
+        description: 'The name of the custom addon',
+        label: 'Name',
+        type: 'text',
+      }
     ],
   },
 ];
@@ -157,119 +164,161 @@ const defaultServices = [
     name: 'Real Debrid',
     id: 'realdebrid',
     enabled: false,
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://real-debrid.com/apitoken',
-        value: '',
-      },
-    ],
+    credentials: {
+    },
   },
   {
     name: 'All Debrid',
     id: 'alldebrid',
     enabled: false,
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://alldebrid.com/api',
-        value: '',
-      },
-    ],
+    credentials: {
+    },
   },
   {
     name: 'Premiumize',
     id: 'premiumize',
     enabled: false,
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://www.premiumize.me/account',
-        value: '',
-      },
-    ],
+    credentials: {
+    },
   },
   {
     name: 'Debrid Link',
     id: 'debridlink',
     enabled: false,
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://debrid-link.com/webapp/apikey',
-        value: '',
-      },
-    ],
+    credentials: {
+    },
   },
   {
     name: 'Torbox',
     id: 'torbox',
     enabled: false,
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://torbox.app/settings',
-        value: '',
-      },
-    ],
+    credentials: {
+    },
   },
   {
     name: 'Offcloud',
     id: 'offcloud',
     enabled: false,
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://offcloud.com/#/account',
-        value: '',
-      },
-    ],
+    credentials: {
+    },
   },
   {
     name: 'put.io',
     id: 'putio',
     enabled: false,
-    credentials: [
-      {
-        label: 'Client ID',
-        id: 'clientId',
-        link: 'https://put.io/oauth',
-        value: '',
-      },
-      {
-        label: 'Token',
-        id: 'token',
-        link: 'https://put.io/oauth',
-        value: '',
-      },
-    ],
+    credentials: {
+    },
   },
   {
     name: 'Easynews',
     id: 'easynews',
     enabled: false,
+    credentials: {
+    },
+  },
+];
+
+
+const serviceCredentials = [
+  {
+    name: 'Real Debrid',
+    id: 'realdebrid',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://real-debrid.com/apitoken',
+      }
+    ]
+  },
+  {
+    name: 'All Debrid',
+    id: 'alldebrid',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://alldebrid.com/api',
+      }
+    ]
+  },
+  {
+    name: 'Premiumize',
+    id: 'premiumize',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://www.premiumize.me/account',
+      }
+    ]
+  },
+  {
+    name: 'Debrid Link',
+    id: 'debridlink',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://debrid-link.com/webapp/apikey',
+      }
+    ]
+  },
+  {
+    name: 'Torbox',
+    id: 'torbox',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://torbox.app/settings',
+      }
+    ]
+  },
+  {
+    name: 'Offcloud',
+    id: 'offcloud',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://offcloud.com/#/account',
+      }
+    ]
+  },
+  {
+    name: 'put.io',
+    id: 'putio',
+    credentials: [
+      {
+        label: 'Client ID',
+        id: 'clientId',
+        link: 'https://put.io/oauth',
+      },
+      {
+        label: 'Token',
+        id: 'token',
+        link: 'https://put.io/oauth',
+      }
+    ]
+  },
+  {
+    name: 'Easynews',
+    id: 'easynews',
     credentials: [
       {
         label: 'Username',
         id: 'username',
         link: 'https://www.easynews.com/',
-        value: '',
       },
       {
         label: 'Password',
         id: 'password',
         link: 'https://www.easynews.com/',
-        value: '',
-      },
-    ],
+      }
+    ]
   },
-];
+]
 
 export default function Configure() {
   const [resolutions, setResolutions] =
@@ -342,17 +391,19 @@ export default function Configure() {
         const torboxService = config.services.find(
           (service) => service.id === 'torbox'
         );
-        if (
-          !torboxService ||
-          !torboxService.enabled ||
-          !torboxService.credentials.find(
-            (credential) => credential.id === 'apiKey' && credential.value
-          )
-        ) {
+        if (!torboxService) {
           showToast(
-            'Torbox service must be enabled and API key must be set to use the Torbox addon',
+            'Torbox service must be enabled to use the Torbox addon',
             'error',
             'torboxServiceNotEnabled'
+          );
+          return false;
+        }
+        if (!torboxService.credentials.apiKey) {
+          showToast(
+            'Torbox API Key must be set to use the Torbox addon',
+            'error',
+            'torboxApiKeyNotSet'
           );
           return false;
         }
@@ -378,8 +429,15 @@ export default function Configure() {
 
     for (const service of config.services) {
       if (service.enabled) {
-        for (const credential of service.credentials) {
-          if (!credential.value) {
+        const serviceDetail = serviceCredentials.find(
+          (detail) => detail.id === service.id
+        );
+        if (!serviceDetail) {
+          showToast(`Invalid service: ${service.id}`, 'error', 'invalidService');
+          return false;
+        }
+        for (const credential of serviceDetail.credentials) {
+          if (!service.credentials[credential.id]) {
             showToast(
               `${credential.label} is required for ${service.name}`,
               'error',
@@ -708,32 +766,32 @@ export default function Configure() {
                 newServices[serviceIndex] = { ...service, enabled };
                 setServices(newServices);
               }}
-              fields={service.credentials.map((credential) => ({
+              fields={serviceCredentials.find(
+                (detail) => detail.id === service.id
+              )?.credentials.map((credential) => ({
                 label: credential.label,
                 link: credential.link,
-                value: credential.value,
+                value: service.credentials[credential.id] || '',
                 setValue: (value) => {
                   const newServices = [...services];
                   const serviceIndex = newServices.findIndex(
                     (s) => s.id === service.id
                   );
-                  const newCredentials = [
-                    ...newServices[serviceIndex].credentials,
-                  ];
-                  const credentialIndex = newCredentials.findIndex(
-                    (c) => c.id === credential.id
-                  );
-                  newCredentials[credentialIndex] = { ...credential, value };
                   newServices[serviceIndex] = {
                     ...service,
-                    credentials: newCredentials,
+                    credentials: {
+                      ...service.credentials,
+                      [credential.id]: value,
+                    },
                   };
                   setServices(newServices);
                 },
-              }))}
+              })) || []
+              }
             />
           ))}
 
+          <div className={styles.section} style={{ marginTop: '20px', marginBottom: '0px' }}>
           <div className={styles.setting}>
             <div className={styles.settingDescription}>
               <h2 style={{ padding: '5px' }}>Only Show Cached Streams</h2>
@@ -746,9 +804,12 @@ export default function Configure() {
                 type="checkbox"
                 checked={onlyShowCachedStreams}
                 onChange={(e) => setOnlyShowCachedStreams(e.target.checked)}
+                // move to the right
+                style={{ marginLeft: 'auto', marginRight: '20px', width: '25px', height: '25px' }}
               />
             </div>
           </div>
+        </div>
         </div>
 
         <div className={styles.section}>

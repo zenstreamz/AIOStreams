@@ -110,11 +110,6 @@ export interface Config {
     name: string;
     id: string;
     enabled: boolean;
-    credentials: {
-      id: string;
-      label: string;
-      link: string;
-      value: string;
-    }[];
+    credentials: { [key: string]: string };
   }[];
 }

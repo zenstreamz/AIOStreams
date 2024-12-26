@@ -110,7 +110,6 @@ export class BaseWrapper {
 
     // see if size is present in behaviorHints
     let size: number | undefined;
-    let formattedSize: string | undefined;
     if (stream.behaviorHints?.videoSize) {
       size = stream.behaviorHints.videoSize;
     }

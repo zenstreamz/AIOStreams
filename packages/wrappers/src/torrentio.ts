@@ -1,64 +1,20 @@
-import { ParsedNameData } from '@aiostreams/types';
+import { ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
 
-const supportedServices: string[] = [
-  'realdebrid',
-  'alldebrid',
-  'premiumize',
-  'putio',
-  'torbox',
-  'offcloud',
-  'debridlink',
-];
-
 export class Torrentio extends BaseWrapper {
   private readonly name: string = 'Torrentio';
 
-  constructor(services: Config['services'], overrideUrl?: string) {
-    let configString = '';
+  constructor(configString: string | null, overrideUrl: string | null) {
 
-    if (!overrideUrl) {
-      let enabledServices: [string, string][] = [];
-
-      for (const service of services) {
-        if (supportedServices.includes(service.id) && service.enabled) {
-          if (service.id === 'putio') {
-            const clientId = service.credentials.find(
-              (cred) => cred.id === 'clientId'
-            )?.value;
-            const token = service.credentials.find(
-              (cred) => cred.id === 'token'
-            )?.value;
-            if (!clientId || !token) {
-              continue;
-            }
-            enabledServices.push([service.id, `${clientId}@${token}`]);
-          } else {
-            const apiKey = service.credentials.find(
-              (cred) => cred.id === 'apiKey'
-            )?.value;
-            if (!apiKey) {
-              continue;
-            }
-            enabledServices.push([service.id, apiKey]);
-          }
-        }
-      }
-      if (enabledServices.length !== 0) {
-        configString =
-          enabledServices.map(([id, value]) => `${id}=${value}`).join('|') +
-          '/';
-      }
-    } else {
-      configString = overrideUrl
-        .replace('https://torrentio.strem.fun/', '')
-        .replace('manifest.json', '');
+    if (overrideUrl && overrideUrl.endsWith('/manifest.json')) {
+      overrideUrl = overrideUrl.replace('/manifest.json', '/');
     }
 
-    console.log('Using config string', configString);
-    super('Torrentio', 'https://torrentio.strem.fun/' + configString);
+    let url = overrideUrl ? overrideUrl : 'https://torrentio.strem.fun/' + (configString ? configString + '/' : '');
+
+    super('Torrentio', url);
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -106,4 +62,69 @@ export class Torrentio extends BaseWrapper {
         : undefined,
     };
   }
+}
+
+export async function getTorrentioStreams(config: Config, torrentioOptions: { [key: string]: string }, streamRequest: StreamRequest): Promise<ParsedStream[]> {
+  const supportedServices: string[] = [
+    'realdebrid',
+    'alldebrid',
+    'premiumize',
+    'putio',
+    'torbox',
+    'offcloud',
+    'debridlink',
+  ];
+  const parsedStreams: ParsedStream[] = [];
+  
+  // If overrideUrl is provided, use it to get streams and skip all other steps
+  if (torrentioOptions.overrideUrl) {
+    const torrentio = new Torrentio(null, torrentioOptions.overrideUrl);
+    return torrentio.getParsedStreams(streamRequest);
+  }
+
+  // find all usable services
+  const usableServices = config.services.filter((service) =>
+    supportedServices.includes(service.id)
+  );
+
+
+  // if no usable services found, use torrentio without any configuration
+  if (usableServices.length < 0) {
+    const torrentio = new Torrentio(null, null);
+    return await torrentio.getParsedStreams(streamRequest);
+  }
+
+  // otherwise, depending on the configuration, create multiple instances of torrentio or use a single instance with all services
+
+  const getServicePair = (serviceId: string, credentials: { [key: string]: string }) => {
+    return serviceId === 'putio' ? `${serviceId}=${credentials.clientId}@${credentials.token}` : `${serviceId}=${credentials.apiKey}`;
+  }
+
+  if (torrentioOptions.useMultipleInstances) {
+    for (const service of usableServices) {
+      if (!service.enabled) {
+        continue;
+      }
+      console.log('Creating Torrentio instance with service:', service.id);
+      let configString = getServicePair(service.id, service.credentials);
+      const torrentio = new Torrentio(configString, null);
+      const streams = await torrentio.getParsedStreams(streamRequest);
+      parsedStreams.push(...streams);
+    }
+    return parsedStreams;
+  } else {
+    let configString = '';
+    for (const service of usableServices) {
+      if (!service.enabled) {
+        continue;
+      }
+      configString += getServicePair(service.id, service.credentials) + '|';
+    }
+    const torrentio = new Torrentio(configString, null);
+    return await torrentio.getParsedStreams(streamRequest);
+  }
+
+
+
+
 }
