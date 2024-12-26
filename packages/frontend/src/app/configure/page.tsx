@@ -13,6 +13,9 @@ import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
 import { Slide, ToastContainer, toast } from 'react-toastify';
+import addonPackage from '../../../package.json';
+
+const version = addonPackage.version;
 
 const defaultQualities: Quality[] = [
   { 'BluRay REMUX': true },
@@ -535,7 +538,7 @@ export default function Configure() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <h1 style={{ textAlign: 'center' }}>AIOStreams</h1>
+        <h1 style={{ textAlign: 'center' }}>AIOStreams v{version}</h1>
         <p style={{ textAlign: 'center', padding: '15px' }}>
           AIOStreams, the all-in-one streaming addon for Stremio. Combine your
           streams from all your addons into one and filter them by resolution,
