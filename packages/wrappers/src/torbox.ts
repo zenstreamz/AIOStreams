@@ -40,9 +40,13 @@ export class Torbox extends BaseWrapper {
 
     const parsedFilename: ParsedNameData = parseFilename(filename);
 
+    /* If the quality from Torbox is not one of the qualities in the Config, they get filtered out
+    So, for now, we will not update the quality from Torbox
+    We can revisit this later and match the quality from Torbox to one of the qualities in the Config
     if (parsedFilename.quality === 'Unknown' && quality !== 'Unknown') {
       parsedFilename.quality = quality;
     }
+    */
     if (
       !parsedFilename.languages.some(
         (lang: string) => lang.toLowerCase() === language.toLowerCase()
