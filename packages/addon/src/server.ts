@@ -3,25 +3,12 @@ import path from 'path';
 import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config';
+import { getManifest } from './manifest';
 
-import { version, description } from '../package.json';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const manifest = {
-  name: 'AIOStreams',
-  id: 'viren070.aiostreams.com',
-  version: version,
-  description: description,
-  catalogs: [],
-  resources: ['stream'],
-  types: ['movie', 'series'],
-  behaviorHints: {
-    configurable: true,
-    configurationRequired: true,
-  },
-};
 
 // Built-in middleware for parsing JSON
 app.use(express.json());
@@ -46,13 +33,11 @@ app.get(['/configure', '/:config/configure'], (req, res) => {
 });
 
 app.get('/manifest.json', (req, res) => {
-  res.status(200).json(manifest);
+  res.status(200).json(getManifest(false));
 });
 
 app.get('/:config/manifest.json', (req, res) => {
-  let configuredManifest = manifest;
-  configuredManifest.behaviorHints.configurationRequired = false;
-  res.status(200).json(configuredManifest);
+  res.status(200).json(getManifest(true));
 });
 
 // Route for /stream
@@ -152,7 +137,7 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
     }
 
     const aioStreams = new AIOStreams(configJson);
-    aioStreams.getStreams({ id, type, season, episode }).then((streams) => {
+    aioStreams.getStreams(streamRequest).then((streams) => {
       res.status(200).json({ streams: streams });
     });
   } catch (error: any) {
