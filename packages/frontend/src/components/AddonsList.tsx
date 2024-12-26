@@ -52,7 +52,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
     value: string
   ) => {
     const newAddons = [...addons];
-    newAddons[addonIndex].options[optionKey] = value;
+    newAddons[addonIndex].options[optionKey] = value.trim();
     setAddons(newAddons);
   };
 

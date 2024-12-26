@@ -53,7 +53,7 @@ const ServiceInput: React.FC<ServiceInputProps> = ({
               <input
                 type="text"
                 value={field.value}
-                onChange={(e) => field.setValue(e.target.value)}
+                onChange={(e) => field.setValue(e.target.value.trim())}
               />
             </div>
           ))}
