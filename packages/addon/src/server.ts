@@ -3,14 +3,16 @@ import path from 'path';
 import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
 
+import { version, description } from '../package.json';
+
 const app = express();
 const port = process.env.PORT || 3000;
 
 const manifest = {
-  name: 'aiostreams',
+  name: 'AIOStreams',
   id: 'viren070.aiostreams.com',
-  version: '1.0.0',
-  description: 'Combine your streams into one addon',
+  version: version,
+  description: description,
   catalogs: [],
   resources: ['stream'],
   types: ['movie', 'series'],
@@ -33,6 +35,10 @@ app.use((req, res, next) => {
 });
 
 app.use(express.static(path.join(__dirname, '../../frontend/out')));
+
+app.get('/', (req, res) => {
+  res.redirect('/configure');
+});
 
 app.get(['/configure', '/:config/configure'], (req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
