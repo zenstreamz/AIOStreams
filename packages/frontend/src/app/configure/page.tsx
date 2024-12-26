@@ -320,7 +320,7 @@ export default function Configure() {
             rel="noreferrer"
             style={{ textDecoration: 'underline' }}
           >
-            Github
+            GitHub
           </a>
         </p>
 
