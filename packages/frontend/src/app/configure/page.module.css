@@ -10,7 +10,7 @@
 .content {
   background-color: #000000; /* Slightly lighter black */
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 16px rgb(0, 0, 0);
   padding: 20px;
   width: 80%;
   max-width: 800px;
