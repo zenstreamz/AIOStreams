@@ -35,9 +35,10 @@ It currently supports:
 - Torrentio
 - Torbox
 - Custom: You can input an addon URL and name and it will parse as much information as it can.
-  > [!NOTE]
-  > The URL can either be a URL to the manifest.json or the url without the manifest.json
-  > e.g. `https://torrentio.strem.fun/` or `https://torrentio.strem.fun/manifest.json`
+
+> [!NOTE]
+> The URL can either be a URL to the manifest.json or the url without the manifest.json
+> e.g. `https://torrentio.strem.fun/` or `https://torrentio.strem.fun/manifest.json`
 
 ### What are the supported formatters?
 
@@ -66,7 +67,7 @@ You need Node.js and git installed. Node v22 and npm v10.9 were used in the deve
 
 1. Clone the project and set it as the current directory
    ```
-   git clone https://github.com/Viren070/aiostreams.git
+   git clone https://github.com/Viren070/AIOStreams.git
    ```
    ```
    cd aiostreams
