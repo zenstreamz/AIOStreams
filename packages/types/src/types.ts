@@ -108,7 +108,7 @@ export interface Config {
   minSize: number | null;
   addons: {
     id: string;
-    options: { [key: string]: string };
+    options: { [key: string]: string | boolean | number | undefined };
   }[];
   services: {
     name: string;
@@ -118,14 +118,34 @@ export interface Config {
   }[];
 }
 
+
+interface BaseOptionDetail {
+  id: string;
+  required?: boolean;
+  label: string;
+  description?: string;
+}
+
+export interface TextOptionDetail extends BaseOptionDetail {
+  type: 'text';
+}
+
+export interface CheckboxOptionDetail extends BaseOptionDetail {
+  type: 'checkbox';
+}
+
+export interface NumberOptionDetail extends BaseOptionDetail {
+  type: 'number';
+  constraints: {
+    min?: number;
+    max?: number;
+  }
+}
+
+export type AddonOptionDetail = TextOptionDetail | CheckboxOptionDetail | NumberOptionDetail;
+
 export interface AddonDetail {
   name: string;
   id: string;
-  options?: {
-    id: string;
-    required?: boolean;
-    label: string;
-    description?: string;
-    type: 'text' | 'checkbox';
-  }[];
+  options?: AddonOptionDetail[];
 }

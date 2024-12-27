@@ -1,28 +1,12 @@
 import React, { useState } from 'react';
 import styles from './AddonsList.module.css';
-
-interface AddonDetail {
-  name: string;
-  id: string;
-  options?: {
-    id: string;
-    required?: boolean;
-    label: string;
-    description?: string;
-    type: 'text' | 'checkbox';
-  }[];
-}
-
-interface Addon {
-  id: string;
-  options: { [key: string]: string };
-}
+import { AddonDetail, Config } from '@aiostreams/types';
 
 interface AddonsListProps {
   choosableAddons: string[];
   addonDetails: AddonDetail[];
-  addons: Addon[];
-  setAddons: (addons: Addon[]) => void;
+  addons: Config['addons'];
+  setAddons: (addons: Config['addons']) => void;
 }
 
 const AddonsList: React.FC<AddonsListProps> = ({
@@ -49,10 +33,10 @@ const AddonsList: React.FC<AddonsListProps> = ({
   const updateOption = (
     addonIndex: number,
     optionKey: string,
-    value: string
+    value?: string | boolean | number
   ) => {
     const newAddons = [...addons];
-    newAddons[addonIndex].options[optionKey] = value.trim();
+    newAddons[addonIndex].options[optionKey] = typeof value === 'string' ? value.trim() : value;
     setAddons(newAddons);
   };
 
@@ -108,12 +92,12 @@ const AddonsList: React.FC<AddonsListProps> = ({
                     {option.type === 'checkbox' && (
                       <input
                         type="checkbox"
-                        checked={addon.options[option.id] === 'true'}
+                        checked={addon.options[option.id] === true}
                         onChange={(e) =>
                           updateOption(
                             index,
                             option.id,
-                            e.target.checked.toString()
+                            e.target.checked
                           )
                         }
                         className={styles.checkbox}
@@ -124,9 +108,19 @@ const AddonsList: React.FC<AddonsListProps> = ({
                   {option.type === 'text' && (
                     <input
                       type="text"
-                      value={addon.options[option.id] || ''}
+                      value={addon.options[option.id] as string || '' }
                       onChange={(e) =>
-                        updateOption(index, option.id, e.target.value)
+                        updateOption(index, option.id, e.target.value ? e.target.value : undefined)
+                      }
+                      className={styles.textInput}
+                    />
+                  )}
+                  {option.type === 'number' && (
+                    <input
+                      type="number"
+                      value={addon.options[option.id] as number}
+                      onChange={(e) =>
+                        updateOption(index, option.id, e.target.value ? parseInt(e.target.value) : undefined)
                       }
                       className={styles.textInput}
                     />

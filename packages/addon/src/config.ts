@@ -14,7 +14,6 @@ export const addonDetails: AddonDetail[] = [
       {
         id: 'overrideUrl',
         required: false,
-
         label: 'Override URL',
         description:
           'Override the URL used to fetch streams from the torrentio addon',
@@ -23,17 +22,40 @@ export const addonDetails: AddonDetail[] = [
       {
         id: 'useMultipleInstances',
         required: false,
-
         label: 'Use Multiple Instances',
         description:
           'Use multiple instances of the torrentio addon to fetch streams when using multiple services',
         type: 'checkbox',
       },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description: 'The timeout for fetching streams from the Torrentio addon',
+        type: 'number',
+        constraints: {
+          min: 1000,
+          max: 20000
+        }
+      }
     ],
   },
   {
     name: 'Torbox',
     id: 'torbox',
+    options: [
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description: 'The timeout for fetching streams from the Torbox addon in milliseconds',
+        type: 'number',
+        constraints: {
+          min: 1000,
+          max: 20000
+        }
+      }
+    ],
   },
   {
     name: 'Google Drive (Viren070)',
@@ -46,6 +68,17 @@ export const addonDetails: AddonDetail[] = [
         description: 'The URL of the Google Drive addon',
         type: 'text',
       },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description: 'The timeout for fetching streams from the Google Drive addon in milliseconds',
+        type: 'number',
+        constraints: {
+          min: 1000,
+          max: 20000
+        }
+      }
     ],
   },
   {
@@ -66,6 +99,17 @@ export const addonDetails: AddonDetail[] = [
         label: 'Name',
         type: 'text',
       },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description: 'The timeout for fetching streams from the custom addon in milliseconds',
+        type: 'number',
+        constraints: {
+          min: 1000,
+          max: 20000
+        }
+      }
     ],
   },
 ];
@@ -255,13 +299,46 @@ export function validateConfig(config: Config): {
         ) {
           console.log('checking url', addon.options[option.id]);
           try {
-            new URL(addon.options[option.id]);
+            new URL(addon.options[option.id] as string);
           } catch (_) {
             return createResponse(
               false,
               'invalidUrl',
               `Invalid URL for ${option.label}`
             );
+          }
+        }
+
+        if (option.type === 'number' && addon.options[option.id]) {
+          if (typeof addon.options[option.id] !== 'number') {
+            return createResponse(
+              false,
+              'invalidNumber',
+              `${option.label} must be a number`
+            );
+          }
+
+          if (option.constraints) {
+            if (
+              option.constraints.min !== undefined &&
+              addon.options[option.id] as number < option.constraints.min
+            ) {
+              return createResponse(
+                false,
+                'invalidNumber',
+                `${option.label} must be greater than or equal to ${option.constraints.min}`
+              );
+            }
+            if (
+              option.constraints.max !== undefined &&
+              addon.options[option.id] as number > option.constraints.max
+            ) {
+              return createResponse(
+                false,
+                'invalidNumber',
+                `${option.label} must be less than or equal to ${option.constraints.max}`
+              );
+            }
           }
         }
       }

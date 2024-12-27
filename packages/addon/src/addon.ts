@@ -306,7 +306,7 @@ export class AIOStreams {
 
     switch (addonId) {
       case 'torbox': {
-        return await getTorboxStreams(this.config, streamRequest);
+        return await getTorboxStreams(this.config, addon.options, streamRequest);
       }
       case 'torrentio': {
         return await getTorrentioStreams(
@@ -315,15 +315,17 @@ export class AIOStreams {
           streamRequest
         );
       }
-      case 'gdrive':
-        const addonUrl = addon.options.addonUrl.replace('/manifest.json', '/');
-        const wrapper = new BaseWrapper('GDrive', addonUrl);
+      case 'gdrive': {
+        let addonUrl = addon.options.addonUrl as string;
+        addonUrl = addonUrl.replace('/manifest.json', '/')
+        const wrapper = new BaseWrapper('GDrive', addonUrl, addon.options.indexerTimeout ? addon.options.indexerTimeout as number : undefined);
         return await wrapper.getParsedStreams(streamRequest);
+      }
       default: {
         console.log(
           `Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`
         );
-        const wrapper = new BaseWrapper(addon.options.name, addon.options.url);
+        const wrapper = new BaseWrapper(addon.options.name as string, addon.options.url as string, addon.options.indexerTimeout ? addon.options.indexerTimeout as number : undefined);
         return await wrapper.getParsedStreams(streamRequest);
       }
     }

@@ -6,7 +6,7 @@ import { BaseWrapper } from './base';
 export class Torrentio extends BaseWrapper {
   private readonly name: string = 'Torrentio';
 
-  constructor(configString: string | null, overrideUrl: string | null) {
+  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000) {
     if (overrideUrl && overrideUrl.endsWith('/manifest.json')) {
       overrideUrl = overrideUrl.replace('/manifest.json', '/');
     }
@@ -16,7 +16,7 @@ export class Torrentio extends BaseWrapper {
       : 'https://torrentio.strem.fun/' +
         (configString ? configString + '/' : '');
 
-    super('Torrentio', url);
+    super('Torrentio', url, indexerTimeout);
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -68,7 +68,11 @@ export class Torrentio extends BaseWrapper {
 
 export async function getTorrentioStreams(
   config: Config,
-  torrentioOptions: { [key: string]: string },
+  torrentioOptions: {
+    useMultipleInstances?: boolean;
+    overrideUrl?: string;
+    indexerTimeout?: number;
+  },
   streamRequest: StreamRequest
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] = [
@@ -84,7 +88,7 @@ export async function getTorrentioStreams(
 
   // If overrideUrl is provided, use it to get streams and skip all other steps
   if (torrentioOptions.overrideUrl) {
-    const torrentio = new Torrentio(null, torrentioOptions.overrideUrl);
+    const torrentio = new Torrentio(null, torrentioOptions.overrideUrl as string, torrentioOptions.indexerTimeout);
     return torrentio.getParsedStreams(streamRequest);
   }
 
@@ -95,7 +99,7 @@ export async function getTorrentioStreams(
 
   // if no usable services found, use torrentio without any configuration
   if (usableServices.length < 0) {
-    const torrentio = new Torrentio(null, null);
+    const torrentio = new Torrentio(null, null, torrentioOptions.indexerTimeout);
     return await torrentio.getParsedStreams(streamRequest);
   }
 
@@ -117,7 +121,7 @@ export async function getTorrentioStreams(
       }
       console.log('Creating Torrentio instance with service:', service.id);
       let configString = getServicePair(service.id, service.credentials);
-      const torrentio = new Torrentio(configString, null);
+      const torrentio = new Torrentio(configString, null, torrentioOptions.indexerTimeout);
       const streams = await torrentio.getParsedStreams(streamRequest);
       parsedStreams.push(...streams);
     }
@@ -130,7 +134,7 @@ export async function getTorrentioStreams(
       }
       configString += getServicePair(service.id, service.credentials) + '|';
     }
-    const torrentio = new Torrentio(configString, null);
+    const torrentio = new Torrentio(configString, null, torrentioOptions.indexerTimeout);
     return await torrentio.getParsedStreams(streamRequest);
   }
 }
