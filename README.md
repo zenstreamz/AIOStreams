@@ -60,6 +60,37 @@ The addon can display your results in different formats. The two formats availab
   ![image](https://github.com/user-attachments/assets/21f90ee2-e81d-4a56-9e64-8937fb7ab2bc)
 
 ## Self-Hosting
+### Docker
+
+Use the Dockerfile with [Docker](https://docs.docker.com/get-docker/) installed .
+```
+docker run -p 8080:3000 ghcr.io/viren070/aiostreams:latest
+```
+
+Or, build the docker image yourself
+```
+git clone https://github.com/Viren070/aiostreams.git
+cd aiostreams
+docker build -t aiostreams .
+docker run -p 8080:3000 aiostreams
+```
+
+### Cloudflare Workers
+
+This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
+
+Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands: 
+
+```
+git clone https://github.com/Viren070/AIOStreams.git
+cd AIOStreams
+npm i
+npm run build
+npm run deploy:cloudflare-worker
+```
+
+> [!NOTE]
+> Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
 
 ### From source
 
