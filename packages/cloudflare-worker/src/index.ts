@@ -1,12 +1,22 @@
-import { AIOStreams, getManifest, validateConfig } from '@aiostreams/addon';
+import { AIOStreams, getManifest, invalidConfig, missingConfig, validateConfig } from '@aiostreams/addon';
 import { Config, StreamRequest } from '@aiostreams/types';
+
+
+const HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+};
 
 function createJsonResponse(data: any): Response {
     return new Response(JSON.stringify(data, null, 4), {
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-        },
+        headers: HEADERS
+    });
+}
+
+function createResponse(message: string, status: number): Response {
+    return new Response(message, {
+        status,
+        headers: HEADERS
     });
 }
 
@@ -19,27 +29,29 @@ export default {
             );
             const components = url.pathname.split('/').splice(1);
             console.log(components);
+
+            // handle static asset requests
             if (components.includes('_next')) {
                 return env.ASSETS.fetch(request);
             }
             
+            // redirect to /configure if root path is requested
+            if (url.pathname === '/') {
+                return Response.redirect(url.origin + "/configure", 301);
+            }
 
+            // handle /configure and /:config/configure requests
             if (components.includes('configure')) {
-                let components = url.pathname.split('/');
-                console.log(components);
                 if (components.length === 1)  {
                     return env.ASSETS.fetch(request);
-
                 } else {
+                    // display configure page with config still in url
                     return env.ASSETS.fetch(new Request(url.origin + '/configure', request));
                 }
             }
 
 
-            if (url.pathname === '/') {
-                return Response.redirect(url.origin + "/configure", 301);
-            }
-
+            // handle /manifest.json and /:config/manifest.json requests
             if (components.includes('manifest.json')) {
                 if (components.length === 1) {
                     return createJsonResponse(getManifest(true));
@@ -49,22 +61,14 @@ export default {
             }
 
             if (components.includes('stream')) {
-
-
+                // when /stream is requested without config
                 if (components.length !== 4) {
-                    return createJsonResponse({
-                        streams: [
-                            {
-                                externalUrl: url.origin + '/configure',
-                                name: 'Missing Config',
-                                description: 'You must configure this addon to use it',
-                            },
-                        ],
-                    });
+                    return createJsonResponse(missingConfig(url.origin));
                 }
+
                 const config = components[0];
                 const decodedPath = decodeURIComponent(url.pathname);
-                
+
                 const streamMatch = new RegExp(
                     `/${config}/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?.json`
                   ).exec(decodedPath);
@@ -72,12 +76,7 @@ export default {
                 if (!streamMatch) {
                     let path = decodedPath.replace(`/${config}`, '')
                     console.error(`Invalid request: ${path}`);
-                    return new Response('Invalid Request', {
-                        status: 400,
-                        headers: {
-                            'Content-Type': 'text/plain',
-                        },
-                    });
+                    return createResponse('Invalid request', 400);
                 }
                 
                 const [type, id, season, episode] = streamMatch.slice(1);
@@ -87,28 +86,12 @@ export default {
                 try {
                     decodedConfig = JSON.parse(atob(config));
                 } catch (error: any) {
-                    return createJsonResponse({
-                        streams: [
-                            {
-                                externalUrl: url.origin + '/configure',
-                                name: 'Invalid Config',
-                                description: 'You must configure this addon to use it',
-                            },
-                        ],
-                    })
+                    return createJsonResponse(invalidConfig(url.origin, 'Outdated Configuration'));
                 }
                 const {valid, errorMessage, errorCode} = validateConfig(decodedConfig);
                 if (!valid) {
                     console.error(`Invalid config: ${errorMessage}`);
-                    return createJsonResponse({
-                        streams: [
-                            {
-                                externalUrl: url.origin + '/configure',
-                                name: 'Invalid Config',
-                                description: errorMessage,
-                            },
-                        ],
-                    });
+                    return createJsonResponse(invalidConfig(url.origin, errorMessage ?? 'Unknown'));
                 }
 
                 let streamRequest: StreamRequest;
@@ -116,12 +99,7 @@ export default {
                 switch (type) {
                     case 'series':
                         if (!season || !episode) {
-                            return new Response('Invalid Request', {
-                                status: 400,
-                                headers: {
-                                    'Content-Type': 'text/plain',
-                                },
-                            });
+                            return createResponse('Invalid Request', 400);
                         }
                         streamRequest = {
                             id,
@@ -137,12 +115,7 @@ export default {
                         };
                         break;
                     default:
-                        return new Response('Invalid Request', {
-                            status: 400,
-                            headers: {
-                                'Content-Type': 'text/plain',
-                            },
-                        });
+                        return createResponse('Invalid Request', 400);
                 }
 
                 const aioStreams = new AIOStreams(decodedConfig);
