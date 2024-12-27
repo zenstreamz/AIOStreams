@@ -90,12 +90,16 @@ export type StreamRequest = MovieRequest | SeriesRequest;
 export type Resolution = { [key: string]: boolean };
 export type Quality = { [key: string]: boolean };
 export type VisualTag = { [key: string]: boolean };
+export type AudioTag = { [key: string]: boolean };
+export type Encode = { [key: string]: boolean };
 export type SortBy = { [key: string]: boolean };
 
 export interface Config {
   resolutions: Resolution[];
   qualities: Quality[];
   visualTags: VisualTag[];
+  audioTags: AudioTag[];
+  encodes: Encode[];
   sortBy: SortBy[];
   onlyShowCachedStreams: boolean;
   prioritiseLanguage: string | null;

@@ -34,10 +34,21 @@ export class AIOStreams {
       );
       if (!qualityFilter) return false;
 
-      const visualTagFilter = parsedStream.visualTags.some(
-        (tag) => !this.config.visualTags.find((t) => t[tag])
+      const visualTagFilter = parsedStream.visualTags.find(
+        (tag) => !this.config.visualTags.some((visualTag) => visualTag[tag])
       );
       if (visualTagFilter) return false;
+
+      const audioTagFilter = parsedStream.audioTags.find(
+        (tag) => !this.config.audioTags.some((audioTag) => audioTag[tag])
+      );
+      if (audioTagFilter) return false;
+
+      if (
+        parsedStream.encode &&
+        !this.config.encodes.some((encode) => encode[parsedStream.encode])
+      )
+        return false;
 
       if (
         this.config.onlyShowCachedStreams &&
@@ -244,6 +255,26 @@ export class AIOStreams {
       );
       // Sort by the visual tag index
       return aVisualTagIndex - bVisualTagIndex;
+    } else if (field === 'audioTag') {
+      // Find the highest priority audio tag in each file
+      const getIndexOfTag = (tag: string) =>
+        this.config.audioTags.findIndex((t) => t[tag]);
+      const aAudioTagIndex = a.audioTags.reduce(
+        (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
+        this.config.audioTags.length
+      );
+
+      const bAudioTagIndex = b.audioTags.reduce(
+        (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
+        this.config.audioTags.length
+      );
+      // Sort by the audio tag index
+      return aAudioTagIndex - bAudioTagIndex;
+    } else if (field === 'encode') {
+      return (
+        this.config.encodes.findIndex((encode) => encode[a.encode]) -
+        this.config.encodes.findIndex((encode) => encode[b.encode])
+      );
     }
     return 0;
   }
