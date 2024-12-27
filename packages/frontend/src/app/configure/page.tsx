@@ -293,19 +293,19 @@ export default function Configure() {
 
       if (configMatch) {
         const decodedConfig = JSON.parse(atob(configMatch[1]));
-        setResolutions(decodedConfig.resolutions);
-        setQualities(decodedConfig.qualities);
-        setVisualTags(decodedConfig.visualTags);
-        setAudioTags(decodedConfig.audioTags);
-        setEncodes(decodedConfig.encodes);
-        setSortCriteria(decodedConfig.sortBy);
-        setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams);
-        setPrioritiseLanguage(decodedConfig.prioritiseLanguage);
-        setFormatter(decodedConfig.formatter);
-        setAddons(decodedConfig.addons);
-        setServices(decodedConfig.services);
-        setMaxSize(decodedConfig.maxSize);
-        setMinSize(decodedConfig.minSize);
+        setResolutions(decodedConfig.resolutions || defaultResolutions);
+        setQualities(decodedConfig.qualities || defaultQualities);
+        setVisualTags(decodedConfig.visualTags || defaultVisualTags);
+        setAudioTags(decodedConfig.audioTags || defaultAudioTags);
+        setEncodes(decodedConfig.encodes || defaultEncodes);
+        setSortCriteria(decodedConfig.sortBy || defaultSortCriteria);
+        setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
+        setPrioritiseLanguage(decodedConfig.prioritiseLanguage || null);
+        setFormatter(decodedConfig.formatter || 'gdrive');
+        setAddons(decodedConfig.addons || []);
+        setServices(decodedConfig.services || defaultServices);
+        setMaxSize(decodedConfig.maxSize || null);
+        setMinSize(decodedConfig.minSize || null);
       }
     } catch (error) {
       console.error('Failed to load config', error);
