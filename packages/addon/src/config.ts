@@ -298,27 +298,16 @@ export function validateConfig(config: Config): {
   }
 
   // need at least one visual tag, resolution, quality
-  if (config.visualTags.length === 0) {
+ 
+  if (
+    !config.visualTags.some((tag) => Object.values(tag)[0]) ||
+    !config.resolutions.some((resolution) => Object.values(resolution)[0]) ||
+    !config.qualities.some((quality) => Object.values(quality)[0])
+  ) {
     return createResponse(
       false,
-      'noVisualTags',
-      'At least one visual tag must be selected'
-    );
-  }
-
-  if (config.resolutions.length === 0) {
-    return createResponse(
-      false,
-      'noResolutions',
-      'At least one resolution must be selected'
-    );
-  }
-
-  if (config.qualities.length === 0) {
-    return createResponse(
-      false,
-      'noQualities',
-      'At least one quality must be selected'
+      'noFilters',
+      'At least one visual tag, resolution, and quality must be selected'
     );
   }
 
