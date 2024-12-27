@@ -14,6 +14,7 @@ import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import addonPackage from '../../../package.json';
+import { formatSize } from '@aiostreams/formatters';
 import {
   allowedFormatters,
   allowedLanguages,
@@ -136,13 +137,6 @@ const defaultServices = [
     credentials: {},
   },
 ];
-
-const formatSize = (size: number | null): string => {
-  if (size === null) return '';
-  return size >= 1000 * 1000 * 1000
-    ? `${(size / 1000 / 1000 / 1000).toFixed(2)} GB`
-    : `${(size / 1000 / 1000).toFixed(2)} MB`;
-};
 
 export default function Configure() {
   const [resolutions, setResolutions] =
