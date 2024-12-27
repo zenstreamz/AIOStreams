@@ -30,7 +30,6 @@ export default {
     try {
       const url = new URL(decodeURIComponent(request.url));
       const components = url.pathname.split('/').splice(1);
-      console.log(components);
 
       // handle static asset requests
       if (components.includes('_next')) {
@@ -133,7 +132,8 @@ export default {
         return createJsonResponse({ streams });
       }
 
-      return env.ASSETS.fetch(new Request(url.origin + '/404', request));
+      const notFound = await env.ASSETS.fetch(new Request(url.origin + '/404', request));
+      return new Response(notFound.body, { ...notFound, status: 404 });
     } catch (e) {
       console.error(e);
       return new Response('Internal Server Error', {
