@@ -446,7 +446,7 @@ export default function Configure() {
                 className={styles.slider + ' ' + styles.sliderMin}
               />
               <div className={styles.sliderValue}>
-                Minimum size: {minSize ? formatSize(minSize) : 'Disabled'}
+                Minimum size: {formatSize(minSize || 0)}
               </div>
               <input
                 type="range"
@@ -462,7 +462,7 @@ export default function Configure() {
                 className={styles.slider + ' ' + styles.sliderMax}
               />
               <div className={styles.sliderValue}>
-                Maximum size: {maxSize ? formatSize(maxSize) : 'Disabled'}
+                Maximum size: {maxSize ? formatSize(maxSize) : '∞'}
               </div>
             </div>
           </div>
