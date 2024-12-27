@@ -21,6 +21,7 @@ import {
   addonDetails,
   validateConfig,
   serviceCredentials,
+  MAX_SIZE,
 } from '@aiostreams/config';
 
 const version = addonPackage.version;
@@ -286,7 +287,7 @@ export default function Configure() {
     if (slider) {
       slider.style.setProperty(
         '--minValue',
-        `${((minSize || 0) / 150000000000) * 100}%`
+        `${((minSize || 0) / MAX_SIZE) * 100}%`
       );
     }
   }, [minSize]);
@@ -298,7 +299,7 @@ export default function Configure() {
     if (slider) {
       slider.style.setProperty(
         '--maxValue',
-        `${((maxSize || 0) / 150000000000) * 100}%`
+        `${((maxSize || 0) / MAX_SIZE) * 100}%`
       );
     }
   }, [maxSize]);
@@ -420,8 +421,8 @@ export default function Configure() {
               <input
                 type="range"
                 min="0"
-                max="150000000000"
-                step="50000000"
+                max={MAX_SIZE}
+                step={MAX_SIZE / 10000}
                 value={minSize || 0}
                 onChange={(e) =>
                   setMinSize(
@@ -436,8 +437,8 @@ export default function Configure() {
               <input
                 type="range"
                 min="0"
-                max="150000000000"
-                step="50000000"
+                max={MAX_SIZE}
+                step={MAX_SIZE / 10000}
                 value={maxSize || 0}
                 onChange={(e) =>
                   setMaxSize(
