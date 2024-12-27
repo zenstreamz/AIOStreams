@@ -9,6 +9,8 @@ import {
   SortBy,
   Quality,
   VisualTag,
+  AudioTag,
+  Encode,
 } from '@aiostreams/types';
 import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
@@ -52,11 +54,34 @@ const defaultVisualTags: VisualTag[] = [
   { AI: true },
 ];
 
+const defaultAudioTags: AudioTag[] = [
+  { Atmos: true },
+  { 'DD+': true },
+  { DD: true },
+  { 'DTS-HD MA': true },
+  { 'DTS-HD': true },
+  { DTS: true },
+  { TrueHD: true },
+  { '5.1': true },
+  { '7.1': true },
+  { AC3: true },
+  { AAC: true },
+];
+
+const defaultEncodes: Encode[] = [
+  { x265: true },
+  { HEVC: true },
+  { x264: true },
+  { AVC: true },
+];
+
 const defaultSortCriteria: SortBy[] = [
   { cached: true },
   { resolution: true },
-  { visualTag: true },
   { size: true },
+  { visualTag: false },
+  { audioTag: false },
+  { encode: false },
   { quality: false },
   { seeders: false },
 ];
@@ -145,6 +170,8 @@ export default function Configure() {
     useState<Resolution[]>(defaultResolutions);
   const [qualities, setQualities] = useState<Quality[]>(defaultQualities);
   const [visualTags, setVisualTags] = useState<VisualTag[]>(defaultVisualTags);
+  const [audioTags, setAudioTags] = useState<AudioTag[]>(defaultAudioTags);
+  const [encodes, setEncodes] = useState<Encode[]>(defaultEncodes);
   const [sortCriteria, setSortCriteria] =
     useState<SortBy[]>(defaultSortCriteria);
   const [formatter, setFormatter] = useState<string>();
@@ -174,6 +201,8 @@ export default function Configure() {
       resolutions,
       qualities,
       visualTags,
+      audioTags,
+      encodes,
       sortBy: sortCriteria,
       onlyShowCachedStreams,
       prioritiseLanguage,
@@ -267,6 +296,8 @@ export default function Configure() {
         setResolutions(decodedConfig.resolutions);
         setQualities(decodedConfig.qualities);
         setVisualTags(decodedConfig.visualTags);
+        setAudioTags(decodedConfig.audioTags);
+        setEncodes(decodedConfig.encodes);
         setSortCriteria(decodedConfig.sortBy);
         setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams);
         setPrioritiseLanguage(decodedConfig.prioritiseLanguage);
@@ -356,9 +387,27 @@ export default function Configure() {
           <h2 style={{ padding: '5px' }}>Visual Tags</h2>
           <p style={{ padding: '5px' }}>
             Choose which visual tags you want to see and reorder their priority
-            if needed.
+            if needed.  
           </p>
           <SortableCardList items={visualTags} setItems={setVisualTags} />
+        </div>
+
+        <div className={styles.section}>
+          <h2 style={{ padding: '5px' }}>Audio Tags</h2>
+          <p style={{ padding: '5px' }}>
+            Choose which audio tags you want to see and reorder their priority
+            if needed.
+          </p>
+          <SortableCardList items={audioTags} setItems={setAudioTags} />
+        </div>
+
+        <div className={styles.section}>
+          <h2 style={{ padding: '5px' }}>Encodes</h2>
+          <p style={{ padding: '5px' }}>
+            Choose which encodes you want to see and reorder their priority if
+            needed.
+          </p>
+          <SortableCardList items={encodes} setItems={setEncodes} />
         </div>
 
         <div className={styles.section}>
