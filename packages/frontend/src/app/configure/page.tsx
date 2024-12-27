@@ -338,6 +338,8 @@ export default function Configure() {
 
   return (
     <div className={styles.container}>
+      
+      <div className={styles.content}>
       <div className={styles.header}>
         <Image
           src="/assets/logo.png"
@@ -364,7 +366,6 @@ export default function Configure() {
           </a>
         </p>
       </div>
-      <div className={styles.content}>
         <div className={styles.section}>
           <h2 style={{ padding: '5px' }}>Resolutions</h2>
           <p style={{ padding: '5px' }}>
