@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import styles from './page.module.css';
 import {
   Config,
@@ -306,7 +307,14 @@ export default function Configure() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.content}>
+      <div className={styles.header}>
+        <Image
+          src="/assets/logo.png"
+          alt="AIOStreams Logo"
+          width={200}
+          height={200}
+          style={{ alignSelf: 'center', justifyContent: 'center' }}
+        />
         <h1 style={{ textAlign: 'center' }}>AIOStreams v{version}</h1>
         <p style={{ textAlign: 'center', padding: '15px' }}>
           AIOStreams, the all-in-one streaming addon for Stremio. Combine your
@@ -324,7 +332,8 @@ export default function Configure() {
             GitHub
           </a>
         </p>
-
+      </div>
+      <div className={styles.content}>
         <div className={styles.section}>
           <h2 style={{ padding: '5px' }}>Resolutions</h2>
           <p style={{ padding: '5px' }}>
