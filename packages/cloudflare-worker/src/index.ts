@@ -57,9 +57,9 @@ export default {
       // handle /manifest.json and /:config/manifest.json requests
       if (components.includes('manifest.json')) {
         if (components.length === 1) {
-          return createJsonResponse(getManifest(true));
-        } else {
           return createJsonResponse(getManifest(false));
+        } else {
+          return createJsonResponse(getManifest(true));
         }
       }
 

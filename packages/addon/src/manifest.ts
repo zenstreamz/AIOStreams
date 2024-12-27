@@ -19,7 +19,7 @@ export const getManifest = (configured: boolean): typeof manifest => {
     ...manifest,
     behaviorHints: {
       ...manifest.behaviorHints,
-      configurationRequired: configured,
+      configurationRequired: !configured,
     },
   };
 };
