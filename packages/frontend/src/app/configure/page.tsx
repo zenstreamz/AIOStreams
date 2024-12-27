@@ -155,7 +155,6 @@ export default function Configure() {
   const [addons, setAddons] = useState<Config['addons']>([]);
   const [maxSize, setMaxSize] = useState<number | null>(null);
   const [minSize, setMinSize] = useState<number | null>(null);
-  const [sizeUnit, setSizeUnit] = useState<'MB' | 'GB'>('GB');
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
@@ -166,14 +165,6 @@ export default function Configure() {
       choosableAddons.push('torbox');
     }
     return choosableAddons;
-  };
-
-  const convertToBytes = (
-    size: number | null,
-    unit: 'MB' | 'GB'
-  ): number | null => {
-    if (size === null) return null;
-    return unit === 'GB' ? size * 1000 * 1000 * 1000 : size * 1000 * 1000;
   };
 
   const createConfig = (): Config => {
