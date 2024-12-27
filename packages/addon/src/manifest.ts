@@ -7,6 +7,8 @@ export const manifest = {
   description: description,
   catalogs: [],
   resources: ['stream'],
+  background: 'https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/assets/background.png',
+  logo: 'https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/assets/logo.png',
   types: ['movie', 'series'],
   behaviorHints: {
     configurable: true,
