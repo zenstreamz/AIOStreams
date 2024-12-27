@@ -3,6 +3,9 @@ import { AddonDetail } from '@aiostreams/types';
 
 export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
 
+export const MAX_ADDONS = 10;
+export const MAX_SIZE = 150000000000; // 1500GB
+
 export const addonDetails: AddonDetail[] = [
   {
     name: 'Torrentio',
@@ -329,11 +332,11 @@ export function validateConfig(config: Config): {
     );
   }
 
-  if (config.addons.length > 10) {
+  if (config.addons.length > MAX_ADDONS) {
     return createResponse(
       false,
       'tooManyAddons',
-      'You can only select a maximum of 10 addons'
+      `You can only select a maximum of ${MAX_ADDONS} addons`
     );
   }
 
