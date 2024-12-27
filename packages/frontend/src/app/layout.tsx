@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'AIOStreams',
-  description: 'Combine all your streams into one addon and display them with consistent formatting, sorting, and filtering.',
+  description:
+    'Combine all your streams into one addon and display them with consistent formatting, sorting, and filtering.',
 };
 
 export default function RootLayout({

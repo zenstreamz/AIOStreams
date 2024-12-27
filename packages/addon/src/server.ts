@@ -6,11 +6,11 @@ import { validateConfig } from './config';
 import { getManifest } from './manifest';
 import { invalidConfig, missingConfig } from './responses';
 
-
 const app = express();
 const port = process.env.PORT || 3000;
 
-const rootUrl = (req: Request) => `${req.protocol}://${req.hostname}${req.hostname === 'localhost' ? `:${port}` : ''}`;
+const rootUrl = (req: Request) =>
+  `${req.protocol}://${req.hostname}${req.hostname === 'localhost' ? `:${port}` : ''}`;
 
 // Built-in middleware for parsing JSON
 app.use(express.json());
@@ -44,7 +44,6 @@ app.get('/:config/manifest.json', (req, res) => {
 
 // Route for /stream
 app.get('/stream/:type/:id', (req: Request, res: Response) => {
-
   res.status(200).json(missingConfig(rootUrl(req)));
 });
 
@@ -118,7 +117,9 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
     const { valid, errorCode, errorMessage } = validateConfig(configJson);
     if (!valid) {
       console.error(`Invalid config: ${errorCode} - ${errorMessage}`);
-      res.status(200).json(invalidConfig(rootUrl(req), errorMessage ?? 'Unknown'));
+      res
+        .status(200)
+        .json(invalidConfig(rootUrl(req), errorMessage ?? 'Unknown'));
     }
 
     const aioStreams = new AIOStreams(configJson);

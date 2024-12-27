@@ -14,7 +14,6 @@ export const manifest = {
   },
 };
 
-
 export const getManifest = (configured: boolean): typeof manifest => {
   return {
     ...manifest,
@@ -23,4 +22,4 @@ export const getManifest = (configured: boolean): typeof manifest => {
       configurationRequired: configured,
     },
   };
-}
+};

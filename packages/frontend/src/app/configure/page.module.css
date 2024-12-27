@@ -66,7 +66,6 @@
   padding: 5px;
 }
 
-
 .slider {
   width: 100%;
   margin: 10px 0;
@@ -80,7 +79,6 @@
   height: 15px;
   transition: opacity 0.2s;
   -webkit-tap-highlight-color: transparent;
-
 }
 
 .slider:hover {
@@ -88,13 +86,24 @@
 }
 
 .sliderMax {
-  background: linear-gradient(to right, #1b1b1b 0%, #d3d3d3 var(--maxValue), #1a1a1a var(--maxValue), #1a1a1a 100%);
+  background: linear-gradient(
+    to right,
+    #1b1b1b 0%,
+    #d3d3d3 var(--maxValue),
+    #1a1a1a var(--maxValue),
+    #1a1a1a 100%
+  );
 }
 
 .sliderMin {
-  background: linear-gradient(to right, #414141 0%, #ffffff var(--minValue), #1a1a1a var(--minValue), #1a1a1a 100%);
+  background: linear-gradient(
+    to right,
+    #414141 0%,
+    #ffffff var(--minValue),
+    #1a1a1a var(--minValue),
+    #1a1a1a 100%
+  );
 }
-
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;

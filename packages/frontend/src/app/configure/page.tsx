@@ -310,18 +310,27 @@ export default function Configure() {
     }
   }, []);
 
-  
   useEffect(() => {
-    const slider = document.querySelector(`.${styles.sliderMin}`) as HTMLElement;
+    const slider = document.querySelector(
+      `.${styles.sliderMin}`
+    ) as HTMLElement;
     if (slider) {
-      slider.style.setProperty('--minValue', `${(minSize || 0) / 150000000000 * 100}%`);
+      slider.style.setProperty(
+        '--minValue',
+        `${((minSize || 0) / 150000000000) * 100}%`
+      );
     }
   }, [minSize]);
 
   useEffect(() => {
-    const slider = document.querySelector(`.${styles.sliderMax}`) as HTMLElement;
+    const slider = document.querySelector(
+      `.${styles.sliderMax}`
+    ) as HTMLElement;
     if (slider) {
-      slider.style.setProperty('--maxValue', `${(maxSize || 0) / 150000000000 * 100}%`);
+      slider.style.setProperty(
+        '--maxValue',
+        `${((maxSize || 0) / 150000000000) * 100}%`
+      );
     }
   }, [maxSize]);
 
@@ -434,7 +443,8 @@ export default function Configure() {
             <div>
               <h2 style={{ padding: '5px' }}>Size Filter</h2>
               <p style={{ padding: '5px' }}>
-                Filter streams by size. Leave both sliders at 0 to disable the filter.
+                Filter streams by size. Leave both sliders at 0 to disable the
+                filter.
               </p>
             </div>
             <div className={styles.slidersContainer}>
@@ -444,7 +454,11 @@ export default function Configure() {
                 max="150000000000"
                 step="50000000"
                 value={minSize || 0}
-                onChange={(e) => setMinSize(e.target.value === '0' ? null : parseInt(e.target.value))}
+                onChange={(e) =>
+                  setMinSize(
+                    e.target.value === '0' ? null : parseInt(e.target.value)
+                  )
+                }
                 className={styles.slider + ' ' + styles.sliderMin}
               />
               <div className={styles.sliderValue}>
@@ -456,7 +470,11 @@ export default function Configure() {
                 max="150000000000"
                 step="50000000"
                 value={maxSize || 0}
-                onChange={(e) => setMaxSize(e.target.value === '0' ? null : parseInt(e.target.value))}
+                onChange={(e) =>
+                  setMaxSize(
+                    e.target.value === '0' ? null : parseInt(e.target.value)
+                  )
+                }
                 className={styles.slider + ' ' + styles.sliderMax}
               />
               <div className={styles.sliderValue}>
