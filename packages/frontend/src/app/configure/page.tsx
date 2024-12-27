@@ -190,8 +190,8 @@ export default function Configure() {
       sortBy: sortCriteria,
       onlyShowCachedStreams,
       prioritiseLanguage,
-      maxSize: convertToBytes(maxSize, sizeUnit),
-      minSize: convertToBytes(minSize, sizeUnit),
+      maxSize: maxSize,
+      minSize: minSize,
       formatter: formatter || 'gdrive',
       addons,
       services,
@@ -286,24 +286,8 @@ export default function Configure() {
         setFormatter(decodedConfig.formatter);
         setAddons(decodedConfig.addons);
         setServices(decodedConfig.services);
-        if (decodedConfig.maxSize) {
-          const unit = decodedConfig.maxSize > 1000 * 1000 * 1000 ? 'GB' : 'MB';
-          setSizeUnit(unit);
-          setMaxSize(
-            unit === 'GB'
-              ? decodedConfig.maxSize / 1000 / 1000 / 1000
-              : decodedConfig.maxSize / 1000 / 1000
-          );
-        }
-        if (decodedConfig.minSize) {
-          const unit = decodedConfig.minSize > 1000 * 1000 * 1000 ? 'GB' : 'MB';
-          setSizeUnit(unit);
-          setMinSize(
-            unit === 'GB'
-              ? decodedConfig.minSize / 1000 / 1000 / 1000
-              : decodedConfig.minSize / 1000 / 1000
-          );
-        }
+        setMaxSize(decodedConfig.maxSize);
+        setMinSize(decodedConfig.minSize);
       }
     } catch (error) {
       console.error('Failed to load config', error);
