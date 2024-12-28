@@ -1,4 +1,7 @@
-# AIOStreams
+
+<p align="center"><img src="https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/logo.png" /></p>
+<h1 align="center" id="title">AIOStreams</h1>
+
 
 > [!WARNING]
 > This addon is currently still in development. Things may not work as expected.
@@ -27,6 +30,20 @@ The addon has parsers for specific addons and can extract the relevant informati
 It goes through each addon you selected and obtains the results with all the parsed information.
 
 Once it has all the parsed information for each result, it can apply your configured sorting and filtering options.
+
+### Why was this addon created?
+
+I wanted to have a single addon that could scrape all the sources I wanted and apply my own custom filters and sorting options.
+Many addons lack the ability to finely tune how you want your results to be sorted and filtered. 
+
+Being able to change the format of every result was also a big factor in creating this addon. 
+I preferred the format of my GDrive addon and wanted to use that format for all my results.
+This makes it easier to parse the results and explain to less tech-savvy people how to pick the best result.
+
+It also means you only have to install one addon instead of configuring multiple addons.
+
+Furthermore, being able to apply a global filter and sort to all results means that you can get the best results from all sources displayed first, 
+rather than having to check each addon individually.
 
 ### What are the currently supported addons?
 
