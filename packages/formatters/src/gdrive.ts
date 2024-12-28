@@ -19,7 +19,7 @@ export function gdriveFormat(stream: ParsedStream): {
 
   name += `${stream.addonName} ${stream.resolution}`;
 
-  let description: string = `🎥 ${stream.quality}   ${stream.encode ? '🎞️ ' + stream.encode : ''}`;
+  let description: string = `${stream.quality !== "Unknown" ? '🎥 ' + stream.quality + ' ' : ''}${stream.encode !== "Unknown" ? '🎞️ ' + stream.encode : ''}`;
 
   if (stream.visualTags.length > 0 || stream.audioTags.length > 0) {
     description += '\n';
@@ -34,10 +34,10 @@ export function gdriveFormat(stream: ParsedStream): {
   if (stream.size || stream.torrent?.seeders || stream.usenet?.age) {
     description += '\n';
 
-    description += `📦 ${formatSize(stream.size || 0)}`;
+    description += `📦 ${formatSize(stream.size || 0)} `;
 
     description += stream.torrent?.seeders
-      ? `👥 ${stream.torrent.seeders}   `
+      ? `👥 ${stream.torrent.seeders}`
       : '';
 
     description += stream.usenet?.age ? `📅 ${stream.usenet.age}` : '';
