@@ -9,7 +9,7 @@ import { parseFilename } from '@aiostreams/parser';
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/tt{id}.json';
   private indexerTimeout: number;
-  private addonName: string;
+  protected addonName: string;
   private addonUrl: string;
   constructor(addonName: string, addonUrl: string, indexerTimeout?: number) {
     this.addonName = addonName;
@@ -50,7 +50,9 @@ export class BaseWrapper {
       'Fetching streams from',
       this.getStreamUrl(streamRequest),
       'with timeout',
-      this.indexerTimeout
+      this.indexerTimeout,
+      'and name',
+      this.addonName
     );
     let url = this.getStreamUrl(streamRequest);
     const response = await fetch(url, { signal: controller.signal });

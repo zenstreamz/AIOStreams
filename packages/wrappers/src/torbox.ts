@@ -18,7 +18,6 @@ interface TorboxStream {
 }
 
 export class Torbox extends BaseWrapper {
-  private readonly name: string = 'Torbox';
   constructor(apiKey: string, indexerTimeout: number = 10000, addonName: string = 'Torbox') {
     super(addonName, 'https://stremio.torbox.app/' + apiKey + '/', indexerTimeout);
   }
@@ -76,7 +75,7 @@ export class Torbox extends BaseWrapper {
       ...parsedFilename,
       filename,
       size: sizeInBytes,
-      addonName: this.name,
+      addonName: this.addonName,
       url: stream.url,
       torrent:
         type === 'torrent'

@@ -4,8 +4,6 @@ import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
 
 export class Torrentio extends BaseWrapper {
-  private readonly name: string = 'Torrentio';
-
   constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Torrentio') {
     if (overrideUrl && overrideUrl.endsWith('/manifest.json')) {
       overrideUrl = overrideUrl.replace('/manifest.json', '/');
@@ -46,7 +44,7 @@ export class Torrentio extends BaseWrapper {
       ...parsedFilename,
       filename,
       size: sizeInBytes,
-      addonName: this.name,
+      addonName: this.addonName,
       url: stream.url,
       externalUrl: stream.externalUrl,
       torrent: {
