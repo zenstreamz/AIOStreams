@@ -109,6 +109,23 @@ npm run deploy:cloudflare-worker
 > [!NOTE]
 > Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
 
+### Huggingface 
+
+https://huggingface.co/spaces/Viren070/AIOStreams
+
+Duplicate the space. 
+
+### Render
+
+https://render.com/
+
+1. Deploy a new web service
+2. Select `Public Git Repository` as the source
+3. Enter `https://github.com/Viren070/AIOStreams`
+4. Deploy
+
+
+
 ### From source
 
 You need Node.js and git installed. Node v22 and npm v10.9 were used in the development of this project. I can not guarantee earlier versions will work.
