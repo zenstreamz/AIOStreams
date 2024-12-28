@@ -316,16 +316,22 @@ export class AIOStreams {
         );
       }
       case 'gdrive': {
-        let addonUrl = addon.options.addonUrl as string;
-        addonUrl = addonUrl.replace('/manifest.json', '/')
-        const wrapper = new BaseWrapper(addon.options.overrideName ? addon.options.overrideName as string: 'GDrive', addonUrl, addon.options.indexerTimeout ? addon.options.indexerTimeout as number : undefined);
+        const addonUrl = addon.options.addonUrl?.replace('/manifest.json', '/') + '/';
+        const wrapper = new BaseWrapper(
+          addon.options.overrideName || 'GDrive',
+          addonUrl,
+          addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined
+        );
         return await wrapper.getParsedStreams(streamRequest);
       }
       default: {
+        if (!addon.options.url) {
+          throw new Error('Addon URL not found');
+        }
         console.log(
           `Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`
         );
-        const wrapper = new BaseWrapper(addon.options.name as string, addon.options.url as string, addon.options.indexerTimeout ? addon.options.indexerTimeout as number : undefined);
+        const wrapper = new BaseWrapper(addon.options.name || 'Custom', addon.options.url.trim(), addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined);
         return await wrapper.getParsedStreams(streamRequest);
       }
     }

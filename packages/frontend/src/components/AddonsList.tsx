@@ -33,10 +33,10 @@ const AddonsList: React.FC<AddonsListProps> = ({
   const updateOption = (
     addonIndex: number,
     optionKey: string,
-    value?: string | boolean | number
+    value?: string
   ) => {
     const newAddons = [...addons];
-    newAddons[addonIndex].options[optionKey] = typeof value === 'string' ? value.trim() : value;
+    newAddons[addonIndex].options[optionKey] = value;
     setAddons(newAddons);
   };
 
@@ -92,12 +92,12 @@ const AddonsList: React.FC<AddonsListProps> = ({
                     {option.type === 'checkbox' && (
                       <input
                         type="checkbox"
-                        checked={addon.options[option.id] === true}
+                        checked={addon.options[option.id] === 'true'}
                         onChange={(e) =>
                           updateOption(
                             index,
                             option.id,
-                            e.target.checked
+                            e.target.checked ? 'true' : 'false'
                           )
                         }
                         className={styles.checkbox}
@@ -118,9 +118,9 @@ const AddonsList: React.FC<AddonsListProps> = ({
                   {option.type === 'number' && (
                     <input
                       type="number"
-                      value={addon.options[option.id] as number}
+                      value={addon.options[option.id]}
                       onChange={(e) =>
-                        updateOption(index, option.id, e.target.value ? parseInt(e.target.value) : undefined)
+                        updateOption(index, option.id, e.target.value ? e.target.value : undefined)
                       }
                       className={styles.textInput}
                     />

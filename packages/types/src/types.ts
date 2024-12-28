@@ -108,7 +108,7 @@ export interface Config {
   minSize: number | null;
   addons: {
     id: string;
-    options: { [key: string]: string | boolean | number | undefined };
+    options: { [key: string]: string | undefined};
   }[];
   services: {
     name: string;

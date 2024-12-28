@@ -101,7 +101,7 @@ export class Torbox extends BaseWrapper {
 export async function getTorboxStreams(
   config: Config,
   torboxOptions: { 
-    indexerTimeout?: number;
+    indexerTimeout?: string;
     overrideName?: string;
   },
   streamRequest: StreamRequest
@@ -118,6 +118,6 @@ export async function getTorboxStreams(
     throw new Error('Torbox API key not found');
   }
 
-  const torbox = new Torbox(torboxApiKey, torboxOptions.indexerTimeout, torboxOptions.overrideName);
+  const torbox = new Torbox(torboxApiKey, torboxOptions.indexerTimeout ? parseInt(torboxOptions.indexerTimeout) : undefined, torboxOptions.overrideName);
   return await torbox.getParsedStreams(streamRequest);
 }

@@ -332,33 +332,21 @@ export function validateConfig(config: Config): {
         }
 
         if (option.type === 'number' && addon.options[option.id]) {
-          if (typeof addon.options[option.id] !== 'number') {
+          const input = addon.options[option.id];
+          if (input !== undefined && !parseInt(input)) {
             return createResponse(
               false,
               'invalidNumber',
               `${option.label} must be a number`
             );
-          }
-
-          if (option.constraints) {
-            if (
-              option.constraints.min !== undefined &&
-              addon.options[option.id] as number < option.constraints.min
-            ) {
+          } else if (input !== undefined) {
+            const value = parseInt(input);
+            const { min, max } = option.constraints || {};
+            if ((min !== undefined && value < min) || (max !== undefined && value > max)) {
               return createResponse(
                 false,
                 'invalidNumber',
-                `${option.label} must be greater than or equal to ${option.constraints.min}`
-              );
-            }
-            if (
-              option.constraints.max !== undefined &&
-              addon.options[option.id] as number > option.constraints.max
-            ) {
-              return createResponse(
-                false,
-                'invalidNumber',
-                `${option.label} must be less than or equal to ${option.constraints.max}`
+                `${option.label} must be between ${min} and ${max}`
               );
             }
           }
