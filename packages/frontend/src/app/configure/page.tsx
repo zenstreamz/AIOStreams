@@ -71,6 +71,8 @@ const defaultAudioTags: AudioTag[] = [
 const defaultEncodes: Encode[] = [
   { HEVC: true },
   { AVC: true },
+  { Unknown: true },
+  
 ];
 
 const defaultSortCriteria: SortBy[] = [
