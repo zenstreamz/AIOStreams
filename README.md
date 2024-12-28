@@ -9,8 +9,8 @@
 Combines streams from other addons into one and provides much greater customisation:
 
 - Change the format of the resutls
-- Filter all results by resolution, quality, visual tags.
-- Sort all results by quality, resolution, size, cached, visual tags, seeders
+- Filter all results by resolution, quality, visual tags, audio tags, encodes.
+- Sort all results by quality, resolution, size, cached, visual tags, audio tags, encodes, seeders.
 - Prioritise specific languages
 - Specify a minimum and/or maximum size
 
