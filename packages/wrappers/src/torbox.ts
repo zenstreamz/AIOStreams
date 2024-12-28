@@ -87,7 +87,7 @@ export class Torbox extends BaseWrapper {
       usenet:
         type === 'usenet'
           ? {
-              age: parseInt(ageOrSeeders),
+              age: ageOrSeeders,
             }
           : undefined,
       provider: {

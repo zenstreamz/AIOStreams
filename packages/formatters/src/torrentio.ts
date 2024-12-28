@@ -32,7 +32,7 @@ export function torrentioFormat(stream: ParsedStream): {
       ? `👤 ${stream.torrent.seeders} `
       : '';
 
-    description += stream.usenet?.age ? `📅 ${stream.usenet.age}d ` : '';
+    description += stream.usenet?.age ? `📅 ${stream.usenet.age} ` : '';
 
     description += `💾 ${formatSize(stream.size || 0)} `;
 

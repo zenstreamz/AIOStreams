@@ -24,7 +24,7 @@ export interface ParsedStream extends ParsedNameData {
     sources?: string[];
   };
   usenet?: {
-    age?: number;
+    age?: string;
   };
   url?: string;
   externalUrl?: string;

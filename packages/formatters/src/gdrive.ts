@@ -40,7 +40,7 @@ export function gdriveFormat(stream: ParsedStream): {
       ? `👥 ${stream.torrent.seeders}   `
       : '';
 
-    description += stream.usenet?.age ? `📅 ${stream.usenet.age}d` : '';
+    description += stream.usenet?.age ? `📅 ${stream.usenet.age}` : '';
   }
   if (stream.languages.length !== 0) {
     description += `\n🔊 ${stream.languages.join(' | ')}`;
