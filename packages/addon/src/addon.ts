@@ -318,7 +318,7 @@ export class AIOStreams {
       case 'gdrive': {
         let addonUrl = addon.options.addonUrl as string;
         addonUrl = addonUrl.replace('/manifest.json', '/')
-        const wrapper = new BaseWrapper('GDrive', addonUrl, addon.options.indexerTimeout ? addon.options.indexerTimeout as number : undefined);
+        const wrapper = new BaseWrapper(addon.options.overrideName ? addon.options.overrideName as string: 'GDrive', addonUrl, addon.options.indexerTimeout ? addon.options.indexerTimeout as number : undefined);
         return await wrapper.getParsedStreams(streamRequest);
       }
       default: {

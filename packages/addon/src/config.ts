@@ -38,6 +38,13 @@ export const addonDetails: AddonDetail[] = [
           min: 1000,
           max: 20000
         }
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description: 'Override the name of the Torrentio addon that shows up in the results',
+        type: 'text',
       }
     ],
   },
@@ -55,6 +62,13 @@ export const addonDetails: AddonDetail[] = [
           min: 1000,
           max: 20000
         }
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description: 'Override the name of the Torrentio addon that shows up in the results',
+        type: 'text',
       }
     ],
   },
@@ -79,6 +93,13 @@ export const addonDetails: AddonDetail[] = [
           min: 1000,
           max: 20000
         }
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description: 'Override the name of the Torrentio addon that shows up in the results',
+        type: 'text',
       }
     ],
   },

@@ -19,8 +19,8 @@ interface TorboxStream {
 
 export class Torbox extends BaseWrapper {
   private readonly name: string = 'Torbox';
-  constructor(apiKey: string, indexerTimeout: number = 10000) {
-    super('Torbox', 'https://stremio.torbox.app/' + apiKey + '/', indexerTimeout);
+  constructor(apiKey: string, indexerTimeout: number = 10000, addonName: string = 'Torbox') {
+    super(addonName, 'https://stremio.torbox.app/' + apiKey + '/', indexerTimeout);
   }
 
   protected parseStream(stream: TorboxStream): ParsedStream | undefined {
@@ -102,6 +102,7 @@ export async function getTorboxStreams(
   config: Config,
   torboxOptions: { 
     indexerTimeout?: number;
+    overrideName?: string;
   },
   streamRequest: StreamRequest
 ): Promise<ParsedStream[]> {
@@ -117,6 +118,6 @@ export async function getTorboxStreams(
     throw new Error('Torbox API key not found');
   }
 
-  const torbox = new Torbox(torboxApiKey, torboxOptions.indexerTimeout);
+  const torbox = new Torbox(torboxApiKey, torboxOptions.indexerTimeout, torboxOptions.overrideName);
   return await torbox.getParsedStreams(streamRequest);
 }

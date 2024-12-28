@@ -6,7 +6,7 @@ import { BaseWrapper } from './base';
 export class Torrentio extends BaseWrapper {
   private readonly name: string = 'Torrentio';
 
-  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000) {
+  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Torrentio') {
     if (overrideUrl && overrideUrl.endsWith('/manifest.json')) {
       overrideUrl = overrideUrl.replace('/manifest.json', '/');
     }
@@ -16,7 +16,7 @@ export class Torrentio extends BaseWrapper {
       : 'https://torrentio.strem.fun/' +
         (configString ? configString + '/' : '');
 
-    super('Torrentio', url, indexerTimeout);
+    super(addonName, url, indexerTimeout);
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -72,6 +72,7 @@ export async function getTorrentioStreams(
     useMultipleInstances?: boolean;
     overrideUrl?: string;
     indexerTimeout?: number;
+    overrideName?: string;
   },
   streamRequest: StreamRequest
 ): Promise<ParsedStream[]> {
@@ -134,7 +135,7 @@ export async function getTorrentioStreams(
       }
       configString += getServicePair(service.id, service.credentials) + '|';
     }
-    const torrentio = new Torrentio(configString, null, torrentioOptions.indexerTimeout);
+    const torrentio = new Torrentio(configString, null, torrentioOptions.indexerTimeout, torrentioOptions.overrideName);
     return await torrentio.getParsedStreams(streamRequest);
   }
 }
