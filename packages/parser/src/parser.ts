@@ -29,7 +29,7 @@ export function parseFilename(filename: string): ParsedNameData {
     matchPattern(filename, PARSE_REGEX.resolutions) || DEFAULT_RESOLUTION;
   const quality =
     matchPattern(filename, PARSE_REGEX.qualities) || DEFAULT_QUALITY;
-  let visualTags = matchMultiplePatterns(filename, PARSE_REGEX.visualTags);
+  const visualTags = matchMultiplePatterns(filename, PARSE_REGEX.visualTags);
   const audioTags = matchMultiplePatterns(filename, PARSE_REGEX.audioTags);
   const encode = matchPattern(filename, PARSE_REGEX.encodes);
   const languages = matchMultiplePatterns(filename, PARSE_REGEX.languages);
