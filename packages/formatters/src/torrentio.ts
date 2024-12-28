@@ -1,5 +1,5 @@
 import { ParsedStream } from '@aiostreams/types';
-import { formatSize } from './utils';
+import { formatSize, languageToEmoji } from './utils';
 
 export function torrentioFormat(stream: ParsedStream): {
   name: string;
@@ -38,9 +38,12 @@ export function torrentioFormat(stream: ParsedStream): {
 
     description += stream.indexers ? `⚙️ ${stream.indexers} ` : '';
   }
-  if (stream.languages.length !== 0) {
-    description += `\n${stream.languages.join(' / ')}`;
+  const languageEmojis = stream.languages.map((lang) => {
+    const emoji = languageToEmoji(lang);
+    return emoji ? emoji : lang;
+  });
+  if (languageEmojis.length > 0) {
+    description += `\n${languageEmojis.join(' / ')}`;
   }
-
   return { name, description };
 }
