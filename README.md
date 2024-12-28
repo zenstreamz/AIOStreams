@@ -113,7 +113,8 @@ npm run deploy:cloudflare-worker
 
 https://huggingface.co/spaces/Viren070/AIOStreams
 
-Duplicate the space. 
+![hd deploy](https://github.com/user-attachments/assets/11d2ad91-bb17-4f79-9131-666a372f334b)
+
 
 ### Render
 
