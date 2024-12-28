@@ -19,6 +19,7 @@ import { Slide, ToastContainer, toast } from 'react-toastify';
 import addonPackage from '../../../package.json';
 import { formatSize } from '@aiostreams/formatters';
 import {
+  allowedAddons,
   allowedFormatters,
   allowedLanguages,
   addonDetails,
@@ -285,6 +286,41 @@ export default function Configure() {
     }
   };
 
+  const loadValidValuesFromObject = (object: { [key: string]: boolean }[], validValues: { [key: string]: boolean }[]) => { 
+    if (!object) {
+      return validValues;
+    }
+    return validValues.map((validValue) => {
+      const value = object.find((v) => Object.keys(v)[0] === Object.keys(validValue)[0]);
+      return value || validValue;
+    });
+
+  };
+
+  const validateValue = (value: string, validValues: string[]) => {
+    if (!value) {
+      return null;
+    }
+    return validValues.includes(value) ? value : null;
+  };
+
+  const loadValidServices = (services: Config['services']) => {
+    if (!services) {
+      return defaultServices;
+    }
+    return defaultServices.map((defaultService) => {
+      const service = services.find((s) => s.id === defaultService.id);
+      return service || defaultService;
+    });
+  };
+
+  const loadValidAddons = (addons: Config['addons']) => {
+    if (!addons) {
+      return [];
+    }
+    return addons.filter((addon) => allowedAddons.includes(addon.id));
+  };
+
   // Load config from the window path if it exists
   useEffect(() => {
     const path = window.location.pathname;
@@ -293,19 +329,19 @@ export default function Configure() {
 
       if (configMatch) {
         const decodedConfig = JSON.parse(atob(configMatch[1]));
-        setResolutions(decodedConfig.resolutions || defaultResolutions);
-        setQualities(decodedConfig.qualities || defaultQualities);
-        setVisualTags(decodedConfig.visualTags || defaultVisualTags);
-        setAudioTags(decodedConfig.audioTags || defaultAudioTags);
-        setEncodes(decodedConfig.encodes || defaultEncodes);
-        setSortCriteria(decodedConfig.sortBy || defaultSortCriteria);
+
+        setResolutions(loadValidValuesFromObject(decodedConfig.resolutions, defaultResolutions));
+        setQualities(loadValidValuesFromObject(decodedConfig.qualities, defaultQualities));
+        setVisualTags(loadValidValuesFromObject(decodedConfig.visualTags, defaultVisualTags));
+        setAudioTags(loadValidValuesFromObject(decodedConfig.audioTags, defaultAudioTags));
+        setEncodes(loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes));
         setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
-        setPrioritiseLanguage(decodedConfig.prioritiseLanguage || null);
-        setFormatter(decodedConfig.formatter || 'gdrive');
-        setAddons(decodedConfig.addons || []);
-        setServices(decodedConfig.services || defaultServices);
+        setPrioritiseLanguage(validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) || null);
+        setFormatter(validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive');
+        setServices(loadValidServices(decodedConfig.services));
         setMaxSize(decodedConfig.maxSize || null);
         setMinSize(decodedConfig.minSize || null);
+        setAddons(loadValidAddons(decodedConfig.addons));
       }
     } catch (error) {
       console.error('Failed to load config', error);

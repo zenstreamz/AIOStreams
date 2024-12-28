@@ -2,6 +2,7 @@ import { Config } from '@aiostreams/types';
 import { AddonDetail } from '@aiostreams/types';
 
 export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
+export const allowedAddons = ['torrentio', 'torbox', 'gdrive', 'custom'];
 
 export const MAX_ADDONS = 10;
 export const MAX_SIZE = 150000000000; // 1500GB
