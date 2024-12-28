@@ -11,7 +11,7 @@ function matchPattern(
   return (
     Object.entries(patterns).find(([_, pattern]) =>
       pattern.test(filename)
-    )?.[0] ?? ''
+    )?.[0] ?? 'Unknown'
   );
 }
 
