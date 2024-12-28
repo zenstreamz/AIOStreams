@@ -1,9 +1,6 @@
 import { ParsedNameData } from '@aiostreams/types';
 import { PARSE_REGEX } from './regex';
 
-const DEFAULT_RESOLUTION = 'Unknown';
-const DEFAULT_QUALITY = 'Unknown';
-
 function matchPattern(
   filename: string,
   patterns: Record<string, RegExp>
@@ -25,13 +22,11 @@ function matchMultiplePatterns(
 }
 
 export function parseFilename(filename: string): ParsedNameData {
-  const resolution =
-    matchPattern(filename, PARSE_REGEX.resolutions) || DEFAULT_RESOLUTION;
-  const quality =
-    matchPattern(filename, PARSE_REGEX.qualities) || DEFAULT_QUALITY;
+  const resolution = matchPattern(filename, PARSE_REGEX.resolutions);
+  const quality = matchPattern(filename, PARSE_REGEX.qualities);
+  const encode = matchPattern(filename, PARSE_REGEX.encodes);
   const visualTags = matchMultiplePatterns(filename, PARSE_REGEX.visualTags);
   const audioTags = matchMultiplePatterns(filename, PARSE_REGEX.audioTags);
-  const encode = matchPattern(filename, PARSE_REGEX.encodes);
   const languages = matchMultiplePatterns(filename, PARSE_REGEX.languages);
 
   return {
