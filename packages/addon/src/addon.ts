@@ -159,7 +159,7 @@ export class AIOStreams {
       subtitles: parsedStream.stream?.subtitles,
       sources: parsedStream.torrent?.sources,
       behaviorHints: {
-        videoSize: Math.floor(parsedStream.size || 0),
+        videoSize: Math.floor(parsedStream.size || 0) || undefined,
         filename: parsedStream.filename,
         bingeGroup: `${parsedStream.addonName}|${combinedTags.join('|')}`,
         proxyHeaders: parsedStream.stream?.behaviorHints?.proxyHeaders,
