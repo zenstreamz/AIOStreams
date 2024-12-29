@@ -13,11 +13,18 @@ export const addonDetails: AddonDetail[] = [
     id: 'torrentio',
     options: [
       {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description: 'Override the name of the Torrentio addon that shows up in the results',
+        type: 'text',
+      },
+      {
         id: 'overrideUrl',
         required: false,
         label: 'Override URL',
         description:
-          'Override the URL used to fetch streams from the torrentio addon',
+          'Override the URL used to fetch streams from the torrentio addon. This option is incompatible with the useMultipleInstances option. By default, the URL is generated based on the selected services and their credentials. Use this option to override the URL with a custom URL.',
         type: 'text',
       },
       {
@@ -25,27 +32,21 @@ export const addonDetails: AddonDetail[] = [
         required: false,
         label: 'Use Multiple Instances',
         description:
-          'Use multiple instances of the torrentio addon to fetch streams when using multiple services',
+          'Use multiple instances of the torrentio addon to fetch streams when using multiple services. With this option enabled, when you use multiple services, a separate request is made for each service. I recommend leaving this disabled, unless you want duplicate streams but with different services.',
         type: 'checkbox',
       },
       {
         id: 'indexerTimeout',
         required: false,
         label: 'Override Indexer Timeout',
-        description: 'The timeout for fetching streams from the Torrentio addon',
+        description: 'The timeout for fetching streams from the Torrentio addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
           min: 1000,
           max: 20000
         }
       },
-      {
-        id: 'overrideName',
-        required: false,
-        label: 'Override Addon Name',
-        description: 'Override the name of the Torrentio addon that shows up in the results',
-        type: 'text',
-      }
+
     ],
   },
   {
@@ -56,7 +57,7 @@ export const addonDetails: AddonDetail[] = [
         id: 'indexerTimeout',
         required: false,
         label: 'Override Indexer Timeout',
-        description: 'The timeout for fetching streams from the Torbox addon in milliseconds',
+        description: 'The timeout for fetching streams from the Torbox addon. This is the time in milliseconds that the addon will wait for a response from Torbox before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
           min: 1000,
@@ -67,7 +68,7 @@ export const addonDetails: AddonDetail[] = [
         id: 'overrideName',
         required: false,
         label: 'Override Addon Name',
-        description: 'Override the name of the Torrentio addon that shows up in the results',
+        description: 'Override the name of the addon that shows up in the results. Leave it empty to use the default name of \'Torbox\'.',
         type: 'text',
       }
     ],
@@ -80,26 +81,26 @@ export const addonDetails: AddonDetail[] = [
         id: 'addonUrl',
         required: true,
         label: 'Addon URL',
-        description: 'The URL of the Google Drive addon',
+        description: 'The URL to the manifest.json file for your Google Drive addon. This would be the URL of your Cloudflare Worker which looks something like https://your-worker-name.your-subdomain.workers.dev/manifest.json',
+        type: 'text',
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description: 'Override the name of the addon that shows up in the results. Leave it empty to use the default name of \'GDrive\'.',
         type: 'text',
       },
       {
         id: 'indexerTimeout',
         required: false,
         label: 'Override Indexer Timeout',
-        description: 'The timeout for fetching streams from the Google Drive addon in milliseconds',
+        description: 'The timeout for fetching streams from the Google Drive addon in milliseconds. This is the time in milliseconds that the addon will wait for a response from your Cloudflare Worker before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
           min: 1000,
           max: 20000
         }
-      },
-      {
-        id: 'overrideName',
-        required: false,
-        label: 'Override Addon Name',
-        description: 'Override the name of the Torrentio addon that shows up in the results',
-        type: 'text',
       }
     ],
   },
@@ -108,17 +109,17 @@ export const addonDetails: AddonDetail[] = [
     id: 'custom',
     options: [
       {
-        id: 'url',
+        id: 'name',
         required: true,
-        description: 'The URL of the custom addon',
-        label: 'URL',
+        description: 'The name of the custom addon. This is the name that will show up in the results',
+        label: 'Name',
         type: 'text',
       },
       {
-        id: 'name',
+        id: 'url',
         required: true,
-        description: 'The name of the custom addon',
-        label: 'Name',
+        description: 'The URL of the custom addon. This is the URL that will be used to fetch streams from the custom addon. The URL should point to the manifest.json file of the custom addon',
+        label: 'URL',
         type: 'text',
       },
       {
