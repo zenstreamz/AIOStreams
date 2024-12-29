@@ -88,7 +88,7 @@ export async function getTorrentioStreams(
 
   // If overrideUrl is provided, use it to get streams and skip all other steps
   if (torrentioOptions.overrideUrl) {
-    const torrentio = new Torrentio(null, torrentioOptions.overrideUrl as string, indexerTimeout);
+    const torrentio = new Torrentio(null, torrentioOptions.overrideUrl as string, indexerTimeout, torrentioOptions.overrideName);
     return torrentio.getParsedStreams(streamRequest);
   }
 
