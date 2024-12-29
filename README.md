@@ -76,25 +76,17 @@ The addon can display your results in different formats. The two formats availab
 
   ![image](https://github.com/user-attachments/assets/21f90ee2-e81d-4a56-9e64-8937fb7ab2bc)
 
-## Self-Hosting
-### Docker
+## Deploying your own instance
 
-Use the Dockerfile with [Docker](https://docs.docker.com/get-docker/) installed .
-```
-docker run -p 8080:3000 ghcr.io/viren070/aiostreams:latest
-```
-
-Or, build the docker image yourself
-```
-git clone https://github.com/Viren070/aiostreams.git
-cd aiostreams
-docker build -t aiostreams .
-docker run -p 8080:3000 aiostreams
-```
+Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it. 
 
 ### Cloudflare Workers
 
 This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
+
+> [!NOTE]
+> Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
+
 
 Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands: 
 
@@ -106,12 +98,13 @@ npm run build
 npm run deploy:cloudflare-worker
 ```
 
-> [!NOTE]
-> Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
-
 ### Huggingface 
 
+
 This addon can be deployed as a [Huggingface](https://huggingface.co/) space. 
+
+> [!WARNING]
+> Huggingface is centered around AI and as this addon is not related to AI, they may take it down.
 
 1. Create a Huggingface account and on the [home page](https://huggingface.co) create a new space.
 
@@ -185,11 +178,30 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 
 https://render.com/
 
+> [!WARNING]
+> Free instances 'spin down' after 15 minutes of inactivity. In this suspended state, it can take around a minute to start back up again when you make a request to it. 
+
 1. Deploy a new web service
 2. Select `Public Git Repository` as the source
 3. Enter `https://github.com/Viren070/AIOStreams`
 4. Deploy
 
+## Self-Hosting
+
+### Docker
+
+Use the Dockerfile with [Docker](https://docs.docker.com/get-docker/) installed .
+```
+docker run -p 8080:3000 ghcr.io/viren070/aiostreams:latest
+```
+
+Or, build the docker image yourself
+```
+git clone https://github.com/Viren070/aiostreams.git
+cd aiostreams
+docker build -t aiostreams .
+docker run -p 8080:3000 aiostreams
+```
 
 
 ### From source
