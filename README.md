@@ -111,9 +111,74 @@ npm run deploy:cloudflare-worker
 
 ### Huggingface 
 
-https://huggingface.co/spaces/Viren070/AIOStreams
+This addon can be deployed as a [Huggingface](https://huggingface.co/) space. 
 
-![hd deploy](https://github.com/user-attachments/assets/11d2ad91-bb17-4f79-9131-666a372f334b)
+1. Create a Huggingface account and on the [home page](https://huggingface.co) create a new space.
+
+  ![Screenshot 2024-12-29 133648](https://github.com/user-attachments/assets/9d20a1ac-8eff-4748-8ed7-29da174bd438)
+
+2. In the 'Create a space' menu, choose 'Docker' as the `Space SDK` and 'Blank' for the docker template.
+
+  ![image](https://github.com/user-attachments/assets/99dc4aed-9331-4bde-a500-2fa1b9dac572)
+
+  - Ensure the space is set to `Public`
+  - The `Space name` can be anything.
+
+3. After clicking 'Create Space', you should be taken to your space. Scroll down to 'Create your dockerfile', and click the link contained in the hint.
+
+  ![image](https://github.com/user-attachments/assets/8020ca91-abbf-4077-9379-1e0b693444a0)
+
+4. Copy and paste the following Dockerfile into the text box. Do not use the Dockerfile in this repository. Make sure to use the one below
+<details>
+<summary>Dockerfile - Click to expand</summary>
+<pre><code>
+FROM node:22-alpine AS builder
+WORKDIR /build
+RUN apk add --no-cache git && \
+git clone https://github.com/Viren070/AIOStreams.git . && \
+apk del git
+
+RUN npm install
+
+
+RUN npm run build
+
+RUN npm --workspaces prune --omit=dev
+
+FROM node:22-alpine AS final
+
+WORKDIR /app
+
+COPY --from=builder /build/package*.json /build/LICENSE ./
+
+COPY --from=builder /build/packages/addon/package.*json ./packages/addon/
+COPY --from=builder /build/packages/frontend/package.*json ./packages/frontend/
+COPY --from=builder /build/packages/formatters/package.*json ./packages/formatters/
+COPY --from=builder /build/packages/parser/package.*json ./packages/parser/
+COPY --from=builder /build/packages/types/package.*json ./packages/types/
+COPY --from=builder /build/packages/wrappers/package.*json ./packages/wrappers/
+
+COPY --from=builder /build/packages/addon/dist ./packages/addon/dist
+COPY --from=builder /build/packages/frontend/out ./packages/frontend/out
+COPY --from=builder /build/packages/formatters/dist ./packages/formatters/dist
+COPY --from=builder /build/packages/parser/dist ./packages/parser/dist
+COPY --from=builder /build/packages/types/dist ./packages/types/dist
+COPY --from=builder /build/packages/wrappers/dist ./packages/wrappers/dist
+
+COPY --from=builder /build/node_modules ./node_modules
+
+EXPOSE 7860
+
+ENV PORT=7860
+
+ENTRYPOINT ["npm", "run", "start:addon"]
+</code></pre>
+</details>
+
+5. Click `Commit new file to main`
+
+6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy 
+
 
 
 ### Render
