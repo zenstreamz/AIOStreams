@@ -13,9 +13,16 @@ export class BaseWrapper {
   private addonUrl: string;
   constructor(addonName: string, addonUrl: string, indexerTimeout?: number) {
     this.addonName = addonName;
-    this.addonUrl = addonUrl;
+    this.addonUrl = this.standardizeManifestUrl(addonUrl);
     this.indexerTimeout = indexerTimeout || 3000;
   }
+  
+  private standardizeManifestUrl(url: string): string {
+    // remove trailing slash and replace stremio:// with https://
+    let manifestUrl = url.replace('stremio://', 'https://').replace(/\/$/, '');
+    return manifestUrl.endsWith('/manifest.json') ? manifestUrl : `${manifestUrl}/manifest.json`;
+  }
+  
 
   public async getParsedStreams(
     streamRequest: StreamRequest
@@ -33,7 +40,7 @@ export class BaseWrapper {
         ? `${streamRequest.id}:${streamRequest.season}:${streamRequest.episode}`
         : streamRequest.id;
     return (
-      this.addonUrl +
+      this.addonUrl.replace('manifest.json', '') +
       this.streamPath
         .replace('{type}', streamRequest.type)
         .replace('{id}', finalId)
