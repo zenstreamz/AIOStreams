@@ -118,7 +118,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
                   {option.type === 'number' && (
                     <input
                       type="number"
-                      value={addon.options[option.id]}
+                      value={addon.options[option.id] || ''}
                       onChange={(e) =>
                         updateOption(index, option.id, e.target.value ? e.target.value : undefined)
                       }
