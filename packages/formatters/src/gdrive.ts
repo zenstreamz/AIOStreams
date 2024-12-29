@@ -46,7 +46,7 @@ export function gdriveFormat(stream: ParsedStream): {
     description += `\n🔊 ${stream.languages.join(' | ')}`;
   }
 
-  description += `\n📄 ${stream.filename}`;
+  description += `\n📄 ${stream.filename ? stream.filename : 'Unknown'}`;
 
   return { name, description };
 }

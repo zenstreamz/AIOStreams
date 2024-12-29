@@ -4,7 +4,7 @@ import {
   StreamRequest,
   ParsedNameData,
 } from '@aiostreams/types';
-import { parseFilename } from '@aiostreams/parser';
+import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
 
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/tt{id}.json';
@@ -77,7 +77,7 @@ export class BaseWrapper {
   protected createParsedResult(
     parsedInfo: ParsedNameData,
     stream: Stream,
-    filename: string,
+    filename?: string,
     size?: number
   ): ParsedStream {
     return {
@@ -111,17 +111,36 @@ export class BaseWrapper {
     // attempt to look for filename in behaviorHints.filename, return undefined if not found
     let filename = stream.behaviorHints?.filename || undefined;
 
-    if (!filename) {
-      return undefined;
-    }
     // parse the filename using our parser.
-    let parsedInfo: ParsedNameData = parseFilename(filename);
+
+    let parsedInfo: ParsedNameData;
+    if (filename) {
+      parsedInfo = parseFilename(filename);
+    } else {
+      console.log('Filename behaviorHint was missing, will attempt to parse stream description', stream.description || stream.title);
+      let description = stream.description || stream.title;
+      if (description) {
+        parsedInfo = parseFilename(description);
+      } else {
+        console.log('Stream had no filename or description, unable to parse.', stream);
+        parsedInfo = {
+          quality: 'Unknown',
+          languages: ['Unknown'],
+          resolution: 'Unknown',
+          encode: 'Unknown',
+          visualTags: [],
+          audioTags: []
+        }
+      }
+    }
 
     // see if size is present in behaviorHints
     let size: number | undefined;
     if (stream.behaviorHints?.videoSize) {
       size = stream.behaviorHints.videoSize;
-    }
+    } else if (stream.description || stream.title) {
+      size = extractSizeInBytes((stream.description || stream.title) as string, 1024);
+    }  
 
     return this.createParsedResult(parsedInfo, stream, filename, size);
   }

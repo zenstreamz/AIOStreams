@@ -77,7 +77,7 @@ export class AIOStreams {
     // Apply sorting
 
     // initially sort by filename to ensure consistent results
-    filteredResults.sort((a, b) => a.filename.localeCompare(b.filename));
+    filteredResults.sort((a, b) => a.filename && b.filename ? a.filename.localeCompare(b.filename) : 0);
 
     // then apply our this.config sorting
     filteredResults.sort((a, b) => {

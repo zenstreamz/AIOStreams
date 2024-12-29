@@ -11,7 +11,7 @@ export interface ParsedNameData {
 // the parsed stream data which is to be used to create the final stream object
 export interface ParsedStream extends ParsedNameData {
   addonName: string;
-  filename: string;
+  filename?: string;
   size?: number;
   provider?: {
     name: string;

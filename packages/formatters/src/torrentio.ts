@@ -19,7 +19,7 @@ export function torrentioFormat(stream: ParsedStream): {
     name += stream.visualTags.join(' | ');
   }
 
-  let description = stream.filename;
+  let description = stream.filename ? stream.filename : 'Unknown Name';
   if (
     stream.size ||
     stream.torrent?.seeders ||
