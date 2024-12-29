@@ -137,6 +137,18 @@
   transform: scale(1.1);
 }
 
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+.slider::-webkit-slider-thumb:active {
+  transform: scale(0.9);
+}
+
+.slider::-moz-range-thumb:active {
+  transform: scale(0.9);
+}
+
 .settingInput input[type='checkbox'] {
   width: 20px;
   height: 20px;
