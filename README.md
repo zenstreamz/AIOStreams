@@ -109,6 +109,9 @@ This addon can be deployed as a [Huggingface](https://huggingface.co/) space.
 > [!WARNING]
 > Huggingface is centered around AI and as this addon is not related to AI, they may take it down.
 
+> [!NOTE]
+> GDrive doesn't seem to work on Huggingface Spaces. I'm not sure why.
+
 1. Create a Huggingface account and on the [home page](https://huggingface.co) create a new space.
 
   ![Screenshot 2024-12-29 133648](https://github.com/user-attachments/assets/9d20a1ac-8eff-4748-8ed7-29da174bd438)
