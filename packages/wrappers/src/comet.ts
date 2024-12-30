@@ -10,7 +10,7 @@ interface CometStream extends Stream {
 }
 
 export class Comet extends BaseWrapper {
-  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Torrentio') {
+  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Comet') {
     let url = overrideUrl
       ? overrideUrl
       : 'https://comet.elfhosted.com/' +

@@ -6,7 +6,7 @@ import { addonDetails } from './details';
 
 
 export class MediaFusion extends BaseWrapper {
-  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Torrentio') {
+  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'MediaFusion') {
     let url = overrideUrl
       ? overrideUrl
       : 'https://mediafusion.elfhosted.com/' +
