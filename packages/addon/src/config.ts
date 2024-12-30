@@ -6,6 +6,8 @@ export const allowedAddons = ['torrentio', 'comet', 'torbox', 'gdrive', 'custom'
 
 export const MAX_ADDONS = 10;
 export const MAX_SIZE = 150000000000; // 1500GB
+const MAX_TIMEOUT = 20000;
+const MIN_TIMEOUT = 1000;
 
 export const addonDetails: AddonDetail[] = [
   {
@@ -44,8 +46,8 @@ export const addonDetails: AddonDetail[] = [
         description: 'The timeout for fetching streams from the Torrentio addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
-          min: 1000,
-          max: 20000
+          min: MIN_TIMEOUT,
+          max: MAX_TIMEOUT
         }
       },
 
@@ -86,6 +88,49 @@ export const addonDetails: AddonDetail[] = [
         required: false,
         label: 'Override Indexer Timeout',
         description: 'The timeout for fetching streams from the Comet addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: MIN_TIMEOUT,
+          max: MAX_TIMEOUT
+        }
+      }
+    ]
+  },
+  {
+    name: 'MediaFusion',
+    id: 'mediafusion',
+    requiresService: false,
+    supportedServices: ['realdebrid', 'alldebrid', 'premiumize', 'debridlink', 'torbox', 'offcloud'],
+    options: [
+      {
+        id: 'prioritiseDebrid',
+        required: false,
+        label: 'Prioritise Debrid Service',
+        description:
+          'Prioritise a specific debrid service when fetching streams. This option is useful when you want to use a specific debrid service for fetching streams. By default, the addon will make a separate request for each debrid service. I highly recommend provding a value for this option as it will speed up the fetching process and remove redundant results.',
+        type: 'select',
+        options: [{ value: 'realdebrid', label: 'Real Debrid' }, { value: 'alldebrid', label: 'All Debrid' }, { value: 'premiumize', label: 'Premiumize' }, { value: 'debridlink', label: 'Debrid Link' }, { value: 'torbox', label: 'Torbox' }, { value: 'offcloud', label: 'Offcloud' }],
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description: 'Override the name of the Media Fusion addon that shows up in the results',
+        type: 'text',
+      },
+      {
+        id: 'overrideUrl',
+        required: false,
+        label: 'Override URL',
+        description:
+          'Override the URL used to fetch streams from the Media Fusion addon. This option is incompatible with the prioritiseDebrid option. By default, the URL is generated based on the selected services and their credentials. Use this option to override the URL with a custom URL.',
+        type: 'text',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description: 'The timeout for fetching streams from the Media Fusion addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
           min: 1000,

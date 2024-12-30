@@ -2,6 +2,7 @@ import { ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
+import { addonDetails } from '@aiostreams/addon';
 
 interface CometStream extends Stream {
     torrentTitle?: string;
@@ -10,10 +11,6 @@ interface CometStream extends Stream {
 
 export class Comet extends BaseWrapper {
   constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Torrentio') {
-    if (overrideUrl && overrideUrl.endsWith('/manifest.json')) {
-      overrideUrl = overrideUrl.replace('/manifest.json', '/');
-    }
-
     let url = overrideUrl
       ? overrideUrl
       : 'https://comet.elfhosted.com/' +
@@ -30,8 +27,8 @@ export class Comet extends BaseWrapper {
     const parsedFilename: ParsedNameData = parseFilename(filename || stream.description || '');
     const sizeInBytes = stream.torrentSize
       ? stream.torrentSize
-      : stream.title
-      ? extractSizeInBytes(stream.title, 1024)
+      : stream.description
+      ? extractSizeInBytes(stream.description, 1024)
       : undefined;
 
     const debridMatch = RegExp(/^\[([a-zA-Z]{2})(\⚡)\]/).exec(
@@ -44,7 +41,7 @@ export class Comet extends BaseWrapper {
         }
       : undefined;
 
-    const indexerMatch = RegExp(/🔎 ([a-zA-Z0-9]+)/).exec(stream.title!);
+    const indexerMatch = RegExp(/🔎 ([a-zA-Z0-9]+)/).exec(stream.description || '');
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
 
     return {
@@ -105,13 +102,7 @@ export async function getCometStreams(
   },
   streamRequest: StreamRequest
 ): Promise<ParsedStream[]> {
-  const supportedServices: string[] = [
-    'realdebrid',
-    'alldebrid',
-    'premiumize',
-    'torbox',
-    'debridlink',
-  ];
+  const supportedServices: string[] = addonDetails.find((addon) => addon.id === 'comet')?.supportedServices || [];
   const parsedStreams: ParsedStream[] = [];
   const indexerTimeout = cometOptions.indexerTimeout ? parseInt(cometOptions.indexerTimeout) : undefined;
 

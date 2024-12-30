@@ -17,7 +17,7 @@ export class BaseWrapper {
     this.indexerTimeout = indexerTimeout || 3000;
   }
   
-  private standardizeManifestUrl(url: string): string {
+  protected standardizeManifestUrl(url: string): string {
     // remove trailing slash and replace stremio:// with https://
     let manifestUrl = url.replace('stremio://', 'https://').replace(/\/$/, '');
     return manifestUrl.endsWith('/manifest.json') ? manifestUrl : `${manifestUrl}/manifest.json`;

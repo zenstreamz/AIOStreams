@@ -2,13 +2,10 @@ import { ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
+import { addonDetails } from '@aiostreams/addon';
 
 export class Torrentio extends BaseWrapper {
   constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Torrentio') {
-    if (overrideUrl && overrideUrl.endsWith('/manifest.json')) {
-      overrideUrl = overrideUrl.replace('/manifest.json', '/');
-    }
-
     let url = overrideUrl
       ? overrideUrl
       : 'https://torrentio.strem.fun/' +
@@ -74,15 +71,7 @@ export async function getTorrentioStreams(
   },
   streamRequest: StreamRequest
 ): Promise<ParsedStream[]> {
-  const supportedServices: string[] = [
-    'realdebrid',
-    'alldebrid',
-    'premiumize',
-    'putio',
-    'torbox',
-    'offcloud',
-    'debridlink',
-  ];
+  const supportedServices: string[] = addonDetails.find((addon) => addon.id === 'torrentio')?.supportedServices || [];
   const parsedStreams: ParsedStream[] = [];
   const indexerTimeout = torrentioOptions.indexerTimeout ? parseInt(torrentioOptions.indexerTimeout) : undefined;
 

@@ -1,6 +1,7 @@
 import {
   BaseWrapper,
   getCometStreams,
+  getMediafusionStreams,
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
@@ -318,6 +319,13 @@ export class AIOStreams {
       }
       case 'comet': {
         return await getCometStreams(this.config, addon.options, streamRequest);
+      }
+      case 'mediafusion': {
+        return await getMediafusionStreams(
+          this.config,
+          addon.options,
+          streamRequest
+        );
       }
       case 'gdrive': {
         if (!addon.options.addonUrl) {
