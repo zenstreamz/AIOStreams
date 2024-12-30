@@ -1,8 +1,8 @@
-import { ParsedNameData, StreamRequest } from '@aiostreams/types';
+import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails } from '@aiostreams/addon';
+import { addonDetails } from './details';
 
 export class Torrentio extends BaseWrapper {
   constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Torrentio') {
@@ -71,7 +71,7 @@ export async function getTorrentioStreams(
   },
   streamRequest: StreamRequest
 ): Promise<ParsedStream[]> {
-  const supportedServices: string[] = addonDetails.find((addon) => addon.id === 'torrentio')?.supportedServices || [];
+  const supportedServices: string[] = addonDetails.find((addon: AddonDetail) => addon.id === 'torrentio')?.supportedServices || [];
   const parsedStreams: ParsedStream[] = [];
   const indexerTimeout = torrentioOptions.indexerTimeout ? parseInt(torrentioOptions.indexerTimeout) : undefined;
 

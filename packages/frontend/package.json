@@ -12,6 +12,7 @@
     "@aiostreams/types": "^1.0.0",
     "@aiostreams/formatters": "^1.0.0",
     "@aiostreams/addon": "^1.0.0",
+    "@aiostreams/wrappers": "^1.0.0",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

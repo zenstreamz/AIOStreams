@@ -1,8 +1,8 @@
-import { ParsedNameData, StreamRequest } from '@aiostreams/types';
+import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails } from '@aiostreams/addon';
+import { addonDetails } from './details';
 
 
 export class MediaFusion extends BaseWrapper {
@@ -83,7 +83,7 @@ export async function getMediafusionStreams(
   },
   streamRequest: StreamRequest
 ): Promise<ParsedStream[]> {
-  const supportedServices: string[] = addonDetails.find((addon) => addon.id === 'mediafusion')?.supportedServices || [];
+  const supportedServices: string[] = addonDetails.find((addon: AddonDetail) => addon.id === 'mediafusion')?.supportedServices || [];
   const parsedStreams: ParsedStream[] = [];
   const indexerTimeout = mediafusionOptions.indexerTimeout ? parseInt(mediafusionOptions.indexerTimeout) : undefined;
 

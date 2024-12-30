@@ -19,14 +19,13 @@ import { Slide, ToastContainer, toast } from 'react-toastify';
 import addonPackage from '../../../package.json';
 import { formatSize } from '@aiostreams/formatters';
 import {
-  allowedAddons,
   allowedFormatters,
   allowedLanguages,
-  addonDetails,
   validateConfig,
   serviceCredentials,
   MAX_SIZE,
 } from '@aiostreams/config';
+import { addonDetails } from '@aiostreams/wrappers';
 
 const version = addonPackage.version;
 
@@ -323,7 +322,7 @@ export default function Configure() {
     if (!addons) {
       return [];
     }
-    return addons.filter((addon) => allowedAddons.includes(addon.id));
+    return addons.filter((addon) => addonDetails.some((detail) => detail.id === addon.id));
   };
 
   // Load config from the window path if it exists

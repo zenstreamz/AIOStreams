@@ -9,7 +9,6 @@
   "description": "Library with wrappers for different addons",
   "devDependencies": {
     "@aiostreams/parser": "^1.0.0",
-    "@aiostreams/types": "^1.0.0",
-    "@aiostreams/addon": "^1.0.0"
+    "@aiostreams/types": "^1.0.0"
   }
 }
