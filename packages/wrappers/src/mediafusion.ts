@@ -53,7 +53,7 @@ export class MediaFusion extends BaseWrapper {
       indexers: indexer,
       provider: debrid
         ? {
-            name: debrid.provider,
+            name: debrid.provider === 'TRB' ? 'TB' : debrid.provider,
             cached: debrid.cached,
           }
         : undefined,
