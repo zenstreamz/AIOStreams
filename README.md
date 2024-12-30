@@ -236,3 +236,7 @@ You need Node.js and git installed. Node v22 and npm v10.9 were used in the deve
 5. Go to `http://localhost:3000/configure`
 
 You can change the PORT environment variable to change the port that the addon will listen on.
+
+## Credits 
+
+Thanks to [sleeyax/stremio-easynews-addon](https://github.com/Sleeyax/stremio-easynews-addon) for the repository structure and dockerfile.
