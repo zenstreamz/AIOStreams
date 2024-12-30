@@ -50,7 +50,10 @@ rather than having to check each addon individually.
 It currently supports:
 
 - Torrentio
-- Torbox
+- MediaFusion
+- Comet
+- Torbox Addon
+- [Stremio GDrive](https://github.com/Viren070/stremio-gdrive-addon)
 - Custom: You can input an addon URL and name and it will parse as much information as it can.
 
 > [!NOTE]
