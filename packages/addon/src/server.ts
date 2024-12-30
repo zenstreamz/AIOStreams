@@ -132,25 +132,6 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
   }
 });
 
-app.get('/mediafusion-encrypt', (req, res) => {
-  const data = {"streaming_provider":null,"selected_catalogs":[],"selected_resolutions":["4k","2160p","1440p","1080p","720p","576p","480p","360p","240p",null],"enable_catalogs":true,"enable_imdb_metadata":false,"max_size":"inf","max_streams_per_resolution":"500","torrent_sorting_priority":[{"key":"language","direction":"desc"},{"key":"cached","direction":"desc"},{"key":"resolution","direction":"desc"},{"key":"quality","direction":"desc"},{"key":"size","direction":"desc"},{"key":"seeders","direction":"desc"},{"key":"created_at","direction":"desc"}],"show_full_torrent_name":true,"nudity_filter":["Severe"],"certification_filter":["Adults"],"language_sorting":["English","Tamil","Hindi","Malayalam","Kannada","Telugu","Chinese","Russian","Arabic","Japanese","Korean","Taiwanese","Latino","French","Spanish","Portuguese","Italian","German","Ukrainian","Polish","Czech","Thai","Indonesian","Vietnamese","Dutch","Bengali","Turkish","Greek","Swedish",null],"quality_filter":["BluRay/UHD","WEB/HD","DVD/TV/SAT","CAM/Screener","Unknown"],"api_password":null,"mediaflow_config":null,"rpdb_config":null,"live_search_streams":false,"contribution_streams":false};
-  const encryptUrl = 'https://mediafusion.elfhosted.com/encrypt-user-data';
-  fetch(encryptUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      res.status(500).send('Internal server error');
-    });
-});
 // define 404
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, '../../frontend/out/404.html'));
