@@ -90,6 +90,7 @@
   align-items: center;
 }
 
+.option select,
 .option input[type='text'],
 .option input[type='number']
 {

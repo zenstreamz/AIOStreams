@@ -130,6 +130,11 @@ export interface TextOptionDetail extends BaseOptionDetail {
   type: 'text';
 }
 
+export interface SelectOptionDetail extends BaseOptionDetail {
+  type: 'select';
+  options: { value: string, label: string }[];
+}
+
 export interface CheckboxOptionDetail extends BaseOptionDetail {
   type: 'checkbox';
 }
@@ -142,10 +147,12 @@ export interface NumberOptionDetail extends BaseOptionDetail {
   }
 }
 
-export type AddonOptionDetail = TextOptionDetail | CheckboxOptionDetail | NumberOptionDetail;
+export type AddonOptionDetail = TextOptionDetail | SelectOptionDetail | CheckboxOptionDetail | NumberOptionDetail;
 
 export interface AddonDetail {
   name: string;
   id: string;
+  requiresService: boolean;
+  supportedServices: string[];
   options?: AddonOptionDetail[];
 }

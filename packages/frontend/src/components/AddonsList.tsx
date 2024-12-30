@@ -115,6 +115,23 @@ const AddonsList: React.FC<AddonsListProps> = ({
                       className={styles.textInput}
                     />
                   )}
+                  {option.type === 'select' && (
+                    <select
+                      value={addon.options[option.id] || ''}
+                      onChange={(e) =>
+                        updateOption(index, option.id, e.target.value ? e.target.value : undefined)
+                      }
+                      className={styles.textInput}
+                    >
+                      <option value={undefined}>None</option>
+                      {option.options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  )
+                  }
                   {option.type === 'number' && (
                     <input
                       type="number"
