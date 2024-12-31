@@ -62,7 +62,7 @@ It currently supports:
 
 ### What are the supported formatters?
 
-The addon can display your results in different formats. The two formats available are:
+The addon can display your results in different formats. The formats available are:
 
 - gdrive:
   Uses the format from this [Stremio GDrive](https://github.com/Viren070/stremio-gdrive-addon) addon
