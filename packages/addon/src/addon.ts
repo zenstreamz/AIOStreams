@@ -213,6 +213,9 @@ export class AIOStreams {
       if (!aCanbeCached && bCanbeCached && !bCached) return -1;
       if (aCanbeCached && bCanbeCached) {
         if (aCached === bCached) return 0;
+        // prioritise a false value over undefined
+        if (aCached === false && bCached === undefined) return -1;
+        if (aCached === undefined && bCached === false) return 1;
         return aCached ? -1 : 1;
       }
     } else if (field === 'hasProvider') {

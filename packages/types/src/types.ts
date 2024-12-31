@@ -15,7 +15,7 @@ export interface ParsedStream extends ParsedNameData {
   size?: number;
   provider?: {
     name: string;
-    cached: boolean;
+    cached?: boolean;
   };
   torrent?: {
     infoHash?: string;
