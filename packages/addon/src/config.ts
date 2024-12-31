@@ -1,5 +1,5 @@
 import { AddonDetail, Config } from '@aiostreams/types';
-import { addonDetails } from '@aiostreams/wrappers';
+import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
 
 export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
 
@@ -56,106 +56,6 @@ export const allowedLanguages = [
   'Malay',
 ];
 
-export const serviceCredentials = [
-  {
-    name: 'Real Debrid',
-    id: 'realdebrid',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://real-debrid.com/apitoken',
-      },
-    ],
-  },
-  {
-    name: 'All Debrid',
-    id: 'alldebrid',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://alldebrid.com/apikeys',
-      },
-    ],
-  },
-  {
-    name: 'Premiumize',
-    id: 'premiumize',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://www.premiumize.me/account',
-      },
-    ],
-  },
-  {
-    name: 'Debrid Link',
-    id: 'debridlink',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://debrid-link.com/webapp/apikey',
-      },
-    ],
-  },
-  {
-    name: 'Torbox',
-    id: 'torbox',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://torbox.app/settings',
-      },
-    ],
-  },
-  {
-    name: 'Offcloud',
-    id: 'offcloud',
-    credentials: [
-      {
-        label: 'API Key',
-        id: 'apiKey',
-        link: 'https://offcloud.com/#/account',
-      },
-    ],
-  },
-  {
-    name: 'put.io',
-    id: 'putio',
-    credentials: [
-      {
-        label: 'Client ID',
-        id: 'clientId',
-        link: 'https://put.io/oauth',
-      },
-      {
-        label: 'Token',
-        id: 'token',
-        link: 'https://put.io/oauth',
-      },
-    ],
-  },
-  {
-    name: 'Easynews',
-    id: 'easynews',
-    credentials: [
-      {
-        label: 'Username',
-        id: 'username',
-        link: 'https://www.easynews.com/',
-      },
-      {
-        label: 'Password',
-        id: 'password',
-        link: 'https://www.easynews.com/',
-      },
-    ],
-  },
-];
 
 export function validateConfig(config: Config): {
   valid: boolean;
@@ -277,7 +177,7 @@ export function validateConfig(config: Config): {
 
   for (const service of config.services) {
     if (service.enabled) {
-      const serviceDetail = serviceCredentials.find(
+      const serviceDetail = serviceDetails.find(
         (detail) => detail.id === service.id
       );
       if (!serviceDetail) {

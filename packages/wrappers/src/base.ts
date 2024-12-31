@@ -5,6 +5,7 @@ import {
   ParsedNameData,
 } from '@aiostreams/types';
 import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
+import { serviceDetails } from './details';
 
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/tt{id}.json';

@@ -226,3 +226,121 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
 ];
+
+
+export const serviceDetails = [
+  {
+    name: 'Real Debrid',
+    shortName: 'RD',
+    knownNames: ['RD', 'Real Debrid'],
+    id: 'realdebrid',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://real-debrid.com/apitoken',
+      },
+    ],
+  },
+  {
+    name: 'All Debrid',
+    id: 'alldebrid',
+    shortName: 'AD',
+    knownNames: ['AD', 'All Debrid', 'AllDebrid', 'All-Debrid'],
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://alldebrid.com/apikeys',
+      },
+    ],
+  },
+  {
+    name: 'Premiumize',
+    id: 'premiumize',
+    shortName: 'PM',
+    knownNames: ['PM', 'Premiumize'],
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://www.premiumize.me/account',
+      },
+    ],
+  },
+  {
+    name: 'Debrid Link',
+    id: 'debridlink',
+    shortName: 'DL',
+    knownNames: ['DL', 'Debrid Link', 'DebridLink', 'Debrid-Link'],
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://debrid-link.com/webapp/apikey',
+      },
+    ],
+  },
+  {
+    name: 'Torbox',
+    id: 'torbox',
+    shortName: 'TB',
+    knownNames: ['TB', 'TRB', 'Torbox'],
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://torbox.app/settings',
+      },
+    ],
+  },
+  {
+    name: 'Offcloud',
+    id: 'offcloud',
+    shortName: 'OC',
+    knownNames: ['OC', 'Offcloud'],
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://offcloud.com/#/account',
+      },
+    ],
+  },
+  {
+    name: 'put.io',
+    id: 'putio',
+    shortName: 'P.IO',
+    knownNames: ['PO', 'put.io', 'putio'],
+    credentials: [
+      {
+        label: 'Client ID',
+        id: 'clientId',
+        link: 'https://put.io/oauth',
+      },
+      {
+        label: 'Token',
+        id: 'token',
+        link: 'https://put.io/oauth',
+      },
+    ],
+  },
+  {
+    name: 'Easynews',
+    id: 'easynews',
+    shortName: 'EN',
+    knownNames: ['EN', 'Easynews'],
+    credentials: [
+      {
+        label: 'Username',
+        id: 'username',
+        link: 'https://www.easynews.com/',
+      },
+      {
+        label: 'Password',
+        id: 'password',
+        link: 'https://www.easynews.com/',
+      },
+    ],
+  },
+];

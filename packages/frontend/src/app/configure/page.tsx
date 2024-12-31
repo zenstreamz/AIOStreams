@@ -22,10 +22,9 @@ import {
   allowedFormatters,
   allowedLanguages,
   validateConfig,
-  serviceCredentials,
   MAX_SIZE,
 } from '@aiostreams/config';
-import { addonDetails } from '@aiostreams/wrappers';
+import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
 
 const version = addonPackage.version;
 
@@ -573,7 +572,7 @@ export default function Configure() {
                 setServices(newServices);
               }}
               fields={
-                serviceCredentials
+                serviceDetails
                   .find((detail) => detail.id === service.id)
                   ?.credentials.map((credential) => ({
                     label: credential.label,
