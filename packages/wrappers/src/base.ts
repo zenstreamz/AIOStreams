@@ -16,13 +16,14 @@ export class BaseWrapper {
     this.addonUrl = this.standardizeManifestUrl(addonUrl);
     this.indexerTimeout = indexerTimeout || 3000;
   }
-  
+
   protected standardizeManifestUrl(url: string): string {
     // remove trailing slash and replace stremio:// with https://
     let manifestUrl = url.replace('stremio://', 'https://').replace(/\/$/, '');
-    return manifestUrl.endsWith('/manifest.json') ? manifestUrl : `${manifestUrl}/manifest.json`;
+    return manifestUrl.endsWith('/manifest.json')
+      ? manifestUrl
+      : `${manifestUrl}/manifest.json`;
   }
-  
 
   public async getParsedStreams(
     streamRequest: StreamRequest
@@ -53,32 +54,47 @@ export class BaseWrapper {
       controller.abort();
     }, this.indexerTimeout);
 
+    const url = this.getStreamUrl(streamRequest);
     console.log(
       'Fetching streams from',
-      this.getStreamUrl(streamRequest),
+      url,
       'with timeout',
       this.indexerTimeout,
       'and name',
       this.addonName
     );
-    let url = this.getStreamUrl(streamRequest);
-    const response = await fetch(url, { signal: controller.signal });
+    try {
+      const response = await fetch(url, { signal: controller.signal });
 
-    clearTimeout(timeout);
+      clearTimeout(timeout);
 
-    if (!response.ok) {
-      return Promise.reject(new Error(await response.text()));
+      if (!response.ok) {
+        let message = await response.text();
+        return Promise.reject(new Error(`${response.status} - ${response.statusText}: ${message}`));
+      }
+
+      let results: { streams: Stream[] } = await response.json();
+      return results.streams;
+    } catch (error: any) {
+      clearTimeout(timeout);
+      let message = error.message;
+      if (error.name === 'AbortError') {
+        message = `${this.addonName} failed to respond within ${this.indexerTimeout}ms`;
+      }
+      console.error(error);
+      return Promise.reject(new Error(message));
     }
-
-    let results: { streams: Stream[] } = await response.json();
-    return results.streams;
   }
 
   protected createParsedResult(
     parsedInfo: ParsedNameData,
     stream: Stream,
     filename?: string,
-    size?: number
+    size?: number,
+    provider?: ParsedStream['provider'],
+    seeders?: number,
+    usenetAge?: string,
+    indexer?: string
   ): ParsedStream {
     return {
       ...parsedInfo,
@@ -91,7 +107,13 @@ export class BaseWrapper {
         infoHash: stream.infoHash,
         fileIdx: stream.fileIdx,
         sources: stream.sources,
+        seeders: seeders,
       },
+      provider: provider,
+      usenet: {
+        age: usenetAge,
+      },
+      indexers: indexer,
       stream: {
         subtitles: stream.subtitles,
         behaviorHints: {
@@ -107,41 +129,56 @@ export class BaseWrapper {
     };
   }
 
-  protected parseStream(stream: Stream): ParsedStream | undefined {
+  protected parseStream(stream: any): ParsedStream | undefined {
     // attempt to look for filename in behaviorHints.filename, return undefined if not found
     let filename = stream.behaviorHints?.filename || undefined;
 
-    // parse the filename using our parser.
+
 
     let parsedInfo: ParsedNameData;
-    if (filename) {
-      parsedInfo = parseFilename(filename);
-    } else {
-      console.log('Filename behaviorHint was missing, will attempt to parse stream description', stream.description || stream.title);
-      let description = stream.description || stream.title;
-      if (description) {
-        parsedInfo = parseFilename(description);
-      } else {
-        console.log('Stream had no filename or description, unable to parse.', stream);
-        parsedInfo = {
-          quality: 'Unknown',
-          languages: ['Unknown'],
-          resolution: 'Unknown',
-          encode: 'Unknown',
-          visualTags: [],
-          audioTags: []
+
+    // if filename behaviorHint is not present, attempt to look for a filename in the stream description or title
+    let description = stream.description || stream.title;
+
+    if (!filename && description) {
+      console.log('No filename found in behaviorHints, attempting to determine from description');
+      // Split the description into words and look for a word that resembles a filename
+      for (const line of description.split('\n')) {
+        // see if the line contains something like s0xe0x, sxex, season x, or any 4 digit number (year)
+        // or 0x0, 
+        if (
+          line.match(/(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/) ||
+          line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
+        ) {
+          filename = line;
+          break;
         }
       }
+      if (filename) {
+        console.log('Determined filename from description:', filename);
+      }
+    } else {
+      console.log('There was no description to parse for filename nor was it found in behaviorHints');
     }
 
-    // see if size is present in behaviorHints
-    let size: number | undefined;
-    if (stream.behaviorHints?.videoSize) {
-      size = stream.behaviorHints.videoSize;
-    } else if (stream.description || stream.title) {
-      size = extractSizeInBytes((stream.description || stream.title) as string, 1024);
-    }  
+    parsedInfo = parseFilename(filename || '');
 
-    return this.createParsedResult(parsedInfo, stream, filename, size);
+    // look for size in one of the many random places it could be
+    let size: number | undefined;
+    size = stream.behaviorHints?.videoSize || stream.size || stream.sizebytes || description ? extractSizeInBytes(description, 1024) : undefined;
+
+    // look for seeders
+    let seeders: string | undefined
+    if (description) {
+      seeders = description.match(/(👥|👤) (\d+)/)?.[2] 
+    }
+
+    // look for indexer
+    let indexer: string | undefined
+    if (description) {
+      indexer = description.match(/(🌐|⚙️|🔗) ?(\w+)/)?.[2]
+    }
+
+    return this.createParsedResult(parsedInfo, stream, filename, size, undefined, seeders ? parseInt(seeders) : undefined, undefined, indexer);
   }
 }
