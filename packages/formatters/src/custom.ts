@@ -1,6 +1,5 @@
 import { Config, ParsedStream } from '@aiostreams/types';
 import { formatSize } from './utils';
-import { serviceDetails } from '@aiostreams/wrappers';
 import { languageToEmoji } from './utils';
 
 /*
