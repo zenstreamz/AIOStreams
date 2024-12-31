@@ -131,37 +131,24 @@ export class BaseWrapper {
 
   protected parseStream(stream: any): ParsedStream | undefined {
     // attempt to look for filename in behaviorHints.filename, return undefined if not found
-    let filename = stream.behaviorHints?.filename || undefined;
-
-
-
-    let parsedInfo: ParsedNameData;
+    let filename = stream.behaviorHints?.filename;
 
     // if filename behaviorHint is not present, attempt to look for a filename in the stream description or title
     let description = stream.description || stream.title;
 
     if (!filename && description) {
       console.log('No filename found in behaviorHints, attempting to determine from description');
-      // Split the description into words and look for a word that resembles a filename
-      for (const line of description.split('\n')) {
-        // see if the line contains something like s0xe0x, sxex, season x, or any 4 digit number (year)
-        // or 0x0, 
-        if (
-          line.match(/(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/) ||
-          line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
-        ) {
-          filename = line;
-          break;
-        }
-      }
-      if (filename) {
-        console.log('Determined filename from description:', filename);
-      }
-    } else {
+      const lines = description.split('\n');
+      filename = lines.find((line: string) =>
+      line.match(/(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/) ||
+      line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
+      ) || lines[0];
+      console.log('Determined filename from description:', filename);
+    } else if (!description) {
       console.log('There was no description to parse for filename nor was it found in behaviorHints');
     }
 
-    parsedInfo = parseFilename(filename || '');
+    let parsedInfo: ParsedNameData = parseFilename(filename || '');
 
     // look for size in one of the many random places it could be
     let size: number | undefined;
