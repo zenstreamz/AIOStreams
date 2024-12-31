@@ -73,6 +73,39 @@ export class AIOStreams {
       )
         return false;
 
+      if (
+        streamRequest.type === 'movie' &&
+        this.config.maxMovieSize &&
+        parsedStream.size && 
+        parsedStream.size > this.config.maxMovieSize
+      )
+        return false;
+
+      if (
+        streamRequest.type === 'movie' &&
+        this.config.minMovieSize &&
+        parsedStream.size && 
+        parsedStream.size < this.config.minMovieSize
+      )
+        return false;
+
+      if (
+        streamRequest.type === 'series' &&
+        this.config.maxEpisodeSize &&
+        parsedStream.size && 
+        parsedStream.size > this.config.maxEpisodeSize
+      )
+        return false;
+      
+      if (
+        streamRequest.type === 'series' &&
+        this.config.minEpisodeSize &&
+        parsedStream.size && 
+        parsedStream.size < this.config.minEpisodeSize
+      )
+        return false;
+      
+
       return true;
     });
     console.log(`Filtered to ${filteredResults.length} streams`);

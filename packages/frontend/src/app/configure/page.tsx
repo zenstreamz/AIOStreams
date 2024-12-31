@@ -22,7 +22,8 @@ import {
   allowedFormatters,
   allowedLanguages,
   validateConfig,
-  MAX_SIZE,
+  MAX_EPISODE_SIZE,
+  MAX_MOVIE_SIZE
 } from '@aiostreams/config';
 import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
 
@@ -181,8 +182,14 @@ export default function Configure() {
     null
   );
   const [addons, setAddons] = useState<Config['addons']>([]);
+  /*
   const [maxSize, setMaxSize] = useState<number | null>(null);
   const [minSize, setMinSize] = useState<number | null>(null);
+  */
+  const [maxMovieSize, setMaxMovieSize] = useState<number | null>(null);
+  const [minMovieSize, setMinMovieSize] = useState<number | null>(null);
+  const [maxEpisodeSize, setMaxEpisodeSize] = useState<number | null>(null);
+  const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
@@ -210,8 +217,10 @@ export default function Configure() {
       sortBy: sortCriteria,
       onlyShowCachedStreams,
       prioritiseLanguage,
-      maxSize: maxSize,
-      minSize: minSize,
+      maxMovieSize,
+      minMovieSize,
+      maxEpisodeSize,
+      minEpisodeSize,
       formatter: formatter || 'gdrive',
       addons,
       services,
@@ -342,8 +351,10 @@ export default function Configure() {
         setPrioritiseLanguage(validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) || null);
         setFormatter(validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive');
         setServices(loadValidServices(decodedConfig.services));
-        setMaxSize(decodedConfig.maxSize || null);
-        setMinSize(decodedConfig.minSize || null);
+        setMaxMovieSize(decodedConfig.maxMovieSize || decodedConfig.maxSize || null);
+        setMinMovieSize(decodedConfig.minMovieSize || decodedConfig.minSize || null);
+        setMaxEpisodeSize(decodedConfig.maxEpisodeSize || decodedConfig.maxSize || null);
+        setMinEpisodeSize(decodedConfig.minEpisodeSize || decodedConfig.minSize || null);
         setAddons(loadValidAddons(decodedConfig.addons));
       }
     } catch (error) {
@@ -353,28 +364,51 @@ export default function Configure() {
 
   useEffect(() => {
     const slider = document.querySelector(
-      `.${styles.sliderMin}`
+      `.${styles.minMovieSizeSlider}`
     ) as HTMLElement;
     if (slider) {
       slider.style.setProperty(
-        '--minValue',
-        `${((minSize || 0) / MAX_SIZE) * 100}%`
+        '--minMovieSizeValue',
+        `${((minMovieSize || 0) / MAX_MOVIE_SIZE) * 100}%`
       );
     }
-  }, [minSize]);
+  }, [minMovieSize]);
 
   useEffect(() => {
     const slider = document.querySelector(
-      `.${styles.sliderMax}`
+      `.${styles.maxMovieSizeSlider}`
     ) as HTMLElement;
     if (slider) {
       slider.style.setProperty(
-        '--maxValue',
-        `${((maxSize || 0) / MAX_SIZE) * 100}%`
+        '--maxMovieSizeValue',
+        `${((maxMovieSize === null ? MAX_MOVIE_SIZE : maxMovieSize) / MAX_MOVIE_SIZE) * 100}%`
       );
     }
-  }, [maxSize]);
+  }, [maxMovieSize]);
 
+  useEffect(() => {
+    const slider = document.querySelector(
+      `.${styles.minEpisodeSizeSlider}`
+    ) as HTMLElement;
+    if (slider) {
+      slider.style.setProperty(
+        '--minEpisodeSizeValue',
+        `${((minEpisodeSize || 0) / MAX_EPISODE_SIZE) * 100}%`
+      );
+    }
+  }, [minEpisodeSize]);
+
+  useEffect(() => {
+    const slider = document.querySelector(
+      `.${styles.maxEpisodeSizeSlider}`
+    ) as HTMLElement;
+    if (slider) {
+      slider.style.setProperty(
+        '--maxEpisodeSizeValue',
+        `${((maxEpisodeSize === null ? MAX_EPISODE_SIZE : maxEpisodeSize) / MAX_EPISODE_SIZE) * 100}%`
+      );
+    }
+  }, [maxEpisodeSize]);
   return (
     <div className={styles.container}>
       
@@ -519,34 +553,66 @@ export default function Configure() {
               <input
                 type="range"
                 min="0"
-                max={MAX_SIZE}
-                step={MAX_SIZE / 10000}
-                value={minSize || 0}
+                max={MAX_MOVIE_SIZE}
+                step={MAX_MOVIE_SIZE / 10000}
+                value={minMovieSize || 0}
                 onChange={(e) =>
-                  setMinSize(
+                  setMinMovieSize(
                     e.target.value === '0' ? null : parseInt(e.target.value)
                   )
                 }
-                className={styles.slider + ' ' + styles.sliderMin}
+                className={styles.slider + ' ' + styles.minMovieSizeSlider}
               />
               <div className={styles.sliderValue}>
-                Minimum size: {formatSize(minSize || 0)}
+                Minimum movie size: {formatSize(minMovieSize || 0)}
               </div>
               <input
                 type="range"
                 min="0"
-                max={MAX_SIZE}
-                step={MAX_SIZE / 10000}
-                value={maxSize || 0}
+                max={MAX_MOVIE_SIZE}
+                step={MAX_MOVIE_SIZE / 10000}
+                value={maxMovieSize === null ? MAX_MOVIE_SIZE : maxMovieSize}
                 onChange={(e) =>
-                  setMaxSize(
+                  setMaxMovieSize(
+                    e.target.value === MAX_MOVIE_SIZE.toString() ? null : parseInt(e.target.value)
+                  )
+                }
+                className={styles.slider + ' ' + styles.maxMovieSizeSlider}
+              />
+              <div className={styles.sliderValue}>
+                Maximum movie size: {maxMovieSize === null ? 'Unlimited' : formatSize(maxMovieSize)}
+              </div>
+              <input
+                type="range"
+                min="0"
+                max={MAX_EPISODE_SIZE}
+                step={MAX_EPISODE_SIZE / 10000}
+                value={minEpisodeSize || 0}
+                onChange={(e) =>
+                  setMinEpisodeSize(
                     e.target.value === '0' ? null : parseInt(e.target.value)
                   )
                 }
-                className={styles.slider + ' ' + styles.sliderMax}
+                className={styles.slider + ' ' + styles.minEpisodeSizeSlider}
               />
               <div className={styles.sliderValue}>
-                Maximum size: {maxSize ? formatSize(maxSize) : '∞'}
+                Minimum episode size: {formatSize(minEpisodeSize || 0)}
+              </div>
+              <input
+                type="range"
+                min="0"
+                max={MAX_EPISODE_SIZE}
+                step={MAX_EPISODE_SIZE / 10000}
+                value={maxEpisodeSize === null ? MAX_EPISODE_SIZE : maxEpisodeSize}
+                onChange={(e) =>
+                  setMaxEpisodeSize(
+                    e.target.value === MAX_EPISODE_SIZE.toString() ? null : parseInt(e.target.value)
+                  )
+                }
+                className={styles.slider + ' ' + styles.maxEpisodeSizeSlider}
+              />
+              <div className={styles.sliderValue}>
+                Maximum episode size: {maxEpisodeSize === null ? 'Unlimited' : formatSize(maxEpisodeSize)}
               </div>
             </div>
           </div>

@@ -92,22 +92,42 @@
   opacity: 1;
 }
 
-.sliderMax {
+.minMovieSizeSlider {
   background: linear-gradient(
     to right,
     #1b1b1b 0%,
-    #d3d3d3 var(--maxValue),
-    #1a1a1a var(--maxValue),
+    #d3d3d3 var(--minMovieSizeValue),
+    #1a1a1a var(--minMovieSizeValue),
     #1a1a1a 100%
   );
 }
 
-.sliderMin {
+.maxMovieSizeSlider {
   background: linear-gradient(
     to right,
-    #414141 0%,
-    #ffffff var(--minValue),
-    #1a1a1a var(--minValue),
+    #1a1a1a 0%,
+    #d3d3d3 var(--maxMovieSizeValue),
+    #1a1a1a var(--maxMovieSizeValue),
+    #1a1a1a 100%
+  );
+}
+
+.minEpisodeSizeSlider {
+  background: linear-gradient(
+    to right,
+    #1a1a1a 0%,
+    #d3d3d3 var(--minEpisodeSizeValue),
+    #1a1a1a var(--minEpisodeSizeValue),
+    #1a1a1a 100%
+  );
+}
+
+.maxEpisodeSizeSlider {
+  background: linear-gradient(
+    to right,
+    #1a1a1a 0%,
+    #d3d3d3 var(--maxEpisodeSizeValue),
+    #1a1a1a var(--maxEpisodeSizeValue),
     #1a1a1a 100%
   );
 }

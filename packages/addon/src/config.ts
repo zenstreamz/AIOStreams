@@ -4,7 +4,8 @@ import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
 export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
 
 export const MAX_ADDONS = 10;
-export const MAX_SIZE = 150000000000; // 1500GB
+export const MAX_MOVIE_SIZE = 150000000000; // 150GB
+export const MAX_EPISODE_SIZE = 15000000000; // 15GB
 
 
 export const allowedLanguages = [
@@ -213,13 +214,19 @@ export function validateConfig(config: Config): {
     );
   }
 
-  if (config.minSize && config.maxSize) {
-    if (config.minSize >= config.maxSize) {
-      return createResponse(
-        false,
-        'invalidSizeRange',
-        "Your minimum size limit can't be greater than or equal to your maximum size limit"
-      );
+  for (const [min, max] of [
+    [config.minMovieSize, config.maxMovieSize],
+    [config.minEpisodeSize, config.maxEpisodeSize],
+    [config.minSize, config.maxSize],
+  ]) {
+    if (min && max) {
+      if (min >= max) {
+        return createResponse(
+          false,
+          'invalidSizeRange',
+          "Your minimum size limit can't be greater than or equal to your maximum size limit"
+        );
+      }
     }
   }
 

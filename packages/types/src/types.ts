@@ -104,8 +104,12 @@ export interface Config {
   onlyShowCachedStreams: boolean;
   prioritiseLanguage: string | null;
   formatter: string;
-  maxSize: number | null;
-  minSize: number | null;
+  maxSize?: number | null;
+  minSize?: number | null;
+  maxMovieSize: number | null;
+  minMovieSize: number | null;
+  maxEpisodeSize: number | null;
+  minEpisodeSize: number | null;
   addons: {
     id: string;
     options: { [key: string]: string | undefined};
