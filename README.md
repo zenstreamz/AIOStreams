@@ -83,24 +83,6 @@ The addon can display your results in different formats. The formats available a
 
 Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it. 
 
-### Cloudflare Workers
-
-This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
-
-> [!NOTE]
-> Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
-
-
-Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands: 
-
-```
-git clone https://github.com/Viren070/AIOStreams.git
-cd AIOStreams
-npm i
-npm run build
-npm run deploy:cloudflare-worker
-```
-
 ### Huggingface 
 
 
@@ -178,7 +160,23 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 
 6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy 
 
+### Cloudflare Workers
 
+This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
+
+> [!NOTE]
+> Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
+
+
+Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands: 
+
+```
+git clone https://github.com/Viren070/AIOStreams.git
+cd AIOStreams
+npm i
+npm run build
+npm run deploy:cloudflare-worker
+```
 
 ### Render
 
