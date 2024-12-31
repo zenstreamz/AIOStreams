@@ -62,7 +62,7 @@ It currently supports:
 
 ### What are the supported formatters?
 
-The addon can display your results in different formats. The two formats available are:
+The addon can display your results in different formats. The formats available are:
 
 - gdrive:
   Uses the format from this [Stremio GDrive](https://github.com/Viren070/stremio-gdrive-addon) addon
@@ -83,24 +83,6 @@ The addon can display your results in different formats. The two formats availab
 
 Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it. 
 
-### Cloudflare Workers
-
-This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
-
-> [!NOTE]
-> Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
-
-
-Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands: 
-
-```
-git clone https://github.com/Viren070/AIOStreams.git
-cd AIOStreams
-npm i
-npm run build
-npm run deploy:cloudflare-worker
-```
-
 ### Huggingface 
 
 
@@ -108,6 +90,9 @@ This addon can be deployed as a [Huggingface](https://huggingface.co/) space.
 
 > [!WARNING]
 > Huggingface is centered around AI and as this addon is not related to AI, they may take it down.
+
+> [!NOTE]
+> GDrive doesn't seem to work on Huggingface Spaces. I'm not sure why.
 
 1. Create a Huggingface account and on the [home page](https://huggingface.co) create a new space.
 
@@ -175,7 +160,23 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 
 6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy 
 
+### Cloudflare Workers
 
+This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
+
+> [!NOTE]
+> Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
+
+
+Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands: 
+
+```
+git clone https://github.com/Viren070/AIOStreams.git
+cd AIOStreams
+npm i
+npm run build
+npm run deploy:cloudflare-worker
+```
 
 ### Render
 
@@ -233,3 +234,7 @@ You need Node.js and git installed. Node v22 and npm v10.9 were used in the deve
 5. Go to `http://localhost:3000/configure`
 
 You can change the PORT environment variable to change the port that the addon will listen on.
+
+## Credits 
+
+Thanks to [sleeyax/stremio-easynews-addon](https://github.com/Sleeyax/stremio-easynews-addon) for the repository structure and dockerfile.
