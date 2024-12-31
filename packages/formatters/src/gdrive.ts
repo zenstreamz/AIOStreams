@@ -8,9 +8,12 @@ export function gdriveFormat(stream: ParsedStream): {
   let name: string = '';
 
   if (stream.provider) {
-    name += stream.provider.cached
-      ? `[${stream.provider.name}⚡]\n`
-      : `[${stream.provider.name}⏳]\n`;
+    const cacheStatus = stream.provider.cached
+      ? '⚡'
+      : stream.provider.cached === undefined
+      ? '❓'
+      : '⏳';
+    name += `[${stream.provider.name}${cacheStatus}]\n`;
   }
 
   if (stream.torrent?.infoHash) {

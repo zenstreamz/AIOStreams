@@ -8,9 +8,12 @@ export function torrentioFormat(stream: ParsedStream): {
   let name: string = '';
 
   if (stream.provider) {
-    name += stream.provider.cached
-      ? `[${stream.provider.name}+]\n`
-      : `[${stream.provider.name} download]\n`;
+    const cacheStatus = stream.provider.cached
+      ? '+'
+      : stream.provider.cached === undefined
+      ? 'Unknown'
+      : 'download';
+    name += `[${stream.provider.name} ${cacheStatus}]\n`;
   }
 
   name += `${stream.addonName} ${stream.resolution} `;

@@ -8,11 +8,8 @@ export function torboxFormat(stream: ParsedStream): {
   let name: string = '';
 
   name += `${stream.addonName}`;
-
   if (stream.provider) {
-    name += stream.provider.cached
-      ? ` (Instant ${stream.provider.name})`
-      : ` (${stream.provider.name})`;
+    name += ` (${stream.provider.name}${stream.provider.cached === undefined ? ' Unknown' : stream.provider.cached ? ' Instant' : ''})`;
   }
 
   if (stream.torrent?.infoHash) {
