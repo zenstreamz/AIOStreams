@@ -149,6 +149,7 @@ export class BaseWrapper {
       console.log('There was no description to parse for filename nor was it found in behaviorHints');
     }
 
+    console.log('Parsing filename:', filename);
     let parsedInfo: ParsedNameData = parseFilename(filename || '');
 
     // look for size in one of the many random places it could be
@@ -167,6 +168,43 @@ export class BaseWrapper {
       indexer = description.match(/(🌐|⚙️|🔗) ?(\w+)/)?.[2]
     }
 
-    return this.createParsedResult(parsedInfo, stream, filename, size, undefined, seeders ? parseInt(seeders) : undefined, undefined, indexer);
+    // look for providers 
+    const services = serviceDetails;
+    const cachedSymbols = ['+', '⚡'];
+    const uncachedSymbols = ['⏳', 'download'];
+    
+    // look at the stream.name for one of the knownNames in each service
+    let provider: ParsedStream['provider'] | undefined;
+    if (stream.name) {
+      services.forEach((service) => {
+      // check if any of the knownNames are in the stream.name using regex
+      const found = service.knownNames.some((name) => {
+        const regex = new RegExp(`\\[${name}.*?\\]`, 'i');
+        return regex.test(stream.name);
+      });
+      let cached: boolean | undefined = undefined;
+      if (found) {
+        // check if any of the uncachedSymbols are in the stream.name
+        if (uncachedSymbols.some((symbol) => stream.name?.includes(symbol))) {
+          cached = false;
+        }
+        // check if any of the cachedSymbols are in the stream.name
+        else if (cachedSymbols.some((symbol) => stream.name?.includes(symbol))) {
+          cached = true;
+        }
+
+        provider = {
+          name: service.shortName,
+          cached: cached,
+        }
+      }
+      });
+    }
+
+    if (stream.infoHash && provider) {
+      // if its a p2p result, it is not from a debrid service
+      provider = undefined;
+    }
+    return this.createParsedResult(parsedInfo, stream, filename, size, provider, seeders ? parseInt(seeders) : undefined, undefined, indexer);
   }
 }
