@@ -1,2 +1,2 @@
-[ ] - custom formatter 
-[ ] - different size filters for movies and shows
+- [ ] custom formatter 
+- [ ] different size filters for movies and shows
