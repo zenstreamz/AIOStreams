@@ -288,7 +288,7 @@ export class AIOStreams {
 
     for (const addon of this.config.addons) {
       try {
-        const streams = await this.getStreamsFromAddon(addon.id, streamRequest);
+        const streams = await this.getStreamsFromAddon(addon, streamRequest);
         parsedStreams.push(...streams);
       } catch (error) {
         console.error(`Failed to get streams from addon ${addon.id}: ${error}`);
@@ -298,15 +298,12 @@ export class AIOStreams {
   }
 
   private async getStreamsFromAddon(
-    addonId: string,
+    addon: Config['addons'][0],
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
-    const addon = this.config.addons.find((addon) => addon.id === addonId);
-    if (!addon) {
-      throw new Error(`Addon ${addonId} not found`);
-    }
 
-    switch (addonId) {
+
+    switch (addon.id) {
       case 'torbox': {
         return await getTorboxStreams(this.config, addon.options, streamRequest);
       }
