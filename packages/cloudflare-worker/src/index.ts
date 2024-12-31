@@ -71,9 +71,7 @@ export default {
         const config = components[0];
         const decodedPath = decodeURIComponent(url.pathname);
 
-        const streamMatch = new RegExp(
-          `/${config}/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?.json`
-        ).exec(decodedPath);
+        const streamMatch = /\/stream\/(movie|series)\/tt(\d{7,})(?::(\d+):(\d+))?.json/.exec(decodedPath.replace(`/${config}`, ''));
 
         if (!streamMatch) {
           let path = decodedPath.replace(`/${config}`, '');

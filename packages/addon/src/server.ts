@@ -63,8 +63,8 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
   const decodedPath = decodeURIComponent(req.path);
 
   const streamMatch = new RegExp(
-    `/${config}/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?\.json`
-  ).exec(decodedPath);
+    `/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?\.json`
+  ).exec(decodedPath.replace(`/${config}`, ''));
 
   if (!streamMatch) {
     // log after removing config if present
