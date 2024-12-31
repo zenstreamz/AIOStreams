@@ -1,2 +1,3 @@
 - [ ] custom formatter 
 - [ ] different size filters for movies and shows
+- [ ] allow brackets in regex 
