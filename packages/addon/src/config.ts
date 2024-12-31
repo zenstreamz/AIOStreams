@@ -169,13 +169,22 @@ export function validateConfig(config: Config): {
   }
 
   if (!allowedFormatters.includes(config.formatter)) {
-    return createResponse(
-      false,
-      'invalidFormatter',
-      `Invalid formatter: ${config.formatter}`
-    );
+    if (config.formatter === 'custom') {
+      if (!config.customFormatter) {
+        return createResponse(
+          false,
+          'missingCustomFormatter',
+          'Custom formatter is required if custom formatter is selected'
+        );
+      }
+    } else { 
+      return createResponse(
+        false,
+        'invalidFormatter',
+        `Invalid formatter: ${config.formatter}`
+      );
+    }
   }
-
   for (const service of config.services) {
     if (service.enabled) {
       const serviceDetail = serviceDetails.find(

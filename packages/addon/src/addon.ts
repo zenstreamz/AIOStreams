@@ -10,6 +10,7 @@ import {
   gdriveFormat,
   torrentioFormat,
   torboxFormat,
+  customFormat,
 } from '@aiostreams/formatters';
 
 export class AIOStreams {
@@ -164,6 +165,16 @@ export class AIOStreams {
       case 'torbox': {
         const { name: _name, description: _description } =
           torboxFormat(parsedStream);
+        name = _name;
+        description = _description;
+        break;
+      }
+      case 'custom': {
+        if (!this.config.customFormatter) {
+          throw new Error('Custom formatter is not defined');
+        }
+        const { name: _name, description: _description } =
+          customFormat(parsedStream, this.config.customFormatter);
         name = _name;
         description = _description;
         break;
