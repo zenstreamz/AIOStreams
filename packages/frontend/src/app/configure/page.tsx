@@ -26,6 +26,7 @@ import {
   MAX_MOVIE_SIZE
 } from '@aiostreams/config';
 import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
+import Slider from '@/components/Slider';
 
 const version = addonPackage.version;
 
@@ -362,53 +363,6 @@ export default function Configure() {
     }
   }, []);
 
-  useEffect(() => {
-    const slider = document.querySelector(
-      `.${styles.minMovieSizeSlider}`
-    ) as HTMLElement;
-    if (slider) {
-      slider.style.setProperty(
-        '--minMovieSizeValue',
-        `${((minMovieSize || 0) / MAX_MOVIE_SIZE) * 100}%`
-      );
-    }
-  }, [minMovieSize]);
-
-  useEffect(() => {
-    const slider = document.querySelector(
-      `.${styles.maxMovieSizeSlider}`
-    ) as HTMLElement;
-    if (slider) {
-      slider.style.setProperty(
-        '--maxMovieSizeValue',
-        `${((maxMovieSize === null ? MAX_MOVIE_SIZE : maxMovieSize) / MAX_MOVIE_SIZE) * 100}%`
-      );
-    }
-  }, [maxMovieSize]);
-
-  useEffect(() => {
-    const slider = document.querySelector(
-      `.${styles.minEpisodeSizeSlider}`
-    ) as HTMLElement;
-    if (slider) {
-      slider.style.setProperty(
-        '--minEpisodeSizeValue',
-        `${((minEpisodeSize || 0) / MAX_EPISODE_SIZE) * 100}%`
-      );
-    }
-  }, [minEpisodeSize]);
-
-  useEffect(() => {
-    const slider = document.querySelector(
-      `.${styles.maxEpisodeSizeSlider}`
-    ) as HTMLElement;
-    if (slider) {
-      slider.style.setProperty(
-        '--maxEpisodeSizeValue',
-        `${((maxEpisodeSize === null ? MAX_EPISODE_SIZE : maxEpisodeSize) / MAX_EPISODE_SIZE) * 100}%`
-      );
-    }
-  }, [maxEpisodeSize]);
   return (
     <div className={styles.container}>
       
@@ -550,66 +504,42 @@ export default function Configure() {
               </p>
             </div>
             <div className={styles.slidersContainer}>
-              <input
-                type="range"
-                min="0"
-                max={MAX_MOVIE_SIZE}
-                step={MAX_MOVIE_SIZE / 10000}
+              <Slider 
+                maxValue={MAX_MOVIE_SIZE}
                 value={minMovieSize || 0}
-                onChange={(e) =>
-                  setMinMovieSize(
-                    e.target.value === '0' ? null : parseInt(e.target.value)
-                  )
-                }
-                className={styles.slider + ' ' + styles.minMovieSizeSlider}
+                setValue={setMinMovieSize}
+                defaultValue="min"
+                id="minMovieSizeSlider"
               />
               <div className={styles.sliderValue}>
                 Minimum movie size: {formatSize(minMovieSize || 0)}
               </div>
-              <input
-                type="range"
-                min="0"
-                max={MAX_MOVIE_SIZE}
-                step={MAX_MOVIE_SIZE / 10000}
+              <Slider 
+                maxValue={MAX_MOVIE_SIZE}
                 value={maxMovieSize === null ? MAX_MOVIE_SIZE : maxMovieSize}
-                onChange={(e) =>
-                  setMaxMovieSize(
-                    e.target.value === MAX_MOVIE_SIZE.toString() ? null : parseInt(e.target.value)
-                  )
-                }
-                className={styles.slider + ' ' + styles.maxMovieSizeSlider}
+                setValue={setMaxMovieSize}
+                defaultValue="max"
+                id="maxMovieSizeSlider"
               />
               <div className={styles.sliderValue}>
                 Maximum movie size: {maxMovieSize === null ? 'Unlimited' : formatSize(maxMovieSize)}
               </div>
-              <input
-                type="range"
-                min="0"
-                max={MAX_EPISODE_SIZE}
-                step={MAX_EPISODE_SIZE / 10000}
+              <Slider 
+                maxValue={MAX_EPISODE_SIZE}
                 value={minEpisodeSize || 0}
-                onChange={(e) =>
-                  setMinEpisodeSize(
-                    e.target.value === '0' ? null : parseInt(e.target.value)
-                  )
-                }
-                className={styles.slider + ' ' + styles.minEpisodeSizeSlider}
+                setValue={setMinEpisodeSize}
+                defaultValue="min"
+                id="minEpisodeSizeSlider"
               />
               <div className={styles.sliderValue}>
                 Minimum episode size: {formatSize(minEpisodeSize || 0)}
               </div>
-              <input
-                type="range"
-                min="0"
-                max={MAX_EPISODE_SIZE}
-                step={MAX_EPISODE_SIZE / 10000}
+              <Slider 
+                maxValue={MAX_EPISODE_SIZE}
                 value={maxEpisodeSize === null ? MAX_EPISODE_SIZE : maxEpisodeSize}
-                onChange={(e) =>
-                  setMaxEpisodeSize(
-                    e.target.value === MAX_EPISODE_SIZE.toString() ? null : parseInt(e.target.value)
-                  )
-                }
-                className={styles.slider + ' ' + styles.maxEpisodeSizeSlider}
+                setValue={setMaxEpisodeSize}
+                defaultValue="max"
+                id="maxEpisodeSizeSlider"
               />
               <div className={styles.sliderValue}>
                 Maximum episode size: {maxEpisodeSize === null ? 'Unlimited' : formatSize(maxEpisodeSize)}
