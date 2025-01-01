@@ -1,6 +1,7 @@
 :root {
   --background: linear-gradient(200deg, #181818, #111111);
   --foreground: #ededed;
+  --borderRadius: 8px;
 }
 
 html,
@@ -33,3 +34,30 @@ a {
     color-scheme: dark;
   }
 }
+
+input[type='checkbox'] {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  accent-color: #ffffff; /* White color */
+  -webkit-tap-highlight-color: transparent;
+  vertical-align: middle;
+}
+
+input[type='text'],
+input[type='number'],
+select {
+  padding: 5px;
+  border-radius: var(--borderRadius);
+  margin: 4px 0 0px 0;
+  border: 1px solid #555;
+  background-color: #eeeeee;
+  font-size: 15px;
+  width: 100%;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+
+

@@ -69,7 +69,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
         return (
           <div key={index} className={styles.card}>
             <div className={styles.cardHeader}>
-              <span>{details?.name}</span>
+              <span style={{"fontSize": "1.2em", "fontWeight": "bold"}}>{details?.name}</span>
               <button
                 onClick={() => removeAddon(index)}
                 className={styles.deleteButton}

@@ -7,7 +7,7 @@
 
 .card {
   background-color: #1a1a1a;
-  border-radius: 8px;
+  border-radius: var(--borderRadius);
   box-shadow: 0 4px 8px rgb(0, 0, 0);
   padding: 10px;
   display: flex;
@@ -40,20 +40,9 @@
   height: 32px;
 }
 
-.checkbox {
-  margin-right: 10px;
-  margin-left: 10px;
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
-  accent-color: #ffffff; /* White color */
-  border-radius: 50%;
-  vertical-align: middle;
-}
-
 .arrowButton {
   background-color: transparent;
-  border-radius: 8px;
+  border-radius: var(--borderRadius);
   display: flex;
   justify-content: space-between;
   align-items: center;
