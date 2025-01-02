@@ -141,6 +141,7 @@ export const addonDetails: AddonDetail[] = [
           { value: 'debridlink', label: 'Debrid Link' },
           { value: 'torbox', label: 'Torbox' },
           { value: 'offcloud', label: 'Offcloud' },
+          { value: 'easydebrid', label: 'EasyDebrid' },
         ],
       },
       {
