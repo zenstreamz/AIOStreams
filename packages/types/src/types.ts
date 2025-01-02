@@ -73,19 +73,10 @@ export interface Subtitle {
   lang: string;
 }
 
-interface MovieRequest {
+export interface StreamRequest {
   id: string;
-  type: 'movie';
+  type: 'series' | 'movie';
 }
-
-interface SeriesRequest {
-  id: string;
-  type: 'series';
-  season: string;
-  episode: string;
-}
-
-export type StreamRequest = MovieRequest | SeriesRequest;
 
 export type Resolution = { [key: string]: boolean };
 export type Quality = { [key: string]: boolean };

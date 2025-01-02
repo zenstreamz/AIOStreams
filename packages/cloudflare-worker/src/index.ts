@@ -71,7 +71,7 @@ export default {
         const config = components[0];
         const decodedPath = decodeURIComponent(url.pathname);
 
-        const streamMatch = /\/stream\/(movie|series)\/tt(\d{7,})(?::(\d+):(\d+))?.json/.exec(decodedPath.replace(`/${config}`, ''));
+        const streamMatch = /stream\/(movie|series)\/([^/]+)\.json/.exec(decodedPath.replace(`/${config}`, ''));
 
         if (!streamMatch) {
           let path = decodedPath.replace(`/${config}`, '');
@@ -79,9 +79,9 @@ export default {
           return createResponse('Invalid request', 400);
         }
 
-        const [type, id, season, episode] = streamMatch.slice(1);
+        const [type, id] = streamMatch.slice(1);
         console.log(
-          `Received /stream request with Type: ${type}, ID: ${id}, Season: ${season}, Episode: ${episode}`
+          `Received /stream request with Type: ${type}, ID: ${id}`
         );
 
         let decodedConfig: Config;
@@ -101,29 +101,11 @@ export default {
           );
         }
 
-        let streamRequest: StreamRequest;
-
-        switch (type) {
-          case 'series':
-            if (!season || !episode) {
-              return createResponse('Invalid Request', 400);
-            }
-            streamRequest = {
-              id,
-              type: 'series',
-              season: season,
-              episode: episode,
-            };
-            break;
-          case 'movie':
-            streamRequest = {
-              id,
-              type: 'movie',
-            };
-            break;
-          default:
-            return createResponse('Invalid Request', 400);
+        if (type !== 'movie' && type !== 'series') {
+          return createResponse('Invalid Request', 400);
         }
+
+        let streamRequest: StreamRequest = { id, type };
 
         const aioStreams = new AIOStreams(decodedConfig);
         const streams = await aioStreams.getStreams(streamRequest);

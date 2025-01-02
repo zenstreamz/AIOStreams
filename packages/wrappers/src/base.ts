@@ -8,7 +8,7 @@ import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
 import { serviceDetails } from './details';
 
 export class BaseWrapper {
-  private readonly streamPath: string = 'stream/{type}/tt{id}.json';
+  private readonly streamPath: string = 'stream/{type}/{id}.json';
   private indexerTimeout: number;
   protected addonName: string;
   private addonUrl: string;
@@ -37,15 +37,11 @@ export class BaseWrapper {
   }
 
   private getStreamUrl(streamRequest: StreamRequest) {
-    let finalId =
-      streamRequest.type === 'series'
-        ? `${streamRequest.id}:${streamRequest.season}:${streamRequest.episode}`
-        : streamRequest.id;
     return (
       this.addonUrl.replace('manifest.json', '') +
       this.streamPath
         .replace('{type}', streamRequest.type)
-        .replace('{id}', finalId)
+        .replace('{id}', streamRequest.id)
     );
   }
 

@@ -47,7 +47,7 @@ app.get('/stream/:type/:id', (req: Request, res: Response) => {
   res.status(200).json(missingConfig(rootUrl(req)));
 });
 
-app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
+app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
   const config = req.params.config;
 
   // Decode Base64 encoded JSON config
@@ -63,9 +63,8 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
   const decodedPath = decodeURIComponent(req.path);
 
   const streamMatch = new RegExp(
-    `/stream/(movie|series)/tt([0-9]{7,})(?::([0-9]+):([0-9]+))?\.json`
+    `/stream/(movie|series)/([^/]+)\.json`
   ).exec(decodedPath.replace(`/${config}`, ''));
-
   if (!streamMatch) {
     // log after removing config if present
     console.error(`Invalid request: ${decodedPath.replace(`/${config}`, '')}`);
@@ -73,46 +72,18 @@ app.get('/:config/stream/:type/:id', (req: Request, res: Response) => {
     return;
   }
 
-  const [type, id, season, episode] = streamMatch.slice(1);
+  const [type, id] = streamMatch.slice(1);
 
   console.log(
-    `Received /stream request with Type: ${type}, ID: ${id}, Season: ${season}, Episode: ${episode}`
+    `Received /stream request with Type: ${type}, ID: ${id}`
   );
 
-  let streamRequest: StreamRequest;
-
-  switch (type) {
-    case 'series':
-      if (!season || !episode) {
-        res.status(400).send('Invalid request');
-        console.log(
-          `Request type was series but season or episode was missing`
-        );
-        return;
-      }
-      streamRequest = {
-        id,
-        type: 'series',
-        season,
-        episode,
-      };
-      break;
-    case 'movie':
-      if (season || episode) {
-        console.log(`Request type was movie but season or episode was present`);
-        res.status(400).send('Invalid request');
-        return;
-      }
-      streamRequest = {
-        id,
-        type: 'movie',
-      };
-      break;
-    default:
-      console.log(`Request type was invalid`);
-      res.status(400).send('Invalid request');
-      return;
+  if (type !== 'movie' && type !== 'series') {
+    res.status(400).send('Invalid type');
+    return;
   }
+  let streamRequest: StreamRequest = { id, type };
+
   try {
     const { valid, errorCode, errorMessage } = validateConfig(configJson);
     if (!valid) {
