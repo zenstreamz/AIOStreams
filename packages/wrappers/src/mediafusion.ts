@@ -43,33 +43,9 @@ export class MediaFusion extends BaseWrapper {
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.description || '');
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
-    return {
-      ...parsedFilename,
-      filename,
-      size: sizeInBytes,
-      addonName: this.addonName,
-      url: stream.url,
-      externalUrl: stream.externalUrl,
-      indexers: indexer,
-      provider: debrid
-        ? {
-            name: debrid.provider === 'TRB' ? 'TB' : debrid.provider,
-            cached: debrid.cached,
-          }
-        : undefined,
-      torrent: {
-        infoHash: stream.infoHash,
-        fileIdx: stream.fileIdx,
-        sources: stream.sources,
-        seeders: seeders
-      },
-      stream: {
-        behaviorHints: {
-          notWebReady: stream.behaviorHints?.notWebReady,
-        }
-      }
-    
-    };
+    const parsedStream: ParsedStream = this.createParsedResult(parsedFilename, stream, filename, sizeInBytes, debrid, seeders, undefined, indexer )
+    return parsedStream; 
+
   }
 }
 

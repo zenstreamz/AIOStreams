@@ -36,7 +36,7 @@ export class Comet extends BaseWrapper {
     );
     const debrid = debridMatch
       ? {
-          provider: debridMatch[1],
+          name: debridMatch[1],
           cached: debridMatch[2] === '⚡',
         }
       : undefined;
@@ -44,21 +44,8 @@ export class Comet extends BaseWrapper {
     const indexerMatch = RegExp(/🔎 ([a-zA-Z0-9]+)/).exec(stream.description || '');
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
 
-    return {
-      ...parsedFilename,
-      filename,
-      size: sizeInBytes,
-      addonName: this.addonName,
-      url: stream.url,
-      externalUrl: stream.externalUrl,
-      indexers: indexer,
-      provider: debrid
-        ? {
-            name: debrid.provider,
-            cached: debrid.cached,
-          }
-        : undefined,
-    };
+    const parsedStream: ParsedStream = this.createParsedResult(parsedFilename, stream, filename, sizeInBytes, debrid, undefined, undefined, indexer )
+    return parsedStream;
   }
 }
 

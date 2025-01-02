@@ -27,7 +27,7 @@ export class Torrentio extends BaseWrapper {
     );
     const debrid = debridMatch
       ? {
-          provider: debridMatch[1],
+          name: debridMatch[1],
           cached: debridMatch[2] === '+',
         }
       : undefined;
@@ -37,27 +37,9 @@ export class Torrentio extends BaseWrapper {
     const indexerMatch = RegExp(/⚙️ ([a-zA-Z0-9]+)/).exec(stream.title!);
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
 
-    return {
-      ...parsedFilename,
-      filename,
-      size: sizeInBytes,
-      addonName: this.addonName,
-      url: stream.url,
-      externalUrl: stream.externalUrl,
-      torrent: {
-        infoHash: stream.infoHash,
-        fileIdx: stream.fileIdx,
-        seeders: seeders,
-        sources: stream.sources,
-      },
-      indexers: indexer,
-      provider: debrid
-        ? {
-            name: debrid.provider,
-            cached: debrid.cached,
-          }
-        : undefined,
-    };
+    const parsedStream: ParsedStream = this.createParsedResult(parsedFilename, stream, filename, sizeInBytes, debrid, seeders, undefined, indexer);
+    return parsedStream;
+
   }
 }
 

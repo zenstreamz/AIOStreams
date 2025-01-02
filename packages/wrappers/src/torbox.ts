@@ -70,30 +70,18 @@ export class Torbox extends BaseWrapper {
     }
 
     const sizeInBytes = stream.size;
+    const provider = {
+      name: 'TB',
+      cached: stream.is_cached,
+    }
 
-    return {
-      ...parsedFilename,
-      filename,
-      size: sizeInBytes,
-      addonName: this.addonName,
-      url: stream.url,
-      torrent:
-        type === 'torrent'
-          ? {
-              seeders: stream.seeders,
-            }
-          : undefined,
-      usenet:
-        type === 'usenet'
-          ? {
-              age: ageOrSeeders,
-            }
-          : undefined,
-      provider: {
-        name: 'TB',
-        cached: stream.is_cached,
-      },
-    };
+    const seeders = type === 'torrent' ? stream.seeders : undefined;
+    const age = type === 'usenet' ? ageOrSeeders : undefined;
+
+    const parsedStream: ParsedStream = this.createParsedResult(parsedFilename, stream, filename, sizeInBytes, provider, seeders, age);
+
+    return parsedStream;
+    
   }
 }
 
