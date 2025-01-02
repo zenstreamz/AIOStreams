@@ -3,7 +3,7 @@ import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
 
 export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
 
-export const MAX_ADDONS = 10;
+export const MAX_ADDONS = 15;
 export const MAX_MOVIE_SIZE = 150000000000; // 150GB
 export const MAX_EPISODE_SIZE = 15000000000; // 15GB
 
