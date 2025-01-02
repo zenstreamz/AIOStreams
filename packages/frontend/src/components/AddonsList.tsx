@@ -123,7 +123,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
                       }
                       className={styles.textInput}
                     >
-                      <option value={undefined}>None</option>
+                      <option value="">None</option>
                       {option.options.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
