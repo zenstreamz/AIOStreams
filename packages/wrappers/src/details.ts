@@ -389,4 +389,17 @@ export const serviceDetails = [
       },
     ],
   },
+  {
+    name: 'EasyDebrid',
+    id: 'easydebrid',
+    shortName: 'ED',
+    knownNames: ['ED', 'EasyDebrid'],
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://paradise-cloud.com/products/easydebrid',
+      },
+    ],
+  }
 ];
