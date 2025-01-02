@@ -155,31 +155,6 @@ app.post('/encrypt-user-data', (req, res) => {
   }
 });
 
-app.post('/decrypt-user-data', (req, res) => {
-  const { data } = req.body;
-
-  if (!data) {
-    res.status(400).json({ success: false, message: 'No data provided' });
-    return;
-  }
-
-  try {
-    if (!Settings.SECRET_KEY) {
-      res.status(500).json({ success: false, message: 'Secret key not set' });
-      return;
-    }
-    const [ivHex, encryptedHex] = data.split('-');
-    const iv = Buffer.from(ivHex, 'hex');
-    const encrypted = Buffer.from(encryptedHex, 'hex');
-    const decryptedData = decryptAndDecompress(encrypted, iv);
-
-    res.status(200).json({ success: true, data: decryptedData });
-  } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
 // define 404
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, '../../frontend/out/404.html'));
