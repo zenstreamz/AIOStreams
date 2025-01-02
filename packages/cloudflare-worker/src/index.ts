@@ -34,7 +34,7 @@ export default {
       const components = url.pathname.split('/').splice(1);
 
       // handle static asset requests
-      if (components.includes('_next')) {
+      if (components.includes('_next') || components.includes('assets')) {
         return env.ASSETS.fetch(request);
       }
 
