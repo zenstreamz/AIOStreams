@@ -15,7 +15,7 @@ import {
 import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
-import { Slide, ToastContainer, toast } from 'react-toastify';
+import { Slide, ToastContainer, ToastOptions, toast } from 'react-toastify';
 import addonPackage from '../../../package.json';
 import { formatSize } from '@aiostreams/formatters';
 import {
@@ -26,6 +26,7 @@ import {
   MAX_MOVIE_SIZE
 } from '@aiostreams/config';
 import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
+
 import Slider from '@/components/Slider';
 
 const version = addonPackage.version;
@@ -88,22 +89,25 @@ const defaultSortCriteria: SortBy[] = [
   { addon: false }
 ];
 
+const toastOptions: ToastOptions = {
+  autoClose: 5000,
+  hideProgressBar: true,
+  closeOnClick: false,
+  pauseOnHover: true,
+  draggable: 'touch',
+  style: {
+    borderRadius: '8px',
+    backgroundColor: '#ededed',
+    color: 'black',
+  },
+}
 function showToast(
   message: string,
   type: 'success' | 'error' | 'info' | 'warning',
   id?: string
 ) {
   toast[type](message, {
-    autoClose: 5000,
-    hideProgressBar: true,
-    closeOnClick: false,
-    pauseOnHover: true,
-    draggable: 'touch',
-    style: {
-      borderRadius: '8px',
-      backgroundColor: '#ededed',
-      color: 'black',
-    },
+    ...toastOptions,
     toastId: id,
   });
 }
@@ -193,6 +197,8 @@ export default function Configure() {
   const [maxEpisodeSize, setMaxEpisodeSize] = useState<number | null>(null);
   const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
 
+  const [disableButtons, setDisableButtons] = useState<boolean>(false);
+
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
     const choosableAddons: string[] = [];
@@ -229,17 +235,59 @@ export default function Configure() {
     };
   };
 
-  const getManifestUrl = () => {
+  const getManifestUrl = async () => {
     const config = createConfig();
-    const encodedConfig = btoa(JSON.stringify(config));
     const protocol = window.location.protocol;
     const root = window.location.host;
-    return `${protocol}//${root}/${encodedConfig}/manifest.json`;
+
+
+    setDisableButtons(true);
+    // make a POST request to /encrypt-user-data with the config as the body
+    // the response will be the encrypted config
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 5000);
+    try { 
+      const encryptPath = `${protocol}//${root}/encrypt-user-data`;
+      const response = await fetch(encryptPath, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: JSON.stringify(config) }),
+          signal: controller.signal,
+        });
+      clearTimeout(timeout);
+      const data = await response.json();
+      if (!data.success) {
+        // fallback to base64 encoding if encryption fails
+        try { 
+          const base64Config = btoa(JSON.stringify(config));
+          return { success: true, manifest: `${protocol}//${root}/${base64Config}/manifest.json` };
+        } catch {
+          return { success: false, manifest: null, message: 'Failed to encrypt config'};
+        }
+      }
+
+      const encryptedConfig = data.data;
+
+      return { success: true, manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json` };
+    } catch (error) {
+      console.error('Failed to get manifest URL', error);
+      clearTimeout(timeout);
+      try { 
+        const base64Config = btoa(JSON.stringify(config));
+        return { success: true, manifest: `${protocol}//${root}/${base64Config}/manifest.json` };
+      } catch {
+        return { success: false, manifest: null, message: 'Failed to encrypt config'};
+      }
+    }
   };
 
   const createAndValidateConfig = () => {
     const config = createConfig();
-
+    
     const { valid, errorCode, errorMessage } = validateConfig(config);
     if (!valid) {
       showToast(
@@ -252,51 +300,58 @@ export default function Configure() {
     return true;
   };
 
-  const handleInstall = () => {
+  const handleInstall = async () => {
     if (createAndValidateConfig()) {
-      const manifestUrl = getManifestUrl();
-      const stremioUrl = manifestUrl.replace(/^https?/, 'stremio');
-      showToast(
-        'Sending addon to Stremio. You need Stremio installed for this to work.',
-        'info',
-        'sendingToStremio'
-      );
-      // timeout to allow the toast to show
-      setTimeout(() => {
-        window.open(stremioUrl, '_blank');
-      }, 1000);
+      const id = toast.loading('Generating manifest URL...', {...toastOptions, toastId: 'generatingManifestUrl'});
+      const manifestUrl = await getManifestUrl();
+      if (!manifestUrl.success || !manifestUrl.manifest) {
+        setDisableButtons(false);
+        toast.update(id, {render: 'Failed to generate manifest URL', type: 'error', autoClose: 5000, isLoading: false});
+        return;
+      }
+
+      const stremioUrl = manifestUrl.manifest.replace(/^https?/, 'stremio');
+      toast.update(id, {render: 'Successfully generated manifest URL', type: 'success', autoClose: 5000, isLoading: false }); 
+
+      window.open(stremioUrl, '_blank');
+      setDisableButtons(false);
     }
   };
 
-  const handleInstallToWeb = () => {
+  const handleInstallToWeb = async () => {
     if (createAndValidateConfig()) {
-      const manifestUrl = getManifestUrl();
-      const encodedManifestUrl = encodeURIComponent(manifestUrl);
-      showToast(
-        'Opening Stremio Web with your addon',
-        'info',
-        'openingStremioWeb'
+      const id = toast.loading('Generating manifest URL...', toastOptions);
+      const manifestUrl = await getManifestUrl();
+      if (!manifestUrl.success || !manifestUrl.manifest) {
+        toast.update(id, {render: 'Failed to generate manifest URL', type: 'error', autoClose: 5000, isLoading: false});
+        setDisableButtons(false);
+        return;
+      }
+
+      const encodedManifestUrl = encodeURIComponent(manifestUrl.manifest);
+      toast.update(id, {render: 'Successfully generated manifest URL.', type: 'success', autoClose: 5000, toastId: 'openingStremioWeb', isLoading: false});
+
+      window.open(
+        `https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`,
+        '_blank'
       );
-      // timeout to allow the toast to show
-      setTimeout(() => {
-        window.open(
-          `https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`,
-          '_blank'
-        );
-      }, 1000);
+      setDisableButtons(false);
     }
   };
 
-  const handleCopyLink = () => {
+  const handleCopyLink = async () => {
     if (createAndValidateConfig()) {
-      const manifestUrl = getManifestUrl();
-      navigator.clipboard.writeText(manifestUrl).then(() => {
-        showToast(
-          'Manifest URL copied to clipboard',
-          'success',
-          'copiedManifestUrl'
-        );
+      const id = toast.loading('Generating manifest URL...', toastOptions);
+      const manifestUrl = await getManifestUrl();
+      if (!manifestUrl.success || !manifestUrl.manifest) {
+        toast.update(id, {render: 'Failed to generate manifest URL', type: 'error', autoClose: 5000, isLoading: false});
+        setDisableButtons(false);
+        return;
+      }
+      navigator.clipboard.writeText(manifestUrl.manifest).then(() => {
+        toast.update(id, {render: 'Manifest URL copied to clipboard', type: 'success', autoClose: 5000, toastId: 'copiedManifestUrl', isLoading: false});
       });
+      setDisableButtons(false);
     }
   };
 
@@ -639,13 +694,13 @@ export default function Configure() {
         </details>
 
         <div className={styles.installButtons}>
-          <button onClick={handleInstall} className={styles.installButton}>
+          <button onClick={handleInstall} className={styles.installButton} disabled={disableButtons}>
             Install
           </button>
-          <button onClick={handleInstallToWeb} className={styles.installButton}>
+          <button onClick={handleInstallToWeb} className={styles.installButton} disabled={disableButtons}>
             Install to Stremio Web
           </button>
-          <button onClick={handleCopyLink} className={styles.installButton}>
+          <button onClick={handleCopyLink} className={styles.installButton} disabled={disableButtons}>
             Copy Link
           </button>
         </div>

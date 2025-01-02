@@ -12,9 +12,10 @@
   },
   "description": "Combine all your streams into one addon and display them with consistent formatting, sorting, and filtering.",
   "dependencies": {
-    "@aiostreams/wrappers": "^1.0.0",
     "@aiostreams/formatters": "^1.0.0",
     "@aiostreams/types": "^1.0.0",
+    "@aiostreams/wrappers": "^1.0.0",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2"
   },
   "devDependencies": {

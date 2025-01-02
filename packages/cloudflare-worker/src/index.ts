@@ -1,5 +1,7 @@
 import {
   AIOStreams,
+  compressAndEncrypt,
+  decryptAndDecompress,
   getManifest,
   invalidConfig,
   missingConfig,
@@ -85,6 +87,10 @@ export default {
         );
 
         let decodedConfig: Config;
+
+        if (config.startsWith('E-')) {
+          return createResponse('Encrypted Config Not Supported', 400);
+        }
         try {
           decodedConfig = JSON.parse(atob(config));
         } catch (error: any) {

@@ -98,7 +98,8 @@
   transition:
     transform 0.2s,
     box-shadow 0.2s,
-    opacity 0.2s;
+    opacity 0.2s,
+    background-color 0.2s;
 }
 
 .installButton:hover {
@@ -108,4 +109,12 @@
 
 .installButton:active {
   transform: scale(0.98);
+}
+
+.installButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none; 
+  box-shadow: none;
+  background-color: #ddddddbe;
 }
