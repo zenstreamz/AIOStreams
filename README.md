@@ -232,6 +232,57 @@ You need Node.js and git installed. Node v22 and npm v10.9 were used in the deve
 
 You can change the PORT environment variable to change the port that the addon will listen on.
 
+## Development 
+
+
+
+1. Clone the project and set it as the current directory
+   ```
+   git clone https://github.com/Viren070/AIOStreams.git
+   ```
+   ```
+   cd aiostreams
+   ```
+2. Install project dependencies
+   ```
+   npm i
+   ```
+
+
+Now, you can run various aspects of the project in development.
+
+> [!NOTE]
+> Most of these commands require that you build the project beforehand. Changes in other packages do not reflect immediately as it needs to be compiled into JavaScript first.
+> Run `npm run build` to build the project.
+
+
+To start the addon in development mode, run the following command: 
+
+```
+npm run start:addon:dev
+```
+
+To run the cloudflare worker in development mode, run the following command 
+
+```
+npm run start:cloudflare-worker:dev
+```
+
+To run the frontend of the project, run the following command
+
+```
+npm run start:frontend:dev
+```
+
+### Deploying 
+
+To deploy your cloudflare worker, run the following command: 
+
+```
+npm run deploy:cloudflare-worker
+```
+
+
 ## Credits
 
 Thanks to [sleeyax/stremio-easynews-addon](https://github.com/Sleeyax/stremio-easynews-addon) for the repository structure and dockerfile.
