@@ -61,11 +61,9 @@ export class BaseWrapper {
     const url = this.getStreamUrl(streamRequest);
     console.log(
       'Fetching streams from',
-      url,
+      this.addonName,
       'with timeout',
       this.indexerTimeout,
-      'and name',
-      this.addonName
     );
     try {
       const response = await fetch(url, { signal: controller.signal });

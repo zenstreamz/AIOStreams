@@ -132,7 +132,6 @@ export function validateConfig(config: Config): {
           option.id.toLowerCase().includes('url') &&
           addon.options[option.id]
         ) {
-          console.log('checking url', addon.options[option.id]);
           try {
             new URL(addon.options[option.id] as string);
           } catch (_) {

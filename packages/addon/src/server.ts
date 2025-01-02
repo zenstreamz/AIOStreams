@@ -6,16 +6,12 @@ import { validateConfig } from './config';
 import { getManifest } from './manifest';
 import { invalidConfig, missingConfig } from './responses';
 import { compressAndEncrypt, decryptAndDecompress } from './crypto';
-import dotenv from 'dotenv';
-
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-
+import Settings from './settings'
+;
 const app = express();
-const port = process.env.PORT || 3000;
-const secretKey = process.env.SECRET_KEY;
 
 const rootUrl = (req: Request) =>
-  `${req.protocol}://${req.hostname}${req.hostname === 'localhost' ? `:${port}` : ''}`;
+  `${req.protocol}://${req.hostname}${req.hostname === 'localhost' ? `:${Settings.PORT}` : ''}`;
 
 // Built-in middleware for parsing JSON
 app.use(express.json());
@@ -70,7 +66,7 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
   // if config starts with E- then it is encrypted, decrypt it
   let configJson: Config;
   if (config.startsWith('E-')) {
-    if (!secretKey) {
+    if (!Settings.SECRET_KEY) {
       res.status(500).send('Secret key not set');
       return;
     }
@@ -79,7 +75,7 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
       const [ivHex, encryptedHex] = encryptedConfig.split('-');
       const iv = Buffer.from(ivHex, 'hex');
       const encrypted = Buffer.from(encryptedHex, 'hex');
-      const decryptedData = decryptAndDecompress(encrypted, iv, secretKey);
+      const decryptedData = decryptAndDecompress(encrypted, iv);
       configJson = JSON.parse(decryptedData);
     } catch (error: any) {
       res.status(400).send('Failed to decrypt config');
@@ -145,11 +141,11 @@ app.post('/encrypt-user-data', (req, res) => {
   }
 
   try {
-    if (!secretKey) {
+    if (!Settings.SECRET_KEY) {
       res.status(500).json({ success: false, message: 'Secret key not set' });
       return;
     }
-    const encryptedData = compressAndEncrypt(data, secretKey);
+    const encryptedData = compressAndEncrypt(data);
 
     res.status(200).json({ success: true, data: encryptedData });
   } catch (error: any) {
@@ -157,11 +153,37 @@ app.post('/encrypt-user-data', (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+app.post('/decrypt-user-data', (req, res) => {
+  const { data } = req.body;
+
+  if (!data) {
+    res.status(400).json({ success: false, message: 'No data provided' });
+    return;
+  }
+
+  try {
+    if (!Settings.SECRET_KEY) {
+      res.status(500).json({ success: false, message: 'Secret key not set' });
+      return;
+    }
+    const [ivHex, encryptedHex] = data.split('-');
+    const iv = Buffer.from(ivHex, 'hex');
+    const encrypted = Buffer.from(encryptedHex, 'hex');
+    const decryptedData = decryptAndDecompress(encrypted, iv);
+
+    res.status(200).json({ success: true, data: decryptedData });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // define 404
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, '../../frontend/out/404.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.listen(Settings.PORT, () => {
+  console.log(`Server is running at http://localhost:${Settings.PORT}`);
 });

@@ -1,7 +1,5 @@
 import {
   AIOStreams,
-  compressAndEncrypt,
-  decryptAndDecompress,
   getManifest,
   invalidConfig,
   missingConfig,

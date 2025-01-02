@@ -1,5 +1,6 @@
 import { randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 import { deflateSync, inflateSync } from 'zlib';
+import Settings from './settings';
 
 const pad = (data: Buffer, blockSize: number): Buffer => {
   const padding = blockSize - (data.length % blockSize);
@@ -11,9 +12,13 @@ const unpad = (data: Buffer): Buffer => {
   return data.subarray(0, data.length - padding);
 };
 
-export const compressAndEncrypt = (data: string, secretKey: string): string => {
+export const compressAndEncrypt = (data: string): string => {
   // First compress the data with Deflate compression
   const compressedData = deflateSync(Buffer.from(data, 'utf-8'), { level: 9 });
+  const secretKey = Settings.SECRET_KEY;
+  if (!secretKey) {
+    throw new Error('No secret key provided');
+  }
 
   // Then encrypt the compressed data
   const iv = randomBytes(16);
@@ -31,9 +36,12 @@ export const compressAndEncrypt = (data: string, secretKey: string): string => {
 
 export const decryptAndDecompress = (
   encryptedData: Buffer,
-  iv: Buffer,
-  secretKey: string
+  iv: Buffer
 ): string => {
+  const secretKey = Settings.SECRET_KEY;
+  if (!secretKey) {
+    throw new Error('No secret key provided');
+  }
   const decipher = createDecipheriv('aes-256-cbc', secretKey, iv);
 
   // Decrypt the data

@@ -427,7 +427,7 @@ export default function Configure() {
     });
   };
 
-  const validateValue = (value: string, validValues: string[]) => {
+  const validateValue = (value: string | null, validValues: string[]) => {
     if (!value) {
       return null;
     }
@@ -454,54 +454,85 @@ export default function Configure() {
   };
 
   // Load config from the window path if it exists
-  useEffect(() => {
+   useEffect(()  => {
+
+    async function decodeConfig(config: string) {
+      let decodedConfig: Config;
+      if (config.startsWith('E-')) {
+
+        const encryptedConfig = config.replace('E-', '');
+        const response = await fetch('/decrypt-user-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: encryptedConfig }),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to decrypt config');
+        }
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error('Failed to decrypt config');
+        }
+        decodedConfig = JSON.parse(data.data);
+      } else {
+        decodedConfig = JSON.parse(atob(config));
+      }
+      return decodedConfig;
+    }
+
+    function loadFromConfig(decodedConfig: Config) {
+      console.log('Loaded config', decodedConfig);
+      setResolutions(
+        loadValidValuesFromObject(
+          decodedConfig.resolutions,
+          defaultResolutions
+        )
+      );
+      setQualities(
+        loadValidValuesFromObject(decodedConfig.qualities, defaultQualities)
+      );
+      setVisualTags(
+        loadValidValuesFromObject(decodedConfig.visualTags, defaultVisualTags)
+      );
+      setAudioTags(
+        loadValidValuesFromObject(decodedConfig.audioTags, defaultAudioTags)
+      );
+      setEncodes(
+        loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes)
+      );
+      setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
+      setPrioritiseLanguage(
+        validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) ||
+          null
+      );
+      setFormatter(
+        validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive'
+      );
+      setServices(loadValidServices(decodedConfig.services));
+      setMaxMovieSize(
+        decodedConfig.maxMovieSize || decodedConfig.maxSize || null
+      );
+      setMinMovieSize(
+        decodedConfig.minMovieSize || decodedConfig.minSize || null
+      );
+      setMaxEpisodeSize(
+        decodedConfig.maxEpisodeSize || decodedConfig.maxSize || null
+      );
+      setMinEpisodeSize(
+        decodedConfig.minEpisodeSize || decodedConfig.minSize || null
+      );
+      setAddons(loadValidAddons(decodedConfig.addons));
+    }
+
     const path = window.location.pathname;
     try {
       const configMatch = path.match(/\/([^/]+)\/configure/);
 
       if (configMatch) {
-        const decodedConfig = JSON.parse(atob(configMatch[1]));
-
-        setResolutions(
-          loadValidValuesFromObject(
-            decodedConfig.resolutions,
-            defaultResolutions
-          )
-        );
-        setQualities(
-          loadValidValuesFromObject(decodedConfig.qualities, defaultQualities)
-        );
-        setVisualTags(
-          loadValidValuesFromObject(decodedConfig.visualTags, defaultVisualTags)
-        );
-        setAudioTags(
-          loadValidValuesFromObject(decodedConfig.audioTags, defaultAudioTags)
-        );
-        setEncodes(
-          loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes)
-        );
-        setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
-        setPrioritiseLanguage(
-          validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) ||
-            null
-        );
-        setFormatter(
-          validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive'
-        );
-        setServices(loadValidServices(decodedConfig.services));
-        setMaxMovieSize(
-          decodedConfig.maxMovieSize || decodedConfig.maxSize || null
-        );
-        setMinMovieSize(
-          decodedConfig.minMovieSize || decodedConfig.minSize || null
-        );
-        setMaxEpisodeSize(
-          decodedConfig.maxEpisodeSize || decodedConfig.maxSize || null
-        );
-        setMinEpisodeSize(
-          decodedConfig.minEpisodeSize || decodedConfig.minSize || null
-        );
-        setAddons(loadValidAddons(decodedConfig.addons));
+        const config = configMatch[1];
+        decodeConfig(config).then(loadFromConfig);
       }
     } catch (error) {
       console.error('Failed to load config', error);
