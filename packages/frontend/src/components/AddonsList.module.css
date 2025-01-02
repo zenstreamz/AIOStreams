@@ -53,13 +53,7 @@
   align-items: center;
 }
 
-.deleteButton {
-  background-color: transparent;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 1.2em;
-}
+
 
 .cardBody {
   display: flex;
@@ -90,4 +84,30 @@
 .required {
   color: #ffffff;
   margin-left: 5px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.actionButton {
+  background-color: transparent;
+  border-radius: var(--borderRadius);
+  display: flex;
+  margin: 5px;
+  font-size: 1.2em;
+  align-items: center;
+  border-width: 0;
+  transition: transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.actionButton:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.actionButton:active {
+  transform: scale(0.9);
 }
