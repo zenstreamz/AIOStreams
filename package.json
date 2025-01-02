@@ -10,6 +10,7 @@
     "build:watch": "tsc --build --watch",
     "start:addon": "npm -w packages/addon start",
     "start:addon:dev": "npm -w packages/addon run start:dev",
+    "start:frontend:dev": "npm -w packages/frontend run dev",
     "start:cloudflare-worker:dev": "npm -w packages/cloudflare-worker run dev",
     "deploy:beamup": "beamup",
     "deploy:cloudflare-worker": "npm -w packages/cloudflare-worker run deploy"
