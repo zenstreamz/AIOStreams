@@ -124,6 +124,7 @@ export const addonDetails: AddonDetail[] = [
       'debridlink',
       'torbox',
       'offcloud',
+      'easydebrid',
     ],
     options: [
       {
