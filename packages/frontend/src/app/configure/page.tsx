@@ -615,8 +615,7 @@ export default function Configure() {
             <div>
               <h2 style={{ padding: '5px' }}>Size Filter</h2>
               <p style={{ padding: '5px' }}>
-                Filter streams by size. Leave both sliders at 0 to disable the
-                filter.
+                Filter streams by size. Leave the maximum and minimum size sliders at opposite ends to disable the filter.
               </p>
             </div>
             <div className={styles.slidersContainer}>
