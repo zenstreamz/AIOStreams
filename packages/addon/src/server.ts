@@ -31,16 +31,41 @@ app.get('/', (req, res) => {
   res.redirect('/configure');
 });
 
-app.get(['/configure', '/:config/configure'], (req, res) => {
+app.get('/configure', (req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
 });
+
+app.get('/:config/configure', (req, res) => {
+  // if the config starts with E- , decrypt it and redirect to base64 encoded config
+  const config = req.params.config;
+  if (config.startsWith("E-")) {
+    const encryptedConfig = config.replace('E-', '');
+    const [ivHex, encryptedHex] = encryptedConfig.split('-');
+    const iv = Buffer.from(ivHex, 'hex');
+    const encrypted = Buffer.from(encryptedHex, 'hex');
+    const decryptedData = decryptAndDecompress(encrypted, iv);
+    // edit out any API keys from the decrypted data
+    const configJson = JSON.parse(decryptedData);
+    if (configJson.services) {
+      configJson.services.forEach((service: any) => {
+        if (service.credentials) {
+          service.credentials = {};
+        }
+      });
+    }
+    const base64Config = Buffer.from(JSON.stringify(configJson)).toString('base64');
+    res.redirect(`/${base64Config}/configure`);
+    return;
+  }
+  res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
+});
+
 
 app.get('/manifest.json', (req, res) => {
   res.status(200).json(getManifest(false));
 });
 
 app.get('/:config/manifest.json', (req, res) => {
-  
   res.status(200).json(getManifest(true));
 });
 
