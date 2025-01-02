@@ -16,6 +16,10 @@ export function torrentioFormat(stream: ParsedStream): {
     name += `[${stream.provider.name} ${cacheStatus}]\n`;
   }
 
+  if (stream.torrent?.infoHash) {
+    name += '[P2P]\n';
+  }
+
   name += `${stream.addon.name} ${stream.resolution} `;
 
   if (stream.visualTags.length > 0) {
