@@ -6,8 +6,8 @@ import { validateConfig } from './config';
 import { getManifest } from './manifest';
 import { invalidConfig, missingConfig } from './responses';
 import { compressAndEncrypt, decryptAndDecompress } from './crypto';
-import Settings from './settings'
-;
+import Settings from './settings';
+
 const app = express();
 
 const rootUrl = (req: Request) =>
@@ -40,6 +40,7 @@ app.get('/manifest.json', (req, res) => {
 });
 
 app.get('/:config/manifest.json', (req, res) => {
+  
   res.status(200).json(getManifest(true));
 });
 
