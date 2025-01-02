@@ -5,3 +5,4 @@ out/
 .next/
 next-env.d.ts
 .wrangler/
+.env
