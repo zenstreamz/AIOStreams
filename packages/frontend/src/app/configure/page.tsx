@@ -119,56 +119,13 @@ const defaultResolutions: Resolution[] = [
   { Unknown: true },
 ];
 
-const defaultServices = [
-  {
-    name: 'Real Debrid',
-    id: 'realdebrid',
-    enabled: false,
-    credentials: {},
-  },
-  {
-    name: 'All Debrid',
-    id: 'alldebrid',
-    enabled: false,
-    credentials: {},
-  },
-  {
-    name: 'Premiumize',
-    id: 'premiumize',
-    enabled: false,
-    credentials: {},
-  },
-  {
-    name: 'Debrid Link',
-    id: 'debridlink',
-    enabled: false,
-    credentials: {},
-  },
-  {
-    name: 'Torbox',
-    id: 'torbox',
-    enabled: false,
-    credentials: {},
-  },
-  {
-    name: 'Offcloud',
-    id: 'offcloud',
-    enabled: false,
-    credentials: {},
-  },
-  {
-    name: 'put.io',
-    id: 'putio',
-    enabled: false,
-    credentials: {},
-  },
-  {
-    name: 'Easynews',
-    id: 'easynews',
-    enabled: false,
-    credentials: {},
-  },
-];
+
+const defaultServices = serviceDetails.map((service) => ({
+  name: service.name,
+  id: service.id,
+  enabled: false,
+  credentials: {},
+}));
 
 export default function Configure() {
   const [resolutions, setResolutions] =
