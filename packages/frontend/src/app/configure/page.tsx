@@ -753,11 +753,6 @@ export default function Configure() {
           />
         </div>
 
-        <details>
-          <summary>Config</summary>
-          <pre>{JSON.stringify(createConfig(), null, 2)}</pre>
-        </details>
-
         <div className={styles.installButtons}>
           <button
             onClick={handleInstall}
