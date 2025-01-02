@@ -69,7 +69,9 @@ const AddonsList: React.FC<AddonsListProps> = ({
         return (
           <div key={index} className={styles.card}>
             <div className={styles.cardHeader}>
-              <span style={{"fontSize": "1.2em", "fontWeight": "bold"}}>{details?.name}</span>
+              <span style={{ fontSize: '1.2em', fontWeight: 'bold' }}>
+                {details?.name}
+              </span>
               <button
                 onClick={() => removeAddon(index)}
                 className={styles.deleteButton}
@@ -108,9 +110,13 @@ const AddonsList: React.FC<AddonsListProps> = ({
                   {option.type === 'text' && (
                     <input
                       type="text"
-                      value={addon.options[option.id] as string || '' }
+                      value={(addon.options[option.id] as string) || ''}
                       onChange={(e) =>
-                        updateOption(index, option.id, e.target.value ? e.target.value : undefined)
+                        updateOption(
+                          index,
+                          option.id,
+                          e.target.value ? e.target.value : undefined
+                        )
                       }
                       className={styles.textInput}
                     />
@@ -119,7 +125,11 @@ const AddonsList: React.FC<AddonsListProps> = ({
                     <select
                       value={addon.options[option.id] || ''}
                       onChange={(e) =>
-                        updateOption(index, option.id, e.target.value ? e.target.value : undefined)
+                        updateOption(
+                          index,
+                          option.id,
+                          e.target.value ? e.target.value : undefined
+                        )
                       }
                       className={styles.textInput}
                     >
@@ -130,14 +140,17 @@ const AddonsList: React.FC<AddonsListProps> = ({
                         </option>
                       ))}
                     </select>
-                  )
-                  }
+                  )}
                   {option.type === 'number' && (
                     <input
                       type="number"
                       value={addon.options[option.id] || ''}
                       onChange={(e) =>
-                        updateOption(index, option.id, e.target.value ? e.target.value : undefined)
+                        updateOption(
+                          index,
+                          option.id,
+                          e.target.value ? e.target.value : undefined
+                        )
                       }
                       className={styles.textInput}
                     />

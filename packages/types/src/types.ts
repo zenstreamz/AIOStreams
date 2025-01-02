@@ -106,34 +106,34 @@ export interface Config {
     splitter: string; // e.g. ' - ', ' | ' etc. the string used to split the tags
     // we need to have a key for where the value has to be determined from the stream data.
     // examples of this is provider and seedersOrAge. provider.cached has different states and seedersOrAge has different states
-    
+
     // available values:
     // {resolution}, {quality}, {streamType} {encode}, {visualTags}, {audioTags}, {languages}, {provider}, {seedersOrAge}, {filename}, {size}, {addonName}, {seedersOrAge}
     languages: {
       useEmojis: boolean; // e.g. 🇬🇧
-    }
+    };
     hideIfUnknown: boolean; // if true, the tag will not be shown if the value is unknown
     provider: {
       trueCacheStatus: string; // e.g. ⚡️
       falseCacheStatus: string; // e.g. ⏳
       undefinedCacheStatus: string; // e.g. ❓
       finalString: string; // e.g. [{providerShortName}{cacheStatus}]  ->  [TB⚡️] or this could be left empty
-    }
+    };
     streamType: {
       torrent: string; // e.g. 🧲
       usenet: string; // e.g. 📡
       direct: string; // e.g. 📥
       unknown: string; // e.g. ❓
       finalString: string; // e.g. {streamType}  ->  🧲
-    }
+    };
     seedersOrAge: {
-      whenSeeders: string; // e.g. 👤 
-      whenAge: string; // e.g. 📅 
+      whenSeeders: string; // e.g. 👤
+      whenAge: string; // e.g. 📅
       finalString: string; // e.g. {seedersOrAge} {seedersOrAgeValue}
-    }
-    name: string; 
+    };
+    name: string;
     description: string;
-  }
+  };
   maxSize?: number | null;
   minSize?: number | null;
   maxMovieSize: number | null;
@@ -142,7 +142,7 @@ export interface Config {
   minEpisodeSize: number | null;
   addons: {
     id: string;
-    options: { [key: string]: string | undefined};
+    options: { [key: string]: string | undefined };
   }[];
   services: {
     name: string;
@@ -151,7 +151,6 @@ export interface Config {
     credentials: { [key: string]: string };
   }[];
 }
-
 
 interface BaseOptionDetail {
   id: string;
@@ -166,7 +165,7 @@ export interface TextOptionDetail extends BaseOptionDetail {
 
 export interface SelectOptionDetail extends BaseOptionDetail {
   type: 'select';
-  options: { value: string, label: string }[];
+  options: { value: string; label: string }[];
 }
 
 export interface CheckboxOptionDetail extends BaseOptionDetail {
@@ -178,10 +177,14 @@ export interface NumberOptionDetail extends BaseOptionDetail {
   constraints: {
     min?: number;
     max?: number;
-  }
+  };
 }
 
-export type AddonOptionDetail = TextOptionDetail | SelectOptionDetail | CheckboxOptionDetail | NumberOptionDetail;
+export type AddonOptionDetail =
+  | TextOptionDetail
+  | SelectOptionDetail
+  | CheckboxOptionDetail
+  | NumberOptionDetail;
 
 export interface AddonDetail {
   name: string;

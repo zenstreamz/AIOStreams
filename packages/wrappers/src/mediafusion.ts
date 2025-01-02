@@ -4,9 +4,14 @@ import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
 import { addonDetails, serviceDetails } from './details';
 
-
 export class MediaFusion extends BaseWrapper {
-  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'MediaFusion', addonId: string) {
+  constructor(
+    configString: string | null,
+    overrideUrl: string | null,
+    indexerTimeout: number = 10000,
+    addonName: string = 'MediaFusion',
+    addonId: string
+  ) {
     let url = overrideUrl
       ? overrideUrl
       : 'https://mediafusion.elfhosted.com/' +
@@ -16,36 +21,53 @@ export class MediaFusion extends BaseWrapper {
   }
 
   protected parseStream(stream: Stream): ParsedStream {
-    const filename = stream.behaviorHints?.filename?.trim() ||
-      stream.description?.split('\n')[0].replace("📂 ", "");
-    
-    const parsedFilename: ParsedNameData = parseFilename(filename || stream.behaviorHints?.bingeGroup || stream.description || '');
-    const sizeInBytes = stream.behaviorHints?.videoSize  
+    const filename =
+      stream.behaviorHints?.filename?.trim() ||
+      stream.description?.split('\n')[0].replace('📂 ', '');
+
+    const parsedFilename: ParsedNameData = parseFilename(
+      filename || stream.behaviorHints?.bingeGroup || stream.description || ''
+    );
+    const sizeInBytes = stream.behaviorHints?.videoSize
       ? stream.behaviorHints.videoSize
       : stream.description
-      ? extractSizeInBytes(stream.description, 1024)
-      : undefined;
+        ? extractSizeInBytes(stream.description, 1024)
+        : undefined;
 
     const nameParts = stream.name!.split(' ');
     const provider = nameParts[nameParts.length - 3];
     const emoji = nameParts[nameParts.length - 1];
 
-    const debrid = provider !== 'P2P' && (emoji === '⏳' || emoji === '⚡️')
-      ? {
-          name: serviceDetails.find((service) => service.knownNames.includes(provider))?.shortName || provider,
-          cached: emoji === '⚡️',
-        }
-      : undefined;
+    const debrid =
+      provider !== 'P2P' && (emoji === '⏳' || emoji === '⚡️')
+        ? {
+            name:
+              serviceDetails.find((service) =>
+                service.knownNames.includes(provider)
+              )?.shortName || provider,
+            cached: emoji === '⚡️',
+          }
+        : undefined;
 
-    const indexerMatch = RegExp(/🔗 ([a-zA-Z0-9]+)/).exec(stream.description || '');
+    const indexerMatch = RegExp(/🔗 ([a-zA-Z0-9]+)/).exec(
+      stream.description || ''
+    );
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
 
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.description || '');
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
-    const parsedStream: ParsedStream = this.createParsedResult(parsedFilename, stream, filename, sizeInBytes, debrid, seeders, undefined, indexer )
-    return parsedStream; 
-
+    const parsedStream: ParsedStream = this.createParsedResult(
+      parsedFilename,
+      stream,
+      filename,
+      sizeInBytes,
+      debrid,
+      seeders,
+      undefined,
+      indexer
+    );
+    return parsedStream;
   }
 }
 
@@ -60,13 +82,23 @@ export async function getMediafusionStreams(
   streamRequest: StreamRequest,
   addonId: string
 ): Promise<ParsedStream[]> {
-  const supportedServices: string[] = addonDetails.find((addon: AddonDetail) => addon.id === 'mediafusion')?.supportedServices || [];
+  const supportedServices: string[] =
+    addonDetails.find((addon: AddonDetail) => addon.id === 'mediafusion')
+      ?.supportedServices || [];
   const parsedStreams: ParsedStream[] = [];
-  const indexerTimeout = mediafusionOptions.indexerTimeout ? parseInt(mediafusionOptions.indexerTimeout) : undefined;
+  const indexerTimeout = mediafusionOptions.indexerTimeout
+    ? parseInt(mediafusionOptions.indexerTimeout)
+    : undefined;
 
   // If overrideUrl is provided, use it to get streams and skip all other steps
   if (mediafusionOptions.overrideUrl) {
-    const mediafusion = new MediaFusion(null, mediafusionOptions.overrideUrl as string, indexerTimeout, mediafusionOptions.overrideName, addonId);
+    const mediafusion = new MediaFusion(
+      null,
+      mediafusionOptions.overrideUrl as string,
+      indexerTimeout,
+      mediafusionOptions.overrideName,
+      addonId
+    );
     return mediafusion.getParsedStreams(streamRequest);
   }
 
@@ -77,35 +109,63 @@ export async function getMediafusionStreams(
 
   // if no usable services found, use mediafusion without debrid
   if (usableServices.length < 0) {
-    const configString = await getConfigString('https://mediafusion.elfhosted.com/', getMediaFusionConfig());
-    const mediafusion = new MediaFusion(configString, null, indexerTimeout, mediafusionOptions.overrideName, addonId);
+    const configString = await getConfigString(
+      'https://mediafusion.elfhosted.com/',
+      getMediaFusionConfig()
+    );
+    const mediafusion = new MediaFusion(
+      configString,
+      null,
+      indexerTimeout,
+      mediafusionOptions.overrideName,
+      addonId
+    );
     return mediafusion.getParsedStreams(streamRequest);
   }
 
-
   // otherwise, depending on the configuration, create multiple instances of mediafusion or use a single instance with the prioritised service
 
-  if (mediafusionOptions.prioritiseDebrid && !supportedServices.includes(mediafusionOptions.prioritiseDebrid)) {
+  if (
+    mediafusionOptions.prioritiseDebrid &&
+    !supportedServices.includes(mediafusionOptions.prioritiseDebrid)
+  ) {
     throw new Error('Invalid debrid service');
   }
 
   if (mediafusionOptions.prioritiseDebrid) {
-      const debridService = usableServices.find(
+    const debridService = usableServices.find(
       (service) => service.id === mediafusionOptions.prioritiseDebrid
+    );
+    if (!debridService) {
+      throw new Error(
+        'Debrid service not found for ' + mediafusionOptions.prioritiseDebrid
       );
-      if (!debridService) {
-      throw new Error('Debrid service not found for ' + mediafusionOptions.prioritiseDebrid);
-      }
-      if (!debridService.credentials.apiKey) {
-      throw new Error('Debrid service API key not found for ' + mediafusionOptions.prioritiseDebrid);
-      }
+    }
+    if (!debridService.credentials.apiKey) {
+      throw new Error(
+        'Debrid service API key not found for ' +
+          mediafusionOptions.prioritiseDebrid
+      );
+    }
 
-      // get the encrypted mediafusion string
-      const mediafusionConfig = getMediaFusionConfig(debridService.id, debridService.credentials.apiKey);
-      const encryptedStr = await getConfigString('https://mediafusion.elfhosted.com/', mediafusionConfig);
-      const mediafusion = new MediaFusion(encryptedStr, null, indexerTimeout, mediafusionOptions.overrideName, addonId);
+    // get the encrypted mediafusion string
+    const mediafusionConfig = getMediaFusionConfig(
+      debridService.id,
+      debridService.credentials.apiKey
+    );
+    const encryptedStr = await getConfigString(
+      'https://mediafusion.elfhosted.com/',
+      mediafusionConfig
+    );
+    const mediafusion = new MediaFusion(
+      encryptedStr,
+      null,
+      indexerTimeout,
+      mediafusionOptions.overrideName,
+      addonId
+    );
 
-      return mediafusion.getParsedStreams(streamRequest);
+    return mediafusion.getParsedStreams(streamRequest);
   }
 
   // if no prioritised service is provided, create a mediafusion instance for each service
@@ -114,36 +174,27 @@ export async function getMediafusionStreams(
     throw new Error('No supported service(s) enabled');
   }
   for (const service of servicesToUse) {
-    const mediafusionConfig = getMediaFusionConfig(service.id, service.credentials.apiKey);
-    const encryptedStr = await getConfigString('https://mediafusion.elfhosted.com/', mediafusionConfig);
-    const mediafusion = new MediaFusion(encryptedStr, null, indexerTimeout, mediafusionOptions.overrideName, addonId);
+    const mediafusionConfig = getMediaFusionConfig(
+      service.id,
+      service.credentials.apiKey
+    );
+    const encryptedStr = await getConfigString(
+      'https://mediafusion.elfhosted.com/',
+      mediafusionConfig
+    );
+    const mediafusion = new MediaFusion(
+      encryptedStr,
+      null,
+      indexerTimeout,
+      mediafusionOptions.overrideName,
+      addonId
+    );
     const streams = await mediafusion.getParsedStreams(streamRequest);
     parsedStreams.push(...streams);
   }
 
   return parsedStreams;
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const getMediaFusionConfig = (service?: string, token?: string) => {
   return {
@@ -248,7 +299,9 @@ async function getConfigString(
 
   const encryptedData = await response.json();
   if (encryptedData.status !== 'success') {
-    throw new Error('Failed to encrypt data for mediafusion' + encryptedData.message);
+    throw new Error(
+      'Failed to encrypt data for mediafusion' + encryptedData.message
+    );
   }
 
   return encryptedData.encrypted_str;

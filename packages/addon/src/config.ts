@@ -7,7 +7,6 @@ export const MAX_ADDONS = 10;
 export const MAX_MOVIE_SIZE = 150000000000; // 150GB
 export const MAX_EPISODE_SIZE = 15000000000; // 15GB
 
-
 export const allowedLanguages = [
   'English',
   'Japanese',
@@ -56,7 +55,6 @@ export const allowedLanguages = [
   'Norwegian',
   'Malay',
 ];
-
 
 export function validateConfig(config: Config): {
   valid: boolean;
@@ -110,7 +108,9 @@ export function validateConfig(config: Config): {
         );
       }
     }
-    const details = addonDetails.find((detail: AddonDetail) => detail.id === addon.id);
+    const details = addonDetails.find(
+      (detail: AddonDetail) => detail.id === addon.id
+    );
     if (!details) {
       return createResponse(
         false,
@@ -155,7 +155,10 @@ export function validateConfig(config: Config): {
           } else if (input !== undefined) {
             const value = parseInt(input);
             const { min, max } = option.constraints || {};
-            if ((min !== undefined && value < min) || (max !== undefined && value > max)) {
+            if (
+              (min !== undefined && value < min) ||
+              (max !== undefined && value > max)
+            ) {
               return createResponse(
                 false,
                 'invalidNumber',
@@ -177,7 +180,7 @@ export function validateConfig(config: Config): {
           'Custom formatter is required if custom formatter is selected'
         );
       }
-    } else { 
+    } else {
       return createResponse(
         false,
         'invalidFormatter',
@@ -210,7 +213,7 @@ export function validateConfig(config: Config): {
   }
 
   // need at least one visual tag, resolution, quality
- 
+
   if (
     !config.visualTags.some((tag) => Object.values(tag)[0]) ||
     !config.resolutions.some((resolution) => Object.values(resolution)[0]) ||

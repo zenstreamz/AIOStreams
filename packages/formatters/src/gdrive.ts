@@ -11,8 +11,8 @@ export function gdriveFormat(stream: ParsedStream): {
     const cacheStatus = stream.provider.cached
       ? '⚡'
       : stream.provider.cached === undefined
-      ? '❓'
-      : '⏳';
+        ? '❓'
+        : '⏳';
     name += `[${stream.provider.name}${cacheStatus}]\n`;
   }
 
@@ -22,7 +22,7 @@ export function gdriveFormat(stream: ParsedStream): {
 
   name += `${stream.addon.name} ${stream.resolution}`;
 
-  let description: string = `${stream.quality !== "Unknown" ? '🎥 ' + stream.quality + ' ' : ''}${stream.encode !== "Unknown" ? '🎞️ ' + stream.encode : ''}`;
+  let description: string = `${stream.quality !== 'Unknown' ? '🎥 ' + stream.quality + ' ' : ''}${stream.encode !== 'Unknown' ? '🎞️ ' + stream.encode : ''}`;
 
   if (stream.visualTags.length > 0 || stream.audioTags.length > 0) {
     description += '\n';

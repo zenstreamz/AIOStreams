@@ -13,10 +13,15 @@ export class BaseWrapper {
   protected addonName: string;
   private addonUrl: string;
   private addonId: string;
-  constructor(addonName: string, addonUrl: string, indexerTimeout: number = 3000, addonId: string) {
+  constructor(
+    addonName: string,
+    addonUrl: string,
+    indexerTimeout: number = 3000,
+    addonId: string
+  ) {
     this.addonName = addonName;
     this.addonUrl = this.standardizeManifestUrl(addonUrl);
-    this.addonId = addonId
+    this.addonId = addonId;
     this.indexerTimeout = indexerTimeout || 3000;
   }
 
@@ -69,7 +74,9 @@ export class BaseWrapper {
 
       if (!response.ok) {
         let message = await response.text();
-        return Promise.reject(new Error(`${response.status} - ${response.statusText}: ${message}`));
+        return Promise.reject(
+          new Error(`${response.status} - ${response.statusText}: ${message}`)
+        );
       }
 
       let results: { streams: Stream[] } = await response.json();
@@ -97,7 +104,7 @@ export class BaseWrapper {
   ): ParsedStream {
     return {
       ...parsedInfo,
-      addon: {name: this.addonName, id: this.addonId},
+      addon: { name: this.addonName, id: this.addonId },
       filename: filename,
       size: size,
       url: stream.url,
@@ -136,15 +143,22 @@ export class BaseWrapper {
     let description = stream.description || stream.title;
 
     if (!filename && description) {
-      console.log('No filename found in behaviorHints, attempting to determine from description');
+      console.log(
+        'No filename found in behaviorHints, attempting to determine from description'
+      );
       const lines = description.split('\n');
-      filename = lines.find((line: string) =>
-      line.match(/(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/) ||
-      line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
-      ) || lines[0];
+      filename =
+        lines.find(
+          (line: string) =>
+            line.match(
+              /(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/
+            ) || line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
+        ) || lines[0];
       console.log('Determined filename from description:', filename);
     } else if (!description) {
-      console.log('There was no description to parse for filename nor was it found in behaviorHints');
+      console.log(
+        'There was no description to parse for filename nor was it found in behaviorHints'
+      );
     }
 
     console.log('Parsing filename:', filename);
@@ -152,50 +166,58 @@ export class BaseWrapper {
 
     // look for size in one of the many random places it could be
     let size: number | undefined;
-    size = stream.behaviorHints?.videoSize || stream.size || stream.sizebytes || description ? extractSizeInBytes(description, 1024) : undefined;
+    size =
+      stream.behaviorHints?.videoSize ||
+      stream.size ||
+      stream.sizebytes ||
+      description
+        ? extractSizeInBytes(description, 1024)
+        : undefined;
 
     // look for seeders
-    let seeders: string | undefined
+    let seeders: string | undefined;
     if (description) {
-      seeders = description.match(/(👥|👤) (\d+)/)?.[2] 
+      seeders = description.match(/(👥|👤) (\d+)/)?.[2];
     }
 
     // look for indexer
-    let indexer: string | undefined
+    let indexer: string | undefined;
     if (description) {
-      indexer = description.match(/(🌐|⚙️|🔗) ?(\w+)/)?.[2]
+      indexer = description.match(/(🌐|⚙️|🔗) ?(\w+)/)?.[2];
     }
 
-    // look for providers 
+    // look for providers
     const services = serviceDetails;
     const cachedSymbols = ['+', '⚡'];
     const uncachedSymbols = ['⏳', 'download'];
-    
+
     // look at the stream.name for one of the knownNames in each service
     let provider: ParsedStream['provider'] | undefined;
     if (stream.name) {
       services.forEach((service) => {
-      // check if any of the knownNames are in the stream.name using regex
-      const found = service.knownNames.some((name) => {
-        const regex = new RegExp(`\\[${name}.*?\\]`, 'i');
-        return regex.test(stream.name);
-      });
-      let cached: boolean | undefined = undefined;
-      if (found) {
-        // check if any of the uncachedSymbols are in the stream.name
-        if (uncachedSymbols.some((symbol) => stream.name?.includes(symbol))) {
-          cached = false;
-        }
-        // check if any of the cachedSymbols are in the stream.name
-        else if (cachedSymbols.some((symbol) => stream.name?.includes(symbol))) {
-          cached = true;
-        }
+        // check if any of the knownNames are in the stream.name using regex
+        const found = service.knownNames.some((name) => {
+          const regex = new RegExp(`\\[${name}.*?\\]`, 'i');
+          return regex.test(stream.name);
+        });
+        let cached: boolean | undefined = undefined;
+        if (found) {
+          // check if any of the uncachedSymbols are in the stream.name
+          if (uncachedSymbols.some((symbol) => stream.name?.includes(symbol))) {
+            cached = false;
+          }
+          // check if any of the cachedSymbols are in the stream.name
+          else if (
+            cachedSymbols.some((symbol) => stream.name?.includes(symbol))
+          ) {
+            cached = true;
+          }
 
-        provider = {
-          name: service.shortName,
-          cached: cached,
+          provider = {
+            name: service.shortName,
+            cached: cached,
+          };
         }
-      }
       });
     }
 
@@ -203,6 +225,15 @@ export class BaseWrapper {
       // if its a p2p result, it is not from a debrid service
       provider = undefined;
     }
-    return this.createParsedResult(parsedInfo, stream, filename, size, provider, seeders ? parseInt(seeders) : undefined, undefined, indexer);
+    return this.createParsedResult(
+      parsedInfo,
+      stream,
+      filename,
+      size,
+      provider,
+      seeders ? parseInt(seeders) : undefined,
+      undefined,
+      indexer
+    );
   }
 }

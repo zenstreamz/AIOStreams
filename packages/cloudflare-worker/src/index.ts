@@ -73,7 +73,9 @@ export default {
         const config = components[0];
         const decodedPath = decodeURIComponent(url.pathname);
 
-        const streamMatch = /stream\/(movie|series)\/([^/]+)\.json/.exec(decodedPath.replace(`/${config}`, ''));
+        const streamMatch = /stream\/(movie|series)\/([^/]+)\.json/.exec(
+          decodedPath.replace(`/${config}`, '')
+        );
 
         if (!streamMatch) {
           let path = decodedPath.replace(`/${config}`, '');
@@ -82,9 +84,7 @@ export default {
         }
 
         const [type, id] = streamMatch.slice(1);
-        console.log(
-          `Received /stream request with Type: ${type}, ID: ${id}`
-        );
+        console.log(`Received /stream request with Type: ${type}, ID: ${id}`);
 
         let decodedConfig: Config;
 
@@ -118,7 +118,9 @@ export default {
         return createJsonResponse({ streams });
       }
 
-      const notFound = await env.ASSETS.fetch(new Request(url.origin + '/404', request));
+      const notFound = await env.ASSETS.fetch(
+        new Request(url.origin + '/404', request)
+      );
       return new Response(notFound.body, { ...notFound, status: 404 });
     } catch (e) {
       console.error(e);

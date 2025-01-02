@@ -1,7 +1,5 @@
-
 <p align="center"><img src="https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/logo.png" /></p>
 <h1 align="center" id="title">AIOStreams</h1>
-
 
 > [!WARNING]
 > This addon is currently still in development. Things may not work as expected.
@@ -34,15 +32,15 @@ Once it has all the parsed information for each result, it can apply your config
 ### Why was this addon created?
 
 I wanted to have a single addon that could scrape all the sources I wanted and apply my own custom filters and sorting options.
-Many addons lack the ability to finely tune how you want your results to be sorted and filtered. 
+Many addons lack the ability to finely tune how you want your results to be sorted and filtered.
 
-Being able to change the format of every result was also a big factor in creating this addon. 
+Being able to change the format of every result was also a big factor in creating this addon.
 I preferred the format of my GDrive addon and wanted to use that format for all my results.
 This makes it easier to parse the results and explain to less tech-savvy people how to pick the best result.
 
 It also means you only have to install one addon instead of configuring multiple addons.
 
-Furthermore, being able to apply a global filter and sort to all results means that you can get the best results from all sources displayed first, 
+Furthermore, being able to apply a global filter and sort to all results means that you can get the best results from all sources displayed first,
 rather than having to check each addon individually.
 
 ### What are the currently supported addons?
@@ -81,12 +79,11 @@ The addon can display your results in different formats. The formats available a
 
 ## Deploying your own instance
 
-Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it. 
+Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it.
 
-### Huggingface 
+### Huggingface
 
-
-This addon can be deployed as a [Huggingface](https://huggingface.co/) space. 
+This addon can be deployed as a [Huggingface](https://huggingface.co/) space.
 
 > [!WARNING]
 > Huggingface is centered around AI and as this addon is not related to AI, they may take it down.
@@ -96,18 +93,18 @@ This addon can be deployed as a [Huggingface](https://huggingface.co/) space.
 
 1. Create a Huggingface account and on the [home page](https://huggingface.co) create a new space.
 
-  ![Screenshot 2024-12-29 133648](https://github.com/user-attachments/assets/9d20a1ac-8eff-4748-8ed7-29da174bd438)
+![Screenshot 2024-12-29 133648](https://github.com/user-attachments/assets/9d20a1ac-8eff-4748-8ed7-29da174bd438)
 
 2. In the 'Create a space' menu, choose 'Docker' as the `Space SDK` and 'Blank' for the docker template.
 
-  ![image](https://github.com/user-attachments/assets/99dc4aed-9331-4bde-a500-2fa1b9dac572)
+![image](https://github.com/user-attachments/assets/99dc4aed-9331-4bde-a500-2fa1b9dac572)
 
-  - Ensure the space is set to `Public`
-  - The `Space name` can be anything.
+- Ensure the space is set to `Public`
+- The `Space name` can be anything.
 
 3. After clicking 'Create Space', you should be taken to your space. Scroll down to 'Create your dockerfile', and click the link contained in the hint.
 
-  ![image](https://github.com/user-attachments/assets/8020ca91-abbf-4077-9379-1e0b693444a0)
+![image](https://github.com/user-attachments/assets/8020ca91-abbf-4077-9379-1e0b693444a0)
 
 4. Copy and paste the following Dockerfile into the text box. Do not use the Dockerfile in this repository. Make sure to use the one below
 <details>
@@ -121,7 +118,6 @@ apk del git
 
 RUN npm install
 
-
 RUN npm run build
 
 RUN npm --workspaces prune --omit=dev
@@ -130,7 +126,7 @@ FROM node:22-alpine AS final
 
 WORKDIR /app
 
-COPY --from=builder /build/package*.json /build/LICENSE ./
+COPY --from=builder /build/package\*.json /build/LICENSE ./
 
 COPY --from=builder /build/packages/addon/package.*json ./packages/addon/
 COPY --from=builder /build/packages/frontend/package.*json ./packages/frontend/
@@ -154,11 +150,12 @@ ENV PORT=7860
 
 ENTRYPOINT ["npm", "run", "start:addon"]
 </code></pre>
+
 </details>
 
 5. Click `Commit new file to main`
 
-6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy 
+6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy
 
 ### Cloudflare Workers
 
@@ -167,8 +164,7 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 > [!NOTE]
 > Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
 
-
-Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands: 
+Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands:
 
 ```
 git clone https://github.com/Viren070/AIOStreams.git
@@ -183,7 +179,7 @@ npm run deploy:cloudflare-worker
 https://render.com/
 
 > [!WARNING]
-> Free instances 'spin down' after 15 minutes of inactivity. In this suspended state, it can take around a minute to start back up again when you make a request to it. 
+> Free instances 'spin down' after 15 minutes of inactivity. In this suspended state, it can take around a minute to start back up again when you make a request to it.
 
 1. Deploy a new web service
 2. Select `Public Git Repository` as the source
@@ -195,18 +191,19 @@ https://render.com/
 ### Docker
 
 Use the Dockerfile with [Docker](https://docs.docker.com/get-docker/) installed .
+
 ```
 docker run -p 8080:3000 ghcr.io/viren070/aiostreams:latest
 ```
 
 Or, build the docker image yourself
+
 ```
 git clone https://github.com/Viren070/aiostreams.git
 cd aiostreams
 docker build -t aiostreams .
 docker run -p 8080:3000 aiostreams
 ```
-
 
 ### From source
 
@@ -235,6 +232,6 @@ You need Node.js and git installed. Node v22 and npm v10.9 were used in the deve
 
 You can change the PORT environment variable to change the port that the addon will listen on.
 
-## Credits 
+## Credits
 
 Thanks to [sleeyax/stremio-easynews-addon](https://github.com/Sleeyax/stremio-easynews-addon) for the repository structure and dockerfile.

@@ -5,11 +5,17 @@ import {
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
-import { Stream, ParsedStream, StreamRequest, Config, CollectedParsedStreams } from '@aiostreams/types';
+import {
+  Stream,
+  ParsedStream,
+  StreamRequest,
+  Config,
+  CollectedParsedStreams,
+} from '@aiostreams/types';
 import {
   gdriveFormat,
   torrentioFormat,
-  torboxFormat
+  torboxFormat,
 } from '@aiostreams/formatters';
 
 export class AIOStreams {
@@ -76,7 +82,7 @@ export class AIOStreams {
       if (
         streamRequest.type === 'movie' &&
         this.config.maxMovieSize &&
-        parsedStream.size && 
+        parsedStream.size &&
         parsedStream.size > this.config.maxMovieSize
       )
         return false;
@@ -84,7 +90,7 @@ export class AIOStreams {
       if (
         streamRequest.type === 'movie' &&
         this.config.minMovieSize &&
-        parsedStream.size && 
+        parsedStream.size &&
         parsedStream.size < this.config.minMovieSize
       )
         return false;
@@ -92,19 +98,18 @@ export class AIOStreams {
       if (
         streamRequest.type === 'series' &&
         this.config.maxEpisodeSize &&
-        parsedStream.size && 
+        parsedStream.size &&
         parsedStream.size > this.config.maxEpisodeSize
       )
         return false;
-      
+
       if (
         streamRequest.type === 'series' &&
         this.config.minEpisodeSize &&
-        parsedStream.size && 
+        parsedStream.size &&
         parsedStream.size < this.config.minEpisodeSize
       )
         return false;
-      
 
       return true;
     });
@@ -112,7 +117,9 @@ export class AIOStreams {
     // Apply sorting
 
     // initially sort by filename to ensure consistent results
-    filteredResults.sort((a, b) => a.filename && b.filename ? a.filename.localeCompare(b.filename) : 0);
+    filteredResults.sort((a, b) =>
+      a.filename && b.filename ? a.filename.localeCompare(b.filename) : 0
+    );
 
     // then apply our this.config sorting
     filteredResults.sort((a, b) => {
@@ -332,7 +339,11 @@ export class AIOStreams {
     for (const addon of this.config.addons) {
       try {
         const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
-        const streams = await this.getStreamsFromAddon(addon, addonId, streamRequest);
+        const streams = await this.getStreamsFromAddon(
+          addon,
+          addonId,
+          streamRequest
+        );
         parsedStreams.push(...streams);
       } catch (error) {
         console.error(`Failed to get streams from addon ${addon.id}: ${error}`);
@@ -346,11 +357,14 @@ export class AIOStreams {
     addonId: string,
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
-
-
     switch (addon.id) {
       case 'torbox': {
-        return await getTorboxStreams(this.config, addon.options, streamRequest, addonId);
+        return await getTorboxStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
       }
       case 'torrentio': {
         return await getTorrentioStreams(
@@ -361,7 +375,12 @@ export class AIOStreams {
         );
       }
       case 'comet': {
-        return await getCometStreams(this.config, addon.options, streamRequest, addonId);
+        return await getCometStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
       }
       case 'mediafusion': {
         return await getMediafusionStreams(
@@ -378,19 +397,30 @@ export class AIOStreams {
         const wrapper = new BaseWrapper(
           addon.options.overrideName || 'GDrive',
           addon.options.addonUrl,
-          addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined,
+          addon.options.indexerTimeout
+            ? parseInt(addon.options.indexerTimeout)
+            : undefined,
           addonId
         );
         return await wrapper.getParsedStreams(streamRequest);
       }
       default: {
         if (!addon.options.url) {
-          throw new Error(`The addon URL was undefined for ${addon.options.name}`);
+          throw new Error(
+            `The addon URL was undefined for ${addon.options.name}`
+          );
         }
         console.log(
           `Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`
         );
-        const wrapper = new BaseWrapper(addon.options.name || 'Custom', addon.options.url.trim(), addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined, addonId);
+        const wrapper = new BaseWrapper(
+          addon.options.name || 'Custom',
+          addon.options.url.trim(),
+          addon.options.indexerTimeout
+            ? parseInt(addon.options.indexerTimeout)
+            : undefined,
+          addonId
+        );
         return await wrapper.getParsedStreams(streamRequest);
       }
     }

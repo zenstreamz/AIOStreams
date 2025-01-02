@@ -23,7 +23,7 @@ import {
   allowedLanguages,
   validateConfig,
   MAX_EPISODE_SIZE,
-  MAX_MOVIE_SIZE
+  MAX_MOVIE_SIZE,
 } from '@aiostreams/config';
 import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
 
@@ -74,7 +74,6 @@ const defaultEncodes: Encode[] = [
   { HEVC: true },
   { AVC: true },
   { Unknown: true },
-  
 ];
 
 const defaultSortCriteria: SortBy[] = [
@@ -86,7 +85,7 @@ const defaultSortCriteria: SortBy[] = [
   { encode: false },
   { quality: false },
   { seeders: false },
-  { addon: false }
+  { addon: false },
 ];
 
 const toastOptions: ToastOptions = {
@@ -100,7 +99,7 @@ const toastOptions: ToastOptions = {
     backgroundColor: '#ededed',
     color: 'black',
   },
-}
+};
 function showToast(
   message: string,
   type: 'success' | 'error' | 'info' | 'warning',
@@ -205,7 +204,14 @@ export default function Configure() {
     for (const addon of addonDetails) {
       if (addon.requiresService) {
         // look through services and see if the ID of any service is in addon.supportedServices
-        if (services.some((service) => addon.supportedServices.includes(service.id) && service.enabled && Object.keys(service.credentials).length > 0)) {
+        if (
+          services.some(
+            (service) =>
+              addon.supportedServices.includes(service.id) &&
+              service.enabled &&
+              Object.keys(service.credentials).length > 0
+          )
+        ) {
           choosableAddons.push(addon.id);
         }
       } else {
@@ -240,7 +246,6 @@ export default function Configure() {
     const protocol = window.location.protocol;
     const root = window.location.host;
 
-
     setDisableButtons(true);
     // make a POST request to /encrypt-user-data with the config as the body
     // the response will be the encrypted config
@@ -248,46 +253,63 @@ export default function Configure() {
     const timeout = setTimeout(() => {
       controller.abort();
     }, 5000);
-    try { 
+    try {
       const encryptPath = `${protocol}//${root}/encrypt-user-data`;
       const response = await fetch(encryptPath, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ data: JSON.stringify(config) }),
-          signal: controller.signal,
-        });
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: JSON.stringify(config) }),
+        signal: controller.signal,
+      });
       clearTimeout(timeout);
       const data = await response.json();
       if (!data.success) {
         // fallback to base64 encoding if encryption fails
-        try { 
+        try {
           const base64Config = btoa(JSON.stringify(config));
-          return { success: true, manifest: `${protocol}//${root}/${base64Config}/manifest.json` };
+          return {
+            success: true,
+            manifest: `${protocol}//${root}/${base64Config}/manifest.json`,
+          };
         } catch {
-          return { success: false, manifest: null, message: 'Failed to encrypt config'};
+          return {
+            success: false,
+            manifest: null,
+            message: 'Failed to encrypt config',
+          };
         }
       }
 
       const encryptedConfig = data.data;
 
-      return { success: true, manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json` };
+      return {
+        success: true,
+        manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json`,
+      };
     } catch (error) {
       console.error('Failed to get manifest URL', error);
       clearTimeout(timeout);
-      try { 
+      try {
         const base64Config = btoa(JSON.stringify(config));
-        return { success: true, manifest: `${protocol}//${root}/${base64Config}/manifest.json` };
+        return {
+          success: true,
+          manifest: `${protocol}//${root}/${base64Config}/manifest.json`,
+        };
       } catch {
-        return { success: false, manifest: null, message: 'Failed to encrypt config'};
+        return {
+          success: false,
+          manifest: null,
+          message: 'Failed to encrypt config',
+        };
       }
     }
   };
 
   const createAndValidateConfig = () => {
     const config = createConfig();
-    
+
     const { valid, errorCode, errorMessage } = validateConfig(config);
     if (!valid) {
       showToast(
@@ -302,16 +324,29 @@ export default function Configure() {
 
   const handleInstall = async () => {
     if (createAndValidateConfig()) {
-      const id = toast.loading('Generating manifest URL...', {...toastOptions, toastId: 'generatingManifestUrl'});
+      const id = toast.loading('Generating manifest URL...', {
+        ...toastOptions,
+        toastId: 'generatingManifestUrl',
+      });
       const manifestUrl = await getManifestUrl();
       if (!manifestUrl.success || !manifestUrl.manifest) {
         setDisableButtons(false);
-        toast.update(id, {render: 'Failed to generate manifest URL', type: 'error', autoClose: 5000, isLoading: false});
+        toast.update(id, {
+          render: 'Failed to generate manifest URL',
+          type: 'error',
+          autoClose: 5000,
+          isLoading: false,
+        });
         return;
       }
 
       const stremioUrl = manifestUrl.manifest.replace(/^https?/, 'stremio');
-      toast.update(id, {render: 'Successfully generated manifest URL', type: 'success', autoClose: 5000, isLoading: false }); 
+      toast.update(id, {
+        render: 'Successfully generated manifest URL',
+        type: 'success',
+        autoClose: 5000,
+        isLoading: false,
+      });
 
       window.open(stremioUrl, '_blank');
       setDisableButtons(false);
@@ -323,13 +358,24 @@ export default function Configure() {
       const id = toast.loading('Generating manifest URL...', toastOptions);
       const manifestUrl = await getManifestUrl();
       if (!manifestUrl.success || !manifestUrl.manifest) {
-        toast.update(id, {render: 'Failed to generate manifest URL', type: 'error', autoClose: 5000, isLoading: false});
+        toast.update(id, {
+          render: 'Failed to generate manifest URL',
+          type: 'error',
+          autoClose: 5000,
+          isLoading: false,
+        });
         setDisableButtons(false);
         return;
       }
 
       const encodedManifestUrl = encodeURIComponent(manifestUrl.manifest);
-      toast.update(id, {render: 'Successfully generated manifest URL.', type: 'success', autoClose: 5000, toastId: 'openingStremioWeb', isLoading: false});
+      toast.update(id, {
+        render: 'Successfully generated manifest URL.',
+        type: 'success',
+        autoClose: 5000,
+        toastId: 'openingStremioWeb',
+        isLoading: false,
+      });
 
       window.open(
         `https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`,
@@ -344,26 +390,41 @@ export default function Configure() {
       const id = toast.loading('Generating manifest URL...', toastOptions);
       const manifestUrl = await getManifestUrl();
       if (!manifestUrl.success || !manifestUrl.manifest) {
-        toast.update(id, {render: 'Failed to generate manifest URL', type: 'error', autoClose: 5000, isLoading: false});
+        toast.update(id, {
+          render: 'Failed to generate manifest URL',
+          type: 'error',
+          autoClose: 5000,
+          isLoading: false,
+        });
         setDisableButtons(false);
         return;
       }
       navigator.clipboard.writeText(manifestUrl.manifest).then(() => {
-        toast.update(id, {render: 'Manifest URL copied to clipboard', type: 'success', autoClose: 5000, toastId: 'copiedManifestUrl', isLoading: false});
+        toast.update(id, {
+          render: 'Manifest URL copied to clipboard',
+          type: 'success',
+          autoClose: 5000,
+          toastId: 'copiedManifestUrl',
+          isLoading: false,
+        });
       });
       setDisableButtons(false);
     }
   };
 
-  const loadValidValuesFromObject = (object: { [key: string]: boolean }[], validValues: { [key: string]: boolean }[]) => { 
+  const loadValidValuesFromObject = (
+    object: { [key: string]: boolean }[],
+    validValues: { [key: string]: boolean }[]
+  ) => {
     if (!object) {
       return validValues;
     }
     return validValues.map((validValue) => {
-      const value = object.find((v) => Object.keys(v)[0] === Object.keys(validValue)[0]);
+      const value = object.find(
+        (v) => Object.keys(v)[0] === Object.keys(validValue)[0]
+      );
       return value || validValue;
     });
-
   };
 
   const validateValue = (value: string, validValues: string[]) => {
@@ -387,7 +448,9 @@ export default function Configure() {
     if (!addons) {
       return [];
     }
-    return addons.filter((addon) => addonDetails.some((detail) => detail.id === addon.id));
+    return addons.filter((addon) =>
+      addonDetails.some((detail) => detail.id === addon.id)
+    );
   };
 
   // Load config from the window path if it exists
@@ -399,19 +462,45 @@ export default function Configure() {
       if (configMatch) {
         const decodedConfig = JSON.parse(atob(configMatch[1]));
 
-        setResolutions(loadValidValuesFromObject(decodedConfig.resolutions, defaultResolutions));
-        setQualities(loadValidValuesFromObject(decodedConfig.qualities, defaultQualities));
-        setVisualTags(loadValidValuesFromObject(decodedConfig.visualTags, defaultVisualTags));
-        setAudioTags(loadValidValuesFromObject(decodedConfig.audioTags, defaultAudioTags));
-        setEncodes(loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes));
+        setResolutions(
+          loadValidValuesFromObject(
+            decodedConfig.resolutions,
+            defaultResolutions
+          )
+        );
+        setQualities(
+          loadValidValuesFromObject(decodedConfig.qualities, defaultQualities)
+        );
+        setVisualTags(
+          loadValidValuesFromObject(decodedConfig.visualTags, defaultVisualTags)
+        );
+        setAudioTags(
+          loadValidValuesFromObject(decodedConfig.audioTags, defaultAudioTags)
+        );
+        setEncodes(
+          loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes)
+        );
         setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
-        setPrioritiseLanguage(validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) || null);
-        setFormatter(validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive');
+        setPrioritiseLanguage(
+          validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) ||
+            null
+        );
+        setFormatter(
+          validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive'
+        );
         setServices(loadValidServices(decodedConfig.services));
-        setMaxMovieSize(decodedConfig.maxMovieSize || decodedConfig.maxSize || null);
-        setMinMovieSize(decodedConfig.minMovieSize || decodedConfig.minSize || null);
-        setMaxEpisodeSize(decodedConfig.maxEpisodeSize || decodedConfig.maxSize || null);
-        setMinEpisodeSize(decodedConfig.minEpisodeSize || decodedConfig.minSize || null);
+        setMaxMovieSize(
+          decodedConfig.maxMovieSize || decodedConfig.maxSize || null
+        );
+        setMinMovieSize(
+          decodedConfig.minMovieSize || decodedConfig.minSize || null
+        );
+        setMaxEpisodeSize(
+          decodedConfig.maxEpisodeSize || decodedConfig.maxSize || null
+        );
+        setMinEpisodeSize(
+          decodedConfig.minEpisodeSize || decodedConfig.minSize || null
+        );
         setAddons(loadValidAddons(decodedConfig.addons));
       }
     } catch (error) {
@@ -421,34 +510,33 @@ export default function Configure() {
 
   return (
     <div className={styles.container}>
-      
       <div className={styles.content}>
-      <div className={styles.header}>
-        <Image
-          src="/assets/logo.png"
-          alt="AIOStreams Logo"
-          width={200}
-          height={200}
-          style={{ alignSelf: 'center', justifyContent: 'center' }}
-        />
-        <h1 style={{ textAlign: 'center' }}>AIOStreams v{version}</h1>
-        <p style={{ textAlign: 'center', padding: '15px' }}>
-          AIOStreams, the all-in-one streaming addon for Stremio. Combine your
-          streams from all your addons into one and filter them by resolution,
-          quality, visual tags and more.
-        </p>
-        <p style={{ textAlign: 'center', padding: '15px' }}>
-          Made by Viren070. Source code on{' '}
-          <a
-            href="https://github.com/Viren070/AIOStreams"
-            target="_blank"
-            rel="noreferrer"
-            style={{ textDecoration: 'underline' }}
-          >
-            GitHub
-          </a>
-        </p>
-      </div>
+        <div className={styles.header}>
+          <Image
+            src="/assets/logo.png"
+            alt="AIOStreams Logo"
+            width={200}
+            height={200}
+            style={{ alignSelf: 'center', justifyContent: 'center' }}
+          />
+          <h1 style={{ textAlign: 'center' }}>AIOStreams v{version}</h1>
+          <p style={{ textAlign: 'center', padding: '15px' }}>
+            AIOStreams, the all-in-one streaming addon for Stremio. Combine your
+            streams from all your addons into one and filter them by resolution,
+            quality, visual tags and more.
+          </p>
+          <p style={{ textAlign: 'center', padding: '15px' }}>
+            Made by Viren070. Source code on{' '}
+            <a
+              href="https://github.com/Viren070/AIOStreams"
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: 'underline' }}
+            >
+              GitHub
+            </a>
+          </p>
+        </div>
         <div className={styles.section}>
           <h2 style={{ padding: '5px' }}>Resolutions</h2>
           <p style={{ padding: '5px' }}>
@@ -471,7 +559,7 @@ export default function Configure() {
           <h2 style={{ padding: '5px' }}>Visual Tags</h2>
           <p style={{ padding: '5px' }}>
             Choose which visual tags you want to see and reorder their priority
-            if needed.  
+            if needed.
           </p>
           <SortableCardList items={visualTags} setItems={setVisualTags} />
         </div>
@@ -560,7 +648,7 @@ export default function Configure() {
               </p>
             </div>
             <div className={styles.slidersContainer}>
-              <Slider 
+              <Slider
                 maxValue={MAX_MOVIE_SIZE}
                 value={minMovieSize || 0}
                 setValue={setMinMovieSize}
@@ -570,7 +658,7 @@ export default function Configure() {
               <div className={styles.sliderValue}>
                 Minimum movie size: {formatSize(minMovieSize || 0)}
               </div>
-              <Slider 
+              <Slider
                 maxValue={MAX_MOVIE_SIZE}
                 value={maxMovieSize === null ? MAX_MOVIE_SIZE : maxMovieSize}
                 setValue={setMaxMovieSize}
@@ -578,9 +666,10 @@ export default function Configure() {
                 id="maxMovieSizeSlider"
               />
               <div className={styles.sliderValue}>
-                Maximum movie size: {maxMovieSize === null ? 'Unlimited' : formatSize(maxMovieSize)}
+                Maximum movie size:{' '}
+                {maxMovieSize === null ? 'Unlimited' : formatSize(maxMovieSize)}
               </div>
-              <Slider 
+              <Slider
                 maxValue={MAX_EPISODE_SIZE}
                 value={minEpisodeSize || 0}
                 setValue={setMinEpisodeSize}
@@ -590,15 +679,20 @@ export default function Configure() {
               <div className={styles.sliderValue}>
                 Minimum episode size: {formatSize(minEpisodeSize || 0)}
               </div>
-              <Slider 
+              <Slider
                 maxValue={MAX_EPISODE_SIZE}
-                value={maxEpisodeSize === null ? MAX_EPISODE_SIZE : maxEpisodeSize}
+                value={
+                  maxEpisodeSize === null ? MAX_EPISODE_SIZE : maxEpisodeSize
+                }
                 setValue={setMaxEpisodeSize}
                 defaultValue="max"
                 id="maxEpisodeSizeSlider"
               />
               <div className={styles.sliderValue}>
-                Maximum episode size: {maxEpisodeSize === null ? 'Unlimited' : formatSize(maxEpisodeSize)}
+                Maximum episode size:{' '}
+                {maxEpisodeSize === null
+                  ? 'Unlimited'
+                  : formatSize(maxEpisodeSize)}
               </div>
             </div>
           </div>
@@ -694,13 +788,25 @@ export default function Configure() {
         </details>
 
         <div className={styles.installButtons}>
-          <button onClick={handleInstall} className={styles.installButton} disabled={disableButtons}>
+          <button
+            onClick={handleInstall}
+            className={styles.installButton}
+            disabled={disableButtons}
+          >
             Install
           </button>
-          <button onClick={handleInstallToWeb} className={styles.installButton} disabled={disableButtons}>
+          <button
+            onClick={handleInstallToWeb}
+            className={styles.installButton}
+            disabled={disableButtons}
+          >
             Install to Stremio Web
           </button>
-          <button onClick={handleCopyLink} className={styles.installButton} disabled={disableButtons}>
+          <button
+            onClick={handleCopyLink}
+            className={styles.installButton}
+            disabled={disableButtons}
+          >
             Copy Link
           </button>
         </div>

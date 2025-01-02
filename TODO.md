@@ -1,4 +1,4 @@
-- [x] custom formatter 
-    - [ ] add to frontend...
+- [x] custom formatter
+  - [ ] add to frontend...
 - [x] different size filters for movies and shows
-- [x] allow brackets in regex 
+- [x] allow brackets in regex

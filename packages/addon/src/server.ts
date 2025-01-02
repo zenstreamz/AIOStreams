@@ -8,7 +8,7 @@ import { invalidConfig, missingConfig } from './responses';
 import { compressAndEncrypt, decryptAndDecompress } from './crypto';
 import dotenv from 'dotenv';
 
-dotenv.config({path: path.resolve(__dirname, '../../../.env')});
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -97,9 +97,9 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
   }
   const decodedPath = decodeURIComponent(req.path);
 
-  const streamMatch = new RegExp(
-    `/stream/(movie|series)/([^/]+)\.json`
-  ).exec(decodedPath.replace(`/${config}`, ''));
+  const streamMatch = new RegExp(`/stream/(movie|series)/([^/]+)\.json`).exec(
+    decodedPath.replace(`/${config}`, '')
+  );
   if (!streamMatch) {
     // log after removing config if present
     console.error(`Invalid request: ${decodedPath.replace(`/${config}`, '')}`);
@@ -109,9 +109,7 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
 
   const [type, id] = streamMatch.slice(1);
 
-  console.log(
-    `Received /stream request with Type: ${type}, ID: ${id}`
-  );
+  console.log(`Received /stream request with Type: ${type}, ID: ${id}`);
 
   if (type !== 'movie' && type !== 'series') {
     res.status(400).send('Invalid type');
@@ -152,7 +150,7 @@ app.post('/encrypt-user-data', (req, res) => {
       return;
     }
     const encryptedData = compressAndEncrypt(data, secretKey);
-    
+
     res.status(200).json({ success: true, data: encryptedData });
   } catch (error: any) {
     console.error(error);

@@ -1,5 +1,5 @@
 import { randomBytes, createCipheriv, createDecipheriv } from 'crypto';
-import {deflateSync, inflateSync } from 'zlib';
+import { deflateSync, inflateSync } from 'zlib';
 
 const pad = (data: Buffer, blockSize: number): Buffer => {
   const padding = blockSize - (data.length % blockSize);
@@ -12,7 +12,6 @@ const unpad = (data: Buffer): Buffer => {
 };
 
 export const compressAndEncrypt = (data: string, secretKey: string): string => {
-
   // First compress the data with Deflate compression
   const compressedData = deflateSync(Buffer.from(data, 'utf-8'), { level: 9 });
 
@@ -22,16 +21,26 @@ export const compressAndEncrypt = (data: string, secretKey: string): string => {
 
   // Ensure proper padding
   const paddedData = pad(compressedData, 16);
-  const encryptedData = Buffer.concat([cipher.update(paddedData), cipher.final()]);
+  const encryptedData = Buffer.concat([
+    cipher.update(paddedData),
+    cipher.final(),
+  ]);
 
   return `E-${iv.toString('hex')}-${encryptedData.toString('hex')}`;
 };
 
-export const decryptAndDecompress = (encryptedData: Buffer, iv: Buffer, secretKey: string): string => {
+export const decryptAndDecompress = (
+  encryptedData: Buffer,
+  iv: Buffer,
+  secretKey: string
+): string => {
   const decipher = createDecipheriv('aes-256-cbc', secretKey, iv);
 
   // Decrypt the data
-  const decryptedPaddedData = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
+  const decryptedPaddedData = Buffer.concat([
+    decipher.update(encryptedData),
+    decipher.final(),
+  ]);
 
   // Remove padding
   const decryptedData = unpad(decryptedPaddedData);

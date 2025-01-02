@@ -18,9 +18,10 @@ const Slider: React.FC<SliderProps> = ({
 }) => {
   useEffect(() => {
     const slider = document.getElementById(id) as HTMLElement;
-    const sliderValue = defaultValue === 'min'
-      ? ((value || 0) / maxValue) * 100
-      : ((value === null ? maxValue : value) / maxValue) * 100;
+    const sliderValue =
+      defaultValue === 'min'
+        ? ((value || 0) / maxValue) * 100
+        : ((value === null ? maxValue : value) / maxValue) * 100;
 
     if (slider) {
       slider.style.setProperty(`--${id}Value`, `${sliderValue}%`);
@@ -47,7 +48,9 @@ const Slider: React.FC<SliderProps> = ({
         );
       }}
       className={styles.slider}
-      style={{ '--currentSliderValue': `var(--${id}Value)` } as React.CSSProperties}
+      style={
+        { '--currentSliderValue': `var(--${id}Value)` } as React.CSSProperties
+      }
     />
   );
 };
