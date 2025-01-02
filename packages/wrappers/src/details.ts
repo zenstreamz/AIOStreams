@@ -1,6 +1,6 @@
 import { AddonDetail } from '@aiostreams/types';
 
-const MAX_TIMEOUT = 20000;
+const MAX_TIMEOUT = 40000;
 const MIN_TIMEOUT = 1000;
 
 export const addonDetails: AddonDetail[] = [
