@@ -416,23 +416,7 @@ export default function Configure() {
     async function decodeConfig(config: string) {
       let decodedConfig: Config;
       if (config.startsWith('E-')) {
-
-        const encryptedConfig = config.replace('E-', '');
-        const response = await fetch('/decrypt-user-data', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ data: encryptedConfig }),
-        });
-        if (!response.ok) {
-          throw new Error('Failed to decrypt config');
-        }
-        const data = await response.json();
-        if (!data.success) {
-          throw new Error('Failed to decrypt config');
-        }
-        decodedConfig = JSON.parse(data.data);
+        throw new Error('Encrypted Config Not Supported');
       } else {
         decodedConfig = JSON.parse(atob(config));
       }
