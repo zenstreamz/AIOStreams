@@ -203,7 +203,7 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
   {
-    name: 'Google Drive (Viren070)',
+    name: 'Stremio GDrive',
     id: 'gdrive',
     requiresService: false,
     supportedServices: [],
