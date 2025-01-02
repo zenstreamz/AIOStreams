@@ -10,7 +10,10 @@ export interface ParsedNameData {
 
 // the parsed stream data which is to be used to create the final stream object
 export interface ParsedStream extends ParsedNameData {
-  addonName: string;
+  addon: {
+    id: string;
+    name: string;
+  };
   filename?: string;
   size?: number;
   provider?: {
@@ -41,6 +44,10 @@ export interface ParsedStream extends ParsedNameData {
       videoHash?: string;
     };
   };
+}
+
+export interface CollectedParsedStreams {
+  [key: string]: ParsedStream[];
 }
 
 export interface Stream {

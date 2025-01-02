@@ -16,7 +16,7 @@ export function torrentioFormat(stream: ParsedStream): {
     name += `[${stream.provider.name} ${cacheStatus}]\n`;
   }
 
-  name += `${stream.addonName} ${stream.resolution} `;
+  name += `${stream.addon.name} ${stream.resolution} `;
 
   if (stream.visualTags.length > 0) {
     name += stream.visualTags.join(' | ');

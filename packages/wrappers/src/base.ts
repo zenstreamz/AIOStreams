@@ -12,9 +12,11 @@ export class BaseWrapper {
   private indexerTimeout: number;
   protected addonName: string;
   private addonUrl: string;
-  constructor(addonName: string, addonUrl: string, indexerTimeout?: number) {
+  private addonId: string;
+  constructor(addonName: string, addonUrl: string, indexerTimeout: number = 3000, addonId: string) {
     this.addonName = addonName;
     this.addonUrl = this.standardizeManifestUrl(addonUrl);
+    this.addonId = addonId
     this.indexerTimeout = indexerTimeout || 3000;
   }
 
@@ -95,7 +97,7 @@ export class BaseWrapper {
   ): ParsedStream {
     return {
       ...parsedInfo,
-      addonName: this.addonName,
+      addon: {name: this.addonName, id: this.addonId},
       filename: filename,
       size: size,
       url: stream.url,

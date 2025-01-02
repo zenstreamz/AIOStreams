@@ -85,6 +85,7 @@ const defaultSortCriteria: SortBy[] = [
   { encode: false },
   { quality: false },
   { seeders: false },
+  { addon: false }
 ];
 
 function showToast(

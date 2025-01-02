@@ -5,7 +5,7 @@ import {
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
-import { Stream, ParsedStream, StreamRequest, Config } from '@aiostreams/types';
+import { Stream, ParsedStream, StreamRequest, Config, CollectedParsedStreams } from '@aiostreams/types';
 import {
   gdriveFormat,
   torrentioFormat,
@@ -196,7 +196,7 @@ export class AIOStreams {
       behaviorHints: {
         videoSize: Math.floor(parsedStream.size || 0) || undefined,
         filename: parsedStream.filename,
-        bingeGroup: `${parsedStream.addonName}|${combinedTags.join('|')}`,
+        bingeGroup: `${parsedStream.addon.name}|${combinedTags.join('|')}`,
         proxyHeaders: parsedStream.stream?.behaviorHints?.proxyHeaders,
         notWebReady: parsedStream.stream?.behaviorHints?.notWebReady,
       },
@@ -313,6 +313,14 @@ export class AIOStreams {
         this.config.encodes.findIndex((encode) => encode[a.encode]) -
         this.config.encodes.findIndex((encode) => encode[b.encode])
       );
+    } else if (field === 'addon') {
+      const aAddon = a.addon.id;
+      const bAddon = b.addon.id;
+
+      const addonIds = this.config.addons.map((addon) => {
+        return `${addon.id}-${JSON.stringify(addon.options)}`;
+      });
+      return addonIds.indexOf(aAddon) - addonIds.indexOf(bAddon);
     }
     return 0;
   }
@@ -321,10 +329,10 @@ export class AIOStreams {
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
-
     for (const addon of this.config.addons) {
       try {
-        const streams = await this.getStreamsFromAddon(addon, streamRequest);
+        const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
+        const streams = await this.getStreamsFromAddon(addon, addonId, streamRequest);
         parsedStreams.push(...streams);
       } catch (error) {
         console.error(`Failed to get streams from addon ${addon.id}: ${error}`);
@@ -335,29 +343,32 @@ export class AIOStreams {
 
   private async getStreamsFromAddon(
     addon: Config['addons'][0],
+    addonId: string,
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
 
 
     switch (addon.id) {
       case 'torbox': {
-        return await getTorboxStreams(this.config, addon.options, streamRequest);
+        return await getTorboxStreams(this.config, addon.options, streamRequest, addonId);
       }
       case 'torrentio': {
         return await getTorrentioStreams(
           this.config,
           addon.options,
-          streamRequest
+          streamRequest,
+          addonId
         );
       }
       case 'comet': {
-        return await getCometStreams(this.config, addon.options, streamRequest);
+        return await getCometStreams(this.config, addon.options, streamRequest, addonId);
       }
       case 'mediafusion': {
         return await getMediafusionStreams(
           this.config,
           addon.options,
-          streamRequest
+          streamRequest,
+          addonId
         );
       }
       case 'gdrive': {
@@ -367,7 +378,8 @@ export class AIOStreams {
         const wrapper = new BaseWrapper(
           addon.options.overrideName || 'GDrive',
           addon.options.addonUrl,
-          addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined
+          addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined,
+          addonId
         );
         return await wrapper.getParsedStreams(streamRequest);
       }
@@ -378,7 +390,7 @@ export class AIOStreams {
         console.log(
           `Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`
         );
-        const wrapper = new BaseWrapper(addon.options.name || 'Custom', addon.options.url.trim(), addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined);
+        const wrapper = new BaseWrapper(addon.options.name || 'Custom', addon.options.url.trim(), addon.options.indexerTimeout ? parseInt(addon.options.indexerTimeout) : undefined, addonId);
         return await wrapper.getParsedStreams(streamRequest);
       }
     }

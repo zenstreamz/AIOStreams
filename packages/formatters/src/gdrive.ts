@@ -20,7 +20,7 @@ export function gdriveFormat(stream: ParsedStream): {
     name += `[P2P]\n`;
   }
 
-  name += `${stream.addonName} ${stream.resolution}`;
+  name += `${stream.addon.name} ${stream.resolution}`;
 
   let description: string = `${stream.quality !== "Unknown" ? '🎥 ' + stream.quality + ' ' : ''}${stream.encode !== "Unknown" ? '🎞️ ' + stream.encode : ''}`;
 

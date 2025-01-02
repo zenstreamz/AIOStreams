@@ -7,7 +7,7 @@ export function torboxFormat(stream: ParsedStream): {
 } {
   let name: string = '';
 
-  name += `${stream.addonName}`;
+  name += `${stream.addon.name}`;
   if (stream.provider) {
     name += ` (${stream.provider.name}${stream.provider.cached === undefined ? ' Unknown' : stream.provider.cached ? ' Instant' : ''})`;
   }

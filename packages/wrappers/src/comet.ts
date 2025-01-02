@@ -10,13 +10,13 @@ interface CometStream extends Stream {
 }
 
 export class Comet extends BaseWrapper {
-  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Comet') {
+  constructor(configString: string | null, overrideUrl: string | null, indexerTimeout: number = 10000, addonName: string = 'Comet', addonId: string) {
     let url = overrideUrl
       ? overrideUrl
       : 'https://comet.elfhosted.com/' +
         (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout);
+    super(addonName, url, indexerTimeout, addonId);
   }
 
   protected parseStream(stream: CometStream): ParsedStream {
@@ -87,7 +87,8 @@ export async function getCometStreams(
     indexerTimeout?: string;
     overrideName?: string;
   },
-  streamRequest: StreamRequest
+  streamRequest: StreamRequest,
+  addonId: string
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] = addonDetails.find((addon: AddonDetail) => addon.id === 'comet')?.supportedServices || [];
   const parsedStreams: ParsedStream[] = [];
@@ -95,7 +96,7 @@ export async function getCometStreams(
 
   // If overrideUrl is provided, use it to get streams and skip all other steps
   if (cometOptions.overrideUrl) {
-    const comet = new Comet(null, cometOptions.overrideUrl as string, indexerTimeout, cometOptions.overrideName);
+    const comet = new Comet(null, cometOptions.overrideUrl as string, indexerTimeout, cometOptions.overrideName, addonId);
     return comet.getParsedStreams(streamRequest);
   }
 
@@ -130,7 +131,7 @@ export async function getCometStreams(
       // get the comet config and b64 encode it
       const cometConfig = getCometConfig(cometOptions.prioritiseDebrid, debridService.credentials.apiKey);
       const configString = Buffer.from(JSON.stringify(cometConfig)).toString('base64');
-      const comet = new Comet(configString, null, indexerTimeout, cometOptions.overrideName);
+      const comet = new Comet(configString, null, indexerTimeout, cometOptions.overrideName, addonId);
 
       return comet.getParsedStreams(streamRequest);
   }
@@ -143,7 +144,7 @@ export async function getCometStreams(
   for (const service of servicesToUse) {
     const cometConfig = getCometConfig(service.id, service.credentials.apiKey);
     const configString = Buffer.from(JSON.stringify(cometConfig)).toString('base64');
-    const comet = new Comet(configString, null, indexerTimeout, cometOptions.overrideName);
+    const comet = new Comet(configString, null, indexerTimeout, cometOptions.overrideName, addonId);
     const streams = await comet.getParsedStreams(streamRequest);
     parsedStreams.push(...streams);
   }
