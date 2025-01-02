@@ -10,6 +10,7 @@
   text-align: center;
   max-width: 800px;
   border-radius: var(--borderRadius);
+  margin: 0 auto; /* Center the header within the content */
 }
 
 .content {
@@ -18,7 +19,7 @@
   box-shadow: 0 8px 16px rgb(0, 0, 0);
   padding: 20px;
   width: 80%;
-  max-width: 800px;
+  max-width: 700px;
   margin: 20px;
 }
 

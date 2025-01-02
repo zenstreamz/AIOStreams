@@ -53,8 +53,9 @@ select {
   border-radius: var(--borderRadius);
   margin: 4px 0 0px 0;
   border: 1px solid #555;
+  height: 30px;
   background-color: #eeeeee;
-  font-size: 15px;
+  font-size: 16px;
   width: 100%;
   color: rgb(0, 0, 0);
   cursor: pointer;
