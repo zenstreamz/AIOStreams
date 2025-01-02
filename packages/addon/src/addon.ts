@@ -336,7 +336,7 @@ export class AIOStreams {
     streamRequest: StreamRequest
   ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
-    for (const addon of this.config.addons) {
+    const addonPromises = this.config.addons.map(async (addon) => {
       try {
         const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
         const streams = await this.getStreamsFromAddon(
@@ -348,7 +348,9 @@ export class AIOStreams {
       } catch (error) {
         console.error(`Failed to get streams from addon ${addon.id}: ${error}`);
       }
-    }
+    });
+
+    await Promise.all(addonPromises);
     return parsedStreams;
   }
 
