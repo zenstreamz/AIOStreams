@@ -17,6 +17,7 @@ import {
   torrentioFormat,
   torboxFormat,
 } from '@aiostreams/formatters';
+import Settings from './settings';
 
 export class AIOStreams {
   private config: Config;
@@ -382,7 +383,8 @@ export class AIOStreams {
           this.config,
           addon.options,
           streamRequest,
-          addonId
+          addonId,
+          Settings.COMET_URL
         );
       }
       case 'mediafusion': {
@@ -390,7 +392,8 @@ export class AIOStreams {
           this.config,
           addon.options,
           streamRequest,
-          addonId
+          addonId,
+          Settings.MEDIAFUSION_URL
         );
       }
       case 'gdrive': {

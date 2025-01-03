@@ -15,11 +15,12 @@ export class Comet extends BaseWrapper {
     overrideUrl: string | null,
     indexerTimeout: number = 10000,
     addonName: string = 'Comet',
-    addonId: string
+    addonId: string,
+    cometUrl: string
   ) {
     let url = overrideUrl
       ? overrideUrl
-      : 'https://comet.elfhosted.com/' +
+      : cometUrl +
         (configString ? configString + '/' : '');
 
     super(addonName, url, indexerTimeout, addonId);
@@ -94,7 +95,8 @@ export async function getCometStreams(
     overrideName?: string;
   },
   streamRequest: StreamRequest,
-  addonId: string
+  addonId: string,
+  cometUrl: string
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] =
     addonDetails.find((addon: AddonDetail) => addon.id === 'comet')
@@ -111,7 +113,8 @@ export async function getCometStreams(
       cometOptions.overrideUrl as string,
       indexerTimeout,
       cometOptions.overrideName,
-      addonId
+      addonId,
+      cometUrl
     );
     return comet.getParsedStreams(streamRequest);
   }
@@ -163,7 +166,8 @@ export async function getCometStreams(
       null,
       indexerTimeout,
       cometOptions.overrideName,
-      addonId
+      addonId,
+      cometUrl
     );
 
     return comet.getParsedStreams(streamRequest);
@@ -184,7 +188,8 @@ export async function getCometStreams(
       null,
       indexerTimeout,
       cometOptions.overrideName,
-      addonId
+      addonId,
+      cometUrl
     );
     const streams = await comet.getParsedStreams(streamRequest);
     parsedStreams.push(...streams);

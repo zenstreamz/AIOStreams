@@ -10,11 +10,12 @@ export class MediaFusion extends BaseWrapper {
     overrideUrl: string | null,
     indexerTimeout: number = 10000,
     addonName: string = 'MediaFusion',
-    addonId: string
+    addonId: string,
+    mediafusionUrl: string,
   ) {
     let url = overrideUrl
       ? overrideUrl
-      : 'https://mediafusion.elfhosted.com/' +
+      : mediafusionUrl +
         (configString ? configString + '/' : '');
 
     super(addonName, url, indexerTimeout, addonId);
@@ -80,7 +81,8 @@ export async function getMediafusionStreams(
     overrideName?: string;
   },
   streamRequest: StreamRequest,
-  addonId: string
+  addonId: string,
+  mediafusionUrl: string,
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] =
     addonDetails.find((addon: AddonDetail) => addon.id === 'mediafusion')
@@ -97,7 +99,8 @@ export async function getMediafusionStreams(
       mediafusionOptions.overrideUrl as string,
       indexerTimeout,
       mediafusionOptions.overrideName,
-      addonId
+      addonId,
+      mediafusionUrl
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -118,7 +121,8 @@ export async function getMediafusionStreams(
       null,
       indexerTimeout,
       mediafusionOptions.overrideName,
-      addonId
+      addonId,
+      mediafusionUrl
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -162,7 +166,8 @@ export async function getMediafusionStreams(
       null,
       indexerTimeout,
       mediafusionOptions.overrideName,
-      addonId
+      addonId,
+      mediafusionUrl
     );
 
     return mediafusion.getParsedStreams(streamRequest);
@@ -179,7 +184,7 @@ export async function getMediafusionStreams(
       service.credentials.apiKey
     );
     const encryptedStr = await getConfigString(
-      'https://mediafusion.elfhosted.com/',
+      mediafusionUrl,
       mediafusionConfig
     );
     const mediafusion = new MediaFusion(
@@ -187,7 +192,8 @@ export async function getMediafusionStreams(
       null,
       indexerTimeout,
       mediafusionOptions.overrideName,
-      addonId
+      addonId,
+      mediafusionUrl
     );
     const streams = await mediafusion.getParsedStreams(streamRequest);
     parsedStreams.push(...streams);

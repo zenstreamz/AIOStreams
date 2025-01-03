@@ -11,6 +11,8 @@ try {
 class Settings {
     public static readonly PORT = process.env.PORT || 3000;
     public static readonly SECRET_KEY = process.env.SECRET_KEY;
+    public static readonly COMET_URL = process.env.COMET_URL || 'https://comet.elfhosted.com/';
+    public static readonly MEDIAFUSION_URL = process.env.MEDIAFUSION_URL || 'https://mediafusion.elfhosted.com/';
 }
 
 
