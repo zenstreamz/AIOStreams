@@ -503,6 +503,11 @@ export default function Configure() {
             AIOStreams, the all-in-one streaming addon for Stremio. Combine your
             streams from all your addons into one and filter them by resolution,
             quality, visual tags and more.
+            <br /><br/>
+            This addon will return any result from the addons you enable. These can be P2P results, direct links, or anything else.
+            Results that are P2P are marked as P2P, however. 
+            <br /><br/>
+            This addon also has no persistence. Nothing you enter here is stored. They are encrypted within the manifest URL and are only used to retrieve streams from any addons you enable.
           </p>
           <p style={{ textAlign: 'center', padding: '15px' }}>
             Made by Viren070. Source code on{' '}
