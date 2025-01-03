@@ -123,10 +123,12 @@ export class BaseWrapper {
         behaviorHints: {
           countryWhitelist: stream.behaviorHints?.countryWhitelist,
           notWebReady: stream.behaviorHints?.notWebReady,
-          proxyHeaders: {
+          proxyHeaders: stream.behaviorHints?.proxyHeaders?.request || stream.behaviorHints?.proxyHeaders?.response
+          ? {
             request: stream.behaviorHints?.proxyHeaders?.request,
             response: stream.behaviorHints?.proxyHeaders?.response,
-          },
+            }
+          : undefined,
           videoHash: stream.behaviorHints?.videoHash,
         },
       },
