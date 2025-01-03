@@ -443,6 +443,9 @@ export default function Configure() {
       setEncodes(
         loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes)
       );
+      setSortCriteria(
+        loadValidValuesFromObject(decodedConfig.sortBy, defaultSortCriteria)
+      );
       setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
       setPrioritiseLanguage(
         validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) ||
