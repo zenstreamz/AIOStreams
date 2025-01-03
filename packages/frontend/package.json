@@ -8,10 +8,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aiostreams/types": "^1.0.0",
-    "@aiostreams/formatters": "^1.0.0",
     "@aiostreams/addon": "^1.0.0",
+    "@aiostreams/formatters": "^1.0.0",
+    "@aiostreams/types": "^1.0.0",
     "@aiostreams/wrappers": "^1.0.0",
+    "dotenv": "^16.4.7",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

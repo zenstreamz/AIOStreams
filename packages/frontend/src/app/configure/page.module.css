@@ -23,6 +23,17 @@
   margin: 20px;
 }
 
+.branding {
+  text-align: center;
+  margin: 20px;
+  font-size: 16px;
+}
+
+.branding a {
+  color: #979292; /* White */
+  text-decoration: underline;
+}
+
 @media (max-width: 1000px) {
   .content {
     margin: 0;
