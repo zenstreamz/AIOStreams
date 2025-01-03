@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   env: {
-    NEXT_PUBLIC_ELFHOSTED_BRANDING: process.env.NEXT_PUBLIC_ELFOSTED_BRANDING,
+    NEXT_PUBLIC_ELFHOSTED_BRANDING: process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING,
   }
 };
 
