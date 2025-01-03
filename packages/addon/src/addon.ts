@@ -196,7 +196,7 @@ export class AIOStreams {
       externalUrl: parsedStream.externalUrl,
       infoHash: parsedStream.torrent?.infoHash,
       fileIdx: parsedStream.torrent?.fileIdx,
-      name: name,
+      name: "🎲 " + name,
       description: description,
       subtitles: parsedStream.stream?.subtitles,
       sources: parsedStream.torrent?.sources,
