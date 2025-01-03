@@ -161,7 +161,6 @@ export class BaseWrapper {
       );
     }
 
-    console.log('Parsing filename:', filename);
     let parsedInfo: ParsedNameData = parseFilename(filename || '');
 
     // look for size in one of the many random places it could be

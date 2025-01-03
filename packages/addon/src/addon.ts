@@ -345,6 +345,7 @@ export class AIOStreams {
           streamRequest
         );
         parsedStreams.push(...streams);
+        console.log(`Got ${streams.length} streams from addon ${addon.options.name || addon.options.overrideName || addon.id}`);
       } catch (error) {
         console.error(`Failed to get streams from addon ${addon.id}: ${error}`);
       }
@@ -412,9 +413,6 @@ export class AIOStreams {
             `The addon URL was undefined for ${addon.options.name}`
           );
         }
-        console.log(
-          `Using base wrapper for addon ${addon.options.name} with url ${addon.options.url}`
-        );
         const wrapper = new BaseWrapper(
           addon.options.name || 'Custom',
           addon.options.url.trim(),
