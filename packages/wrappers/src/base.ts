@@ -5,7 +5,7 @@ import {
   ParsedNameData,
 } from '@aiostreams/types';
 import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
-import { serviceDetails } from '@aiostreams/utils';
+import { serviceDetails, Settings } from '@aiostreams/utils';
 
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/{id}.json';
@@ -16,7 +16,7 @@ export class BaseWrapper {
   constructor(
     addonName: string,
     addonUrl: string,
-    indexerTimeout: number = 3000,
+    indexerTimeout: number = Settings.DEFAULT_TIMEOUT,
     addonId: string
   ) {
     this.addonName = addonName;

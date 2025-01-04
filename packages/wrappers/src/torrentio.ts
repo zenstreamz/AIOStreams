@@ -9,7 +9,7 @@ export class Torrentio extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = 10000,
+    indexerTimeout: number = Settings.DEFAULT_TORRENTIO_TIMEOUT,
     addonName: string = 'Torrentio',
     addonId: string
   ) {

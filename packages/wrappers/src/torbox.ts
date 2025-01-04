@@ -21,7 +21,7 @@ interface TorboxStream {
 export class Torbox extends BaseWrapper {
   constructor(
     apiKey: string,
-    indexerTimeout: number = 10000,
+    indexerTimeout: number = Settings.DEFAULT_TORBOX_TIMEOUT,
     addonName: string = 'Torbox',
     addonId: string
   ) {

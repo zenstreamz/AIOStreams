@@ -8,7 +8,7 @@ export class MediaFusion extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = 10000,
+    indexerTimeout: number = Settings.DEFAULT_MEDIAFUSION_TIMEOUT,
     addonName: string = 'MediaFusion',
     addonId: string,
   ) {

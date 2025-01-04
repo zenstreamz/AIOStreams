@@ -14,7 +14,7 @@ export class Comet extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = 10000,
+    indexerTimeout: number = Settings.DEFAULT_COMET_TIMEOUT,
     addonName: string = 'Comet',
     addonId: string,
   ) {
