@@ -471,8 +471,6 @@ export default function Configure() {
 
     const path = window.location.pathname;
     const brandingDiv = document.getElementById('BrandingDiv');
-    console.log('BrandingDiv', brandingDiv);
-    console.log('BrandingDiv innerHTML', brandingDiv?.innerHTML);
     if (brandingDiv) {
       setBranding(brandingDiv.innerHTML);
     }
