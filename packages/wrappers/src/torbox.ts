@@ -6,6 +6,7 @@ import {
   StreamRequest,
 } from '@aiostreams/types';
 import { parseFilename } from '@aiostreams/parser';
+import { Settings } from '@aiostreams/utils';
 
 interface TorboxStream {
   name: string;
@@ -26,7 +27,7 @@ export class Torbox extends BaseWrapper {
   ) {
     super(
       addonName,
-      'https://stremio.torbox.app/' + apiKey + '/',
+      Settings.TORBOX_STREMIO_URL + apiKey + '/',
       indexerTimeout,
       addonId
     );
