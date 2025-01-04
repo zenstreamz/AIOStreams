@@ -2,7 +2,7 @@ import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails, serviceDetails } from './details';
+import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
 
 export class MediaFusion extends BaseWrapper {
   constructor(
@@ -11,11 +11,10 @@ export class MediaFusion extends BaseWrapper {
     indexerTimeout: number = 10000,
     addonName: string = 'MediaFusion',
     addonId: string,
-    mediafusionUrl: string,
   ) {
     let url = overrideUrl
       ? overrideUrl
-      : mediafusionUrl +
+      : Settings.MEDIAFUSION_URL +
         (configString ? configString + '/' : '');
 
     super(addonName, url, indexerTimeout, addonId);
@@ -82,7 +81,6 @@ export async function getMediafusionStreams(
   },
   streamRequest: StreamRequest,
   addonId: string,
-  mediafusionUrl: string,
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] =
     addonDetails.find((addon: AddonDetail) => addon.id === 'mediafusion')
@@ -100,7 +98,6 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      mediafusionUrl
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -111,9 +108,8 @@ export async function getMediafusionStreams(
   );
 
   // if no usable services found, use mediafusion without debrid
-  if (usableServices.length < 0) {
+  if (config.services.length < 0) {
     const configString = await getConfigString(
-      'https://mediafusion.elfhosted.com/',
       getMediaFusionConfig()
     );
     const mediafusion = new MediaFusion(
@@ -122,7 +118,6 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      mediafusionUrl
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -158,7 +153,6 @@ export async function getMediafusionStreams(
       debridService.credentials.apiKey
     );
     const encryptedStr = await getConfigString(
-      'https://mediafusion.elfhosted.com/',
       mediafusionConfig
     );
     const mediafusion = new MediaFusion(
@@ -167,7 +161,6 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      mediafusionUrl
     );
 
     return mediafusion.getParsedStreams(streamRequest);
@@ -184,7 +177,6 @@ export async function getMediafusionStreams(
       service.credentials.apiKey
     );
     const encryptedStr = await getConfigString(
-      mediafusionUrl,
       mediafusionConfig
     );
     const mediafusion = new MediaFusion(
@@ -193,7 +185,6 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      mediafusionUrl
     );
     const streams = await mediafusion.getParsedStreams(streamRequest);
     parsedStreams.push(...streams);
@@ -290,10 +281,9 @@ const getMediaFusionConfig = (service?: string, token?: string) => {
 };
 
 async function getConfigString(
-  baseUrl: string = 'https://mediafusion.elfhosted.com/',
   data: any
 ): Promise<string> {
-  const encryptUrl = `${baseUrl}encrypt-user-data`;
+  const encryptUrl = `${Settings.MEDIAFUSION_URL}encrypt-user-data`;
 
   const response = await fetch(encryptUrl, {
     method: 'POST',

@@ -22,10 +22,8 @@ import {
   allowedFormatters,
   allowedLanguages,
   validateConfig,
-  MAX_EPISODE_SIZE,
-  MAX_MOVIE_SIZE,
 } from '@aiostreams/config';
-import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
+import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
 
 import Slider from '@/components/Slider';
 
@@ -154,6 +152,7 @@ export default function Configure() {
   const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
 
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
+  const [branding, setBranding] = useState<string | null>(null);
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
@@ -471,6 +470,12 @@ export default function Configure() {
     }
 
     const path = window.location.pathname;
+    const brandingDiv = document.getElementById('BrandingDiv');
+    console.log('BrandingDiv', brandingDiv);
+    console.log('BrandingDiv innerHTML', brandingDiv?.innerHTML);
+    if (brandingDiv) {
+      setBranding(brandingDiv.innerHTML);
+    }
     try {
       const configMatch = path.match(/\/([^/]+)\/configure/);
 
@@ -495,10 +500,13 @@ export default function Configure() {
             style={{ alignSelf: 'center', justifyContent: 'center' }}
           />
           <h1 style={{ textAlign: 'center' }}>AIOStreams v{version}</h1>
-          {process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING && (
-            <div className={styles.branding} dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING }}>
-            </div>
-          )}
+            {process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING && (
+              <div className={styles.branding} id="BrandingDiv" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING }} />
+            )}
+
+            <div className={styles.branding} id="BrandingDiv" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: branding || '' }} />
+ 
+          
           <p style={{ textAlign: 'center', padding: '15px' }}>
             AIOStreams, the all-in-one streaming addon for Stremio. Combine your
             streams from all your addons into one and filter them by resolution,
@@ -632,7 +640,7 @@ export default function Configure() {
             </div>
             <div className={styles.slidersContainer}>
               <Slider
-                maxValue={MAX_MOVIE_SIZE}
+                maxValue={Settings.MAX_MOVIE_SIZE}
                 value={minMovieSize || 0}
                 setValue={setMinMovieSize}
                 defaultValue="min"
@@ -642,8 +650,8 @@ export default function Configure() {
                 Minimum movie size: {formatSize(minMovieSize || 0)}
               </div>
               <Slider
-                maxValue={MAX_MOVIE_SIZE}
-                value={maxMovieSize === null ? MAX_MOVIE_SIZE : maxMovieSize}
+                maxValue={Settings.MAX_MOVIE_SIZE}
+                value={maxMovieSize === null ? Settings.MAX_MOVIE_SIZE : maxMovieSize}
                 setValue={setMaxMovieSize}
                 defaultValue="max"
                 id="maxMovieSizeSlider"
@@ -653,7 +661,7 @@ export default function Configure() {
                 {maxMovieSize === null ? 'Unlimited' : formatSize(maxMovieSize)}
               </div>
               <Slider
-                maxValue={MAX_EPISODE_SIZE}
+                maxValue={Settings.MAX_EPISODE_SIZE}
                 value={minEpisodeSize || 0}
                 setValue={setMinEpisodeSize}
                 defaultValue="min"
@@ -663,9 +671,9 @@ export default function Configure() {
                 Minimum episode size: {formatSize(minEpisodeSize || 0)}
               </div>
               <Slider
-                maxValue={MAX_EPISODE_SIZE}
+                maxValue={Settings.MAX_EPISODE_SIZE}
                 value={
-                  maxEpisodeSize === null ? MAX_EPISODE_SIZE : maxEpisodeSize
+                  maxEpisodeSize === null ? Settings.MAX_EPISODE_SIZE : maxEpisodeSize
                 }
                 setValue={setMaxEpisodeSize}
                 defaultValue="max"

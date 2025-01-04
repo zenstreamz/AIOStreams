@@ -17,7 +17,7 @@ import {
   torrentioFormat,
   torboxFormat,
 } from '@aiostreams/formatters';
-import Settings from './settings';
+import { Settings } from '@aiostreams/utils';
 
 export class AIOStreams {
   private config: Config;
@@ -197,7 +197,7 @@ export class AIOStreams {
       externalUrl: parsedStream.externalUrl,
       infoHash: parsedStream.torrent?.infoHash,
       fileIdx: parsedStream.torrent?.fileIdx,
-      name: "🎲 " + name,
+      name: Settings.SHOW_DIE ? `🎲 ${name}` : name,
       description: description,
       subtitles: parsedStream.stream?.subtitles,
       sources: parsedStream.torrent?.sources,
@@ -384,7 +384,6 @@ export class AIOStreams {
           addon.options,
           streamRequest,
           addonId,
-          Settings.COMET_URL
         );
       }
       case 'mediafusion': {
@@ -393,7 +392,6 @@ export class AIOStreams {
           addon.options,
           streamRequest,
           addonId,
-          Settings.MEDIAFUSION_URL
         );
       }
       case 'gdrive': {

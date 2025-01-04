@@ -2,7 +2,7 @@ import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails } from './details';
+import { addonDetails } from '@aiostreams/utils';
 
 export class Torrentio extends BaseWrapper {
   constructor(

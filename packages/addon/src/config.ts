@@ -1,11 +1,7 @@
 import { AddonDetail, Config } from '@aiostreams/types';
-import { addonDetails, serviceDetails } from '@aiostreams/wrappers';
+import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
 
 export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
-
-export const MAX_ADDONS = 15;
-export const MAX_MOVIE_SIZE = 150000000000; // 150GB
-export const MAX_EPISODE_SIZE = 15000000000; // 15GB
 
 export const allowedLanguages = [
   'English',
@@ -249,11 +245,11 @@ export function validateConfig(config: Config): {
     );
   }
 
-  if (config.addons.length > MAX_ADDONS) {
+  if (config.addons.length > Settings.MAX_ADDONS) {
     return createResponse(
       false,
       'tooManyAddons',
-      `You can only select a maximum of ${MAX_ADDONS} addons`
+      `You can only select a maximum of ${Settings.MAX_ADDONS} addons`
     );
   }
 

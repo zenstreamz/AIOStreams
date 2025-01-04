@@ -2,7 +2,8 @@ import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails } from './details';
+import { addonDetails } from '@aiostreams/utils';
+import { Settings } from '@aiostreams/utils';
 
 interface CometStream extends Stream {
   torrentTitle?: string;
@@ -16,11 +17,10 @@ export class Comet extends BaseWrapper {
     indexerTimeout: number = 10000,
     addonName: string = 'Comet',
     addonId: string,
-    cometUrl: string
   ) {
     let url = overrideUrl
       ? overrideUrl
-      : cometUrl +
+      : Settings.COMET_URL +
         (configString ? configString + '/' : '');
 
     super(addonName, url, indexerTimeout, addonId);
@@ -96,7 +96,6 @@ export async function getCometStreams(
   },
   streamRequest: StreamRequest,
   addonId: string,
-  cometUrl: string
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] =
     addonDetails.find((addon: AddonDetail) => addon.id === 'comet')
@@ -114,7 +113,6 @@ export async function getCometStreams(
       indexerTimeout,
       cometOptions.overrideName,
       addonId,
-      cometUrl
     );
     return comet.getParsedStreams(streamRequest);
   }
@@ -166,8 +164,7 @@ export async function getCometStreams(
       null,
       indexerTimeout,
       cometOptions.overrideName,
-      addonId,
-      cometUrl
+      addonId
     );
 
     return comet.getParsedStreams(streamRequest);
@@ -188,8 +185,7 @@ export async function getCometStreams(
       null,
       indexerTimeout,
       cometOptions.overrideName,
-      addonId,
-      cometUrl
+      addonId
     );
     const streams = await comet.getParsedStreams(streamRequest);
     parsedStreams.push(...streams);

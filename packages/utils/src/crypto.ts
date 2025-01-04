@@ -1,6 +1,6 @@
 import { randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 import { deflateSync, inflateSync } from 'zlib';
-import Settings from './settings';
+import {Settings} from './settings';
 
 const pad = (data: Buffer, blockSize: number): Buffer => {
   const padding = blockSize - (data.length % blockSize);

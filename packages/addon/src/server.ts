@@ -1,14 +1,33 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import fs from 'fs';
+import {load} from 'cheerio';
 import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config';
 import { getManifest } from './manifest';
 import { invalidConfig, missingConfig } from './responses';
-import { compressAndEncrypt, decryptAndDecompress } from './crypto';
-import Settings from './settings';
+import {Settings, compressAndEncrypt, decryptAndDecompress} from '@aiostreams/utils';
 
 const app = express();
+
+console.log('PORT:', Settings.PORT);
+console.log('SECRET_KEY:', Settings.SECRET_KEY ? 'Set' : 'Not Set');
+console.log('COMET_URL:', Settings.COMET_URL);
+console.log('MEDIAFUSION_URL:', Settings.MEDIAFUSION_URL);
+console.log('MAX_ADDONS:', Settings.MAX_ADDONS);
+console.log('MAX_MOVIE_SIZE:', Settings.MAX_MOVIE_SIZE);
+console.log('MAX_EPISODE_SIZE:', Settings.MAX_EPISODE_SIZE);
+console.log('MAX_TIMEOUT:', Settings.MAX_TIMEOUT);
+console.log('MIN_TIMEOUT:', Settings.MIN_TIMEOUT);
+console.log('SHOW_DIE:', Settings.SHOW_DIE);
+console.log('BRANDING:', Settings.BRANDING ? 'Set' : 'Not Set');
+
+
+if (!Settings.SECRET_KEY) {
+  console.warn('You have not set a SECRET_KEY, you will not be able to use encrypted configs');
+}
+
 
 const rootUrl = (req: Request) =>
   `${req.protocol}://${req.hostname}${req.hostname === 'localhost' ? `:${Settings.PORT}` : ''}`;
@@ -25,18 +44,39 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname, '../../frontend/out')));
+//app.use(express.static(path.join(__dirname, '../../frontend/out')));
+
+app.get(['/_next/*', '/assets/*'], (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/out', req.path));
+});
 
 app.get('/', (req, res) => {
   res.redirect('/configure');
 });
 
+const sendModifiedHtml = (res: Response, filePath: string) => {
+  fs.readFile(filePath, 'utf8', (err, html) => {
+    if (err) {
+      console.error('Failed to read HTML file', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    const $ = load(html);
+
+    if (Settings.BRANDING) {
+      $('[id*="BrandingDiv"]').html(Settings.BRANDING);
+    }
+    res.send($.html());
+  });
+};
+
 app.get('/configure', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
+  const filePath = path.join(__dirname, '../../frontend/out/configure.html');
+  sendModifiedHtml(res, filePath);
 });
 
 app.get('/:config/configure', (req, res) => {
-  // if the config starts with E- , decrypt it and redirect to base64 encoded config
   const config = req.params.config;
   if (config.startsWith("E-")) {
     const encryptedConfig = config.replace('E-', '');
@@ -44,7 +84,6 @@ app.get('/:config/configure', (req, res) => {
     const iv = Buffer.from(ivHex, 'hex');
     const encrypted = Buffer.from(encryptedHex, 'hex');
     const decryptedData = decryptAndDecompress(encrypted, iv);
-    // edit out any API keys from the decrypted data
     const configJson = JSON.parse(decryptedData);
     if (configJson.services) {
       configJson.services.forEach((service: any) => {
@@ -57,9 +96,9 @@ app.get('/:config/configure', (req, res) => {
     res.redirect(`/${base64Config}/configure`);
     return;
   }
-  res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
+  const filePath = path.join(__dirname, '../../frontend/out/configure.html');
+  sendModifiedHtml(res, filePath);
 });
-
 
 app.get('/manifest.json', (req, res) => {
   res.status(200).json(getManifest(false));

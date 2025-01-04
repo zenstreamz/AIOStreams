@@ -1,7 +1,6 @@
 import { AddonDetail } from '@aiostreams/types';
+import {Settings} from './settings';
 
-const MAX_TIMEOUT = 40000;
-const MIN_TIMEOUT = 1000;
 
 export const addonDetails: AddonDetail[] = [
   {
@@ -50,8 +49,8 @@ export const addonDetails: AddonDetail[] = [
           'The timeout for fetching streams from the Torrentio addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
-          min: MIN_TIMEOUT,
-          max: MAX_TIMEOUT,
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
         },
       },
     ],
@@ -107,8 +106,8 @@ export const addonDetails: AddonDetail[] = [
           'The timeout for fetching streams from the Comet addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
-          min: MIN_TIMEOUT,
-          max: MAX_TIMEOUT,
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
         },
       },
     ],
@@ -168,8 +167,8 @@ export const addonDetails: AddonDetail[] = [
           'The timeout for fetching streams from the Media Fusion addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
-          min: MIN_TIMEOUT,
-          max: MAX_TIMEOUT,
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
         },
       },
     ],
@@ -188,8 +187,8 @@ export const addonDetails: AddonDetail[] = [
           'The timeout for fetching streams from the Torbox addon. This is the time in milliseconds that the addon will wait for a response from Torbox before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
-          min: MIN_TIMEOUT,
-          max: MAX_TIMEOUT,
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
         },
       },
       {
@@ -232,8 +231,8 @@ export const addonDetails: AddonDetail[] = [
           'The timeout for fetching streams from the Google Drive addon in milliseconds. This is the time in milliseconds that the addon will wait for a response from your Cloudflare Worker before timing out. Leave it empty to use the recommended timeout.',
         type: 'number',
         constraints: {
-          min: MIN_TIMEOUT,
-          max: MAX_TIMEOUT,
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
         },
       },
     ],
@@ -268,8 +267,8 @@ export const addonDetails: AddonDetail[] = [
           'The timeout for fetching streams from the custom addon in milliseconds',
         type: 'number',
         constraints: {
-          min: MIN_TIMEOUT,
-          max: MAX_TIMEOUT,
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
         },
       },
     ],
