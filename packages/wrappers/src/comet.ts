@@ -117,14 +117,15 @@ export async function getCometStreams(
     return comet.getParsedStreams(streamRequest);
   }
 
-  // find all usable services
-  const usableServices = config.services.filter((service) =>
-    supportedServices.includes(service.id)
+  // find all usable and enabled services
+  const usableServices = config.services.filter(
+    (service) =>
+      supportedServices.includes(service.id) && service.enabled
   );
 
-  // if no usable services found, raise an error
-  if (usableServices.length < 0) {
-    throw new Error('No usable services found');
+  // if no usable services found, throw an error
+  if (usableServices.length < 1) {
+    throw new Error('No supported service(s) enabled');
   }
 
   // otherwise, depending on the configuration, create multiple instances of comet or use a single instance with the prioritised service

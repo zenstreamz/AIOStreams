@@ -102,13 +102,14 @@ export async function getMediafusionStreams(
     return mediafusion.getParsedStreams(streamRequest);
   }
 
-  // find all usable services
-  const usableServices = config.services.filter((service) =>
-    supportedServices.includes(service.id)
+  // find all usable and enabled services
+  const usableServices = config.services.filter(
+    (service) =>
+      supportedServices.includes(service.id) && service.enabled
   );
 
   // if no usable services found, use mediafusion without debrid
-  if (config.services.length < 0) {
+  if (usableServices.length < 1) {
     const configString = await getConfigString(
       getMediaFusionConfig()
     );

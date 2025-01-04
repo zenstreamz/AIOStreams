@@ -90,11 +90,11 @@ export async function getTorrentioStreams(
 
   // find all usable services
   const usableServices = config.services.filter((service) =>
-    supportedServices.includes(service.id)
+    supportedServices.includes(service.id) && service.enabled
   );
 
   // if no usable services found, use torrentio without any configuration
-  if (usableServices.length < 0) {
+  if (usableServices.length < 1) {
     const torrentio = new Torrentio(
       null,
       null,
