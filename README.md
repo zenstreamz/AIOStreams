@@ -159,6 +159,11 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 
 6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy
 
+
+#### Updating 
+
+To update the addon, you can simply go to the `Settings` tab and click `Factory rebuild`. This will rebuild the addon with the latest changes. 
+
 ### Cloudflare Workers
 
 This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
@@ -176,6 +181,17 @@ npm run build
 npm run deploy:cloudflare-worker
 ```
 
+#### Updating
+
+To update the addon, you can simply run the following commands to pull the latest changes, build the project, and deploy the worker.
+This will update the worker with the latest changes, which may not be stable.
+
+```
+git pull
+npm run build
+npm run deploy:cloudflare-worker
+```
+
 ### Render
 
 https://render.com/
@@ -187,6 +203,12 @@ https://render.com/
 2. Select `Public Git Repository` as the source
 3. Enter `https://github.com/Viren070/AIOStreams`
 4. Deploy
+
+#### Updating 
+
+When you deploy with Render, it automatically builds the addon every time a commit is pushed to this repository. You can also manually trigger a build by clicking the `Deploy` button. 
+
+It is recommend to disable the `Auto Deploy` feature as the latest changes may not be stable. You can do this by going to the `Settings` tab and scrolling down to the `Auto Deploy` setting near the bottom of the `Build & Deploy` section.
 
 ## Self-Hosting
 
@@ -337,6 +359,45 @@ To modify the behaviour of the addon, you can provide the following environment 
    - Type: boolean
    - Default: true
    - Description: A flag to indicate whether to show a die (singular dice) emoji in the stream result names. This is available to distinguish results from the AIOStreams addon from other addons.
+
+Below, you can find how to set environment variables for the different methods of deployment.
+
+### Cloudflare Workers
+
+Unfortunately, it is not currently possible to set environment variables for this addon on a Cloudflare Worker. You will have to modify the code directly. You can look in `packages/utils/src/settings.ts` to change the default values.
+
+### Render 
+
+You can set environment variables in the Render dashboard.
+
+1. Go to the [Render dashboard](https://dashboard.render.com/) and select the `AIOStreams` service.
+2. Click on the `Environment` tab under the `Manage` section.
+3. Click on the `Edit` button.
+4. Click `Add Environment Variable` and enter the name and value of the environment variable you want to set.
+5. Once you have added all the environment variables you want to set, click `Save, build, and deploy`.
+
+
+### Huggingface
+
+1. Go to your Hugging Face space and click on the `Settings` tab.
+2. Scroll down to `Variables and Secrets` and click on `New secret`. 
+> [!WARNING]
+> Ensure you are using `Secrets`, especially for  `SECRET_KEY`. Variables are public and can be seen by anyone.
+3. Enter the name and value of the environment variable you want to set. The description is optional and can be left empty. 
+
+
+### Local 
+
+You can set environment variables using a .env file in the root of the project. 
+
+```
+ADDON_NAME=AIOStreams
+ADDON_ID=aiostreams.viren070.com
+PORT=3000
+SECRET_KEY=your_secret_key
+COMET_URL=https://comet.elfhosted.com/
+...
+```
 
 ## Development 
 
