@@ -9,6 +9,7 @@ try {
 
 
 export class Settings {
+  public static readonly ADDON_NAME = 'AIOStreams';
   public static readonly PORT = process.env.PORT ?? 3000;
   public static readonly BRANDING = process.env.BRANDING ?? process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING
   public static readonly SECRET_KEY = process.env.SECRET_KEY ?? '';

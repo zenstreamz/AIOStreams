@@ -1,6 +1,6 @@
 import {
   AIOStreams,
-  getManifest,
+  manifest,
   invalidConfig,
   missingConfig,
   validateConfig,
@@ -56,9 +56,9 @@ export default {
       // handle /manifest.json and /:config/manifest.json requests
       if (components.includes('manifest.json')) {
         if (components.length === 1) {
-          return createJsonResponse(getManifest(false));
+          return createJsonResponse(manifest(false));
         } else {
-          return createJsonResponse(getManifest(true));
+          return createJsonResponse(manifest(true));
         }
       }
 

@@ -5,29 +5,24 @@ import {load} from 'cheerio';
 import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config';
-import { getManifest } from './manifest';
+import manifest from './manifest';
 import { invalidConfig, missingConfig } from './responses';
 import {Settings, compressAndEncrypt, decryptAndDecompress} from '@aiostreams/utils';
 
 const app = express();
 
-console.log('PORT:', Settings.PORT);
-console.log('SECRET_KEY:', Settings.SECRET_KEY ? 'Set' : 'Not Set');
-console.log('COMET_URL:', Settings.COMET_URL);
-console.log('MEDIAFUSION_URL:', Settings.MEDIAFUSION_URL);
-console.log('MAX_ADDONS:', Settings.MAX_ADDONS);
-console.log('MAX_MOVIE_SIZE:', Settings.MAX_MOVIE_SIZE);
-console.log('MAX_EPISODE_SIZE:', Settings.MAX_EPISODE_SIZE);
-console.log('MAX_TIMEOUT:', Settings.MAX_TIMEOUT);
-console.log('MIN_TIMEOUT:', Settings.MIN_TIMEOUT);
-console.log('SHOW_DIE:', Settings.SHOW_DIE);
-console.log('BRANDING:', Settings.BRANDING ? 'Set' : 'Not Set');
-
-
-if (!Settings.SECRET_KEY) {
-  console.warn('You have not set a SECRET_KEY, you will not be able to use encrypted configs');
-}
-
+(Object.keys(Settings) as Array<keyof typeof Settings>).forEach((key) => {
+  if (key === 'SECRET_KEY' || key === 'BRANDING') {
+    if (Settings[key]) {
+      console.log(`${key}: Set`);
+    }
+    if (key === 'SECRET_KEY' && !Settings[key]) {
+      console.warn('SECRET_KEY: NOT SET! You have not set a SECRET_KEY, you will not be able to use encrypted configs');
+    }
+    return
+  }
+  console.log(`${key}: ${Settings[key]}`);
+})
 
 const rootUrl = (req: Request) =>
   `${req.protocol}://${req.hostname}${req.hostname === 'localhost' ? `:${Settings.PORT}` : ''}`;
@@ -101,11 +96,11 @@ app.get('/:config/configure', (req, res) => {
 });
 
 app.get('/manifest.json', (req, res) => {
-  res.status(200).json(getManifest(false));
+  res.status(200).json(manifest(false));
 });
 
 app.get('/:config/manifest.json', (req, res) => {
-  res.status(200).json(getManifest(true));
+  res.status(200).json(manifest(true));
 });
 
 // Route for /stream

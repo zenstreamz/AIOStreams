@@ -1,28 +1,23 @@
 import { version, description } from '../package.json';
+import { Settings } from '@aiostreams/utils';
 
-export const manifest = {
-  name: 'AIOStreams',
-  id: 'viren070.aiostreams.com',
-  version: version,
-  description: description,
-  catalogs: [],
-  resources: ['stream'],
-  background:
-    'https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/background.png',
-  logo: 'https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/logo.png',
-  types: ['movie', 'series'],
-  behaviorHints: {
-    configurable: true,
-    configurationRequired: true,
-  },
-};
-
-export const getManifest = (configured: boolean): typeof manifest => {
+const manifest = (configured: boolean) => {
   return {
-    ...manifest,
+    name: Settings.ADDON_NAME,
+    id: 'viren070.aiostreams.com',
+    version: version,
+    description: description,
+    catalogs: [],
+    resources: ['stream'],
+    background:
+      'https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/background.png',
+    logo: 'https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/logo.png',
+    types: ['movie', 'series'],
     behaviorHints: {
-      ...manifest.behaviorHints,
-      configurationRequired: !configured,
-    },
+      configurable: true,
+      configurationRequired: configured ? false : true 
+    }
   };
 };
+
+export default manifest;
