@@ -214,6 +214,10 @@ app.post('/encrypt-user-data', (req, res) => {
   }
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // define 404
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, '../../frontend/out/404.html'));
