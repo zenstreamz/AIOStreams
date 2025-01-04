@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 
 //app.use(express.static(path.join(__dirname, '../../frontend/out')));
 
-app.get(['/_next/*', '/assets/*'], (req, res) => {
+app.get(['/_next/*', '/assets/*', '/icon.ico', '/configure.txt'], (req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/out', req.path));
 });
 
