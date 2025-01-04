@@ -234,6 +234,110 @@ You need Node.js and git installed. Node v22 and npm v10.9 were used in the deve
 
 You can change the PORT environment variable to change the port that the addon will listen on.
 
+## Configuring
+
+To modify the behaviour of the addon, you can provide the following environment variables:
+
+- **ADDON_NAME**
+   - Type: string
+   - Default: 'AIOStreams'
+   - Description: The name of the addon.
+
+- **ADDON_ID**
+   - Type: string
+   - Default: 'aiostreams.viren070.com'
+   - Description: The unique identifier for the addon.
+
+
+- **PORT**
+   - Type: number
+   - Default: 3000
+   - Description: The port on which the server will run. 
+
+- **BRANDING**
+   - Type: string
+   - Default: undefined
+   - Description: Custom branding HTML content. This can be customized by setting the BRANDING environment variable. This HTML content will be displayed at the top of the addon configuration page.
+
+- **SECRET_KEY**
+   - Type: string
+   - Default: ''
+   - Description: The secret key used for encryption. This should be set using the SECRET_KEY environment variable. ```openssl rand -hex 16``` or ```[System.Guid]::NewGuid().ToString("N").Substring(0, 32)``` can be used to generate a new secret key for Linux/MacoS and Windows respectively.
+
+- **COMET_URL**
+   - Type: string
+   - Default: `'https://comet.elfhosted.com/'`
+   - Description: The URL for the Comet addon. This URL is used internally by the addon to fetch results from the Comet addon. This environment variable allows you to modify the base URL being used without having to configure the addon yourself and then providing an `Override URL` in the addon configuration.
+
+- **MEDIAFUSION_URL**
+   - Type: string
+   - Default: `'https://mediafusion.elfhosted.com/'`
+   - Description: The URL for the MediaFusion addon.
+
+- **TORRENTIO_URL**
+   - Type: string
+   - Default: `'https://torrentio.strem.fun/'`
+   - Description: The URL for the Torrentio addon.
+
+- **TORBOX_STREMIO_URL**
+   - Type: string
+   - Default: `'https://stremio.torbox.app/'`
+   - Description: The URL for the Torbox Stremio addon.
+
+- **MAX_ADDONS**
+   - Type: number
+   - Default: 15
+   - Description: The maximum number of addons that is allowed. This is checked when the addon is configured and when you make a request to the addon. 
+
+- **MAX_MOVIE_SIZE**
+   - Type: number
+   - Default: 150000000000 (150GB)
+   - Description: The maximum size for movie files in bytes. This URL controls the maximum size you can set for the movie size filters. This affects the maximum value for the sliders in the configure page.
+- **MAX_EPISODE_SIZE**
+   - Type: number
+   - Default: 15000000000 (15GB)
+   - Description: The maximum size for episode files in bytes. This URL controls the maximum size you can set for the episode size filters. This affects the maximum value for the sliders in the configure page.
+
+- **MAX_TIMEOUT**
+   - Type: number
+   - Default: 50000
+   - Description: The maximum timeout value in milliseconds. The timeout value controls how long the addon will wait for a response from an addon before moving on to the next addon. This controls the max value the user can set for the timeout slider in the configure page.
+
+- **MIN_TIMEOUT**
+   - Type: number
+   - Default: 1000
+   - Description: The minimum timeout value in milliseconds.
+
+- **DEFAULT_TIMEOUT**
+   - Type: number
+   - Default: 15000
+   - Description: The default timeout value in milliseconds.
+
+- **DEFAULT_TORRENTIO_TIMEOUT**
+   - Type: number
+   - Default: 5000
+   - Description: The default timeout value for Torrentio in milliseconds. 
+
+- **DEFAULT_TORBOX_TIMEOUT**
+   - Type: number
+   - Default: 15000
+   - Description: The default timeout value for Torbox in milliseconds.
+
+- **DEFAULT_COMET_TIMEOUT**
+   - Type: number
+   - Default: 15000
+   - Description: The default timeout value for Comet in milliseconds.
+
+- **DEFAULT_MEDIAFUSION_TIMEOUT**
+   - Type: number
+   - Default: 15000
+   - Description: The default timeout value for MediaFusion in milliseconds. 
+
+- **SHOW_DIE**
+   - Type: boolean
+   - Default: true
+   - Description: A flag to indicate whether to show a die (singular dice) emoji in the stream result names. This is available to distinguish results from the AIOStreams addon from other addons.
+
 ## Development 
 
 
