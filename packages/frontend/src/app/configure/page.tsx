@@ -98,6 +98,7 @@ const toastOptions: ToastOptions = {
     color: 'black',
   },
 };
+
 function showToast(
   message: string,
   type: 'success' | 'error' | 'info' | 'warning',
@@ -498,13 +499,7 @@ export default function Configure() {
             style={{ alignSelf: 'center', justifyContent: 'center' }}
           />
           <h1 style={{ textAlign: 'center' }}>AIOStreams v{version}</h1>
-            {process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING && (
-              <div className={styles.branding} id="BrandingDiv" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING }} />
-            )}
-
-            <div className={styles.branding} id="BrandingDiv" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: branding || '' }} />
- 
-          
+          <div className={styles.branding} id="BrandingDiv" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: branding || '' }} />          
           <p style={{ textAlign: 'center', padding: '15px' }}>
             AIOStreams, the all-in-one streaming addon for Stremio. Combine your
             streams from all your addons into one and filter them by resolution,

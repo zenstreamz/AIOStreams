@@ -13,6 +13,7 @@
   margin: 0 auto; /* Center the header within the content */
 }
 
+
 .content {
   background-color: #000000; /* Slightly lighter black */
   border-radius: var(--borderRadius);
@@ -27,11 +28,6 @@
   text-align: center;
   margin: 20px;
   font-size: 16px;
-}
-
-.branding a {
-  color: #979292; /* White */
-  text-decoration: underline;
 }
 
 @media (max-width: 1000px) {
