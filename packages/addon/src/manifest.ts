@@ -4,7 +4,7 @@ import { Settings } from '@aiostreams/utils';
 const manifest = (configured: boolean) => {
   return {
     name: Settings.ADDON_NAME,
-    id: 'viren070.aiostreams.com',
+    id: Settings.ADDON_ID,
     version: version,
     description: description,
     catalogs: [],
