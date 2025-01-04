@@ -1,10 +1,10 @@
 import {
   AIOStreams,
-  manifest,
   invalidConfig,
   missingConfig,
   validateConfig,
 } from '@aiostreams/addon';
+import manifest from '@aiostreams/addon/src/manifest';
 import { Config, StreamRequest } from '@aiostreams/types';
 
 const HEADERS = {
