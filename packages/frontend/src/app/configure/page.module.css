@@ -124,3 +124,15 @@
   box-shadow: none;
   background-color: #ddddddbe;
 }
+
+.version {
+  position: absolute;
+  top: -5px;
+  right: -50px;
+  font-size: 14px;
+  color: black;
+  background-color: rgb(241, 241, 241);
+  font-weight: bold;
+  padding: 5px;
+  border-radius: var(--borderRadius);
+}

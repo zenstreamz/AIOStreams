@@ -496,9 +496,12 @@ export default function Configure() {
             alt="AIOStreams Logo"
             width={200}
             height={200}
-            style={{ alignSelf: 'center', justifyContent: 'center' }}
+            style={{ display: 'block', margin: '0 auto' }}
           />
-          <h1 style={{ textAlign: 'center' }}>AIOStreams v{version}</h1>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <h1 style={{ textAlign: 'center' }}>AIOStreams</h1>
+            <span className={styles.version}>v{version}</span>
+          </div>
           <div className={styles.branding} id="BrandingDiv" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: branding || '' }} />          
           <p style={{ textAlign: 'center', padding: '15px' }}>
             AIOStreams, the all-in-one streaming addon for Stremio. Combine your
