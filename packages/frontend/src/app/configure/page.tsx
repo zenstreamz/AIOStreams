@@ -155,6 +155,13 @@ export default function Configure() {
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
   const [branding, setBranding] = useState<string | null>(null);
 
+  useEffect(() => {
+    const brandingDiv = document.getElementById('BrandingDiv');
+    if (brandingDiv) {
+      setBranding(brandingDiv.innerHTML);
+    }
+  }, []);
+
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
     const choosableAddons: string[] = [];
@@ -471,10 +478,6 @@ export default function Configure() {
     }
 
     const path = window.location.pathname;
-    const brandingDiv = document.getElementById('BrandingDiv');
-    if (brandingDiv) {
-      setBranding(brandingDiv.innerHTML);
-    }
     try {
       const configMatch = path.match(/\/([^/]+)\/configure/);
 
