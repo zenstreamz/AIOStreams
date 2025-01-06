@@ -155,12 +155,8 @@ export default function Configure() {
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
   const [branding, setBranding] = useState<string | null>(null);
 
-  useEffect(() => {
-    const brandingDiv = document.getElementById('BrandingDiv');
-    if (brandingDiv) {
-      setBranding(brandingDiv.innerHTML);
-    }
-  }, []);
+  // load branding through fetch
+  useEffect(() => { fetch('/branding').then(response => response.ok ? response.text().then(data => setBranding(data)) : console.log('No branding was found')); }, []);
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon

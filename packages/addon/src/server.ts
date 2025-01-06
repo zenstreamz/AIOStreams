@@ -1,7 +1,5 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
-import fs from 'fs';
-import {load} from 'cheerio';
 import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config';
@@ -18,6 +16,8 @@ const app = express();
     }
     if (key === 'SECRET_KEY' && !Settings[key]) {
       console.warn('SECRET_KEY: NOT SET! You have not set a SECRET_KEY, you will not be able to use encrypted configs');
+    } else if (key === 'BRANDING' && !Settings[key]) {
+      console.log('BRANDING: Not set');
     }
     return
   }
@@ -39,36 +39,23 @@ app.use((req, res, next) => {
   next();
 });
 
-//app.use(express.static(path.join(__dirname, '../../frontend/out')));
-
-app.get(['/_next/*', '/assets/*', '/icon.ico', '/configure.txt'], (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/out', req.path));
-});
-
 app.get('/', (req, res) => {
   res.redirect('/configure');
 });
 
-const sendModifiedHtml = (res: Response, filePath: string) => {
-  fs.readFile(filePath, 'utf8', (err, html) => {
-    if (err) {
-      console.error('Failed to read HTML file', err);
-      res.status(500).send('Internal Server Error');
-      return;
-    }
+app.get(['/_next/*', '/assets/*', '/icon.ico', '/configure.txt', ], (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/out', req.path));
+});
 
-    const $ = load(html);
 
-    if (Settings.BRANDING) {
-      $('[id*="BrandingDiv"]').html(Settings.BRANDING);
-    }
-    res.send($.html());
+if (Settings.BRANDING) {
+  app.get('/branding', (req, res) => {
+    res.send(Settings.BRANDING);
   });
-};
+}
 
 app.get('/configure', (req, res) => {
-  const filePath = path.join(__dirname, '../../frontend/out/configure.html');
-  sendModifiedHtml(res, filePath);
+  res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
 });
 
 app.get('/:config/configure', (req, res) => {
@@ -91,8 +78,7 @@ app.get('/:config/configure', (req, res) => {
     res.redirect(`/${base64Config}/configure`);
     return;
   }
-  const filePath = path.join(__dirname, '../../frontend/out/configure.html');
-  sendModifiedHtml(res, filePath);
+  res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));  
 });
 
 app.get('/manifest.json', (req, res) => {
@@ -110,18 +96,6 @@ app.get('/stream/:type/:id', (req: Request, res: Response) => {
 
 app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
   const config = req.params.config;
-
-  // Decode Base64 encoded JSON config
-  /*
-  const decodedConfig = Buffer.from(config, 'base64').toString('utf-8');
-  let configJson: Config;
-  try {
-    configJson = JSON.parse(decodedConfig);
-  } catch (error: any) {
-    res.status(400).send('Invalid config');
-    return;
-  }
-  */
 
   // if config starts with E- then it is encrypted, decrypt it
   let configJson: Config;
