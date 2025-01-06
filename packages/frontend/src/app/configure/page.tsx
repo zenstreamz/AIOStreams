@@ -153,10 +153,6 @@ export default function Configure() {
   const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
 
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
-  const [branding, setBranding] = useState<string | null>(null);
-
-  // load branding through fetch
-  useEffect(() => { fetch('/branding').then(response => response.ok ? response.text().then(data => setBranding(data)) : console.log('No branding was found')); }, []);
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
@@ -501,7 +497,7 @@ export default function Configure() {
             <h1 style={{ textAlign: 'center' }}>AIOStreams</h1>
             <span className={styles.version}>v{version}</span>
           </div>
-          <div className={styles.branding} id="BrandingDiv" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: branding || '' }} />          
+          {process.env.NEXT_PUBLIC_BRANDING && <div className={styles.branding} dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_BRANDING || '' }} />}
           <p style={{ textAlign: 'center', padding: '15px' }}>
             AIOStreams, the all-in-one streaming addon for Stremio. Combine your
             streams from all your addons into one and filter them by resolution,
