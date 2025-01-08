@@ -1,4 +1,5 @@
-- [x] custom formatter
-  - [ ] add to frontend...
-- [x] different size filters for movies and shows
-- [x] allow brackets in regex
+- [ ] A custom formatter
+- [ ] Ability to clean up debrid results when using multiple services - Essentially removes duplicate files and only keeps 1 service, priority of each service can be customised 
+- [ ] Ability to sort by debrid, 
+- [ ] Adding pikpak and seedr.cc for mediafusion
+- [ ] More addons.
