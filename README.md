@@ -1,9 +1,6 @@
 <p align="center"><img src="https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/logo.png" /></p>
 <h1 align="center" id="title">AIOStreams</h1>
 
-> [!WARNING]
-> This addon is currently still in development. Things may not work as expected.
-
 Combines streams from other addons into one and provides much greater customisation:
 
 - Change the format of the resutls
@@ -280,6 +277,8 @@ To modify the behaviour of the addon, you can provide the following environment 
    - Type: string
    - Default: undefined
    - Description: Custom branding HTML content. This can be customized by setting the BRANDING environment variable. This HTML content will be displayed at the top of the addon configuration page.
+>[!NOTE]
+>`BRANDING` is a **build-time** environment variable. It must be present during the build process. 
 
 - **SECRET_KEY**
    - Type: string
