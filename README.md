@@ -168,8 +168,10 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 > [!NOTE]
 > Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
 
-Follow the [guide](https://developers.cloudflare.com/workers/get-started/guide/) to get started and then run the following commands:
-
+1. Sign up for a [Cloudflare Account](https://dash.cloudflare.com/sign-up/workers-and-pages)
+2. Install Node.js (I would recommend using package managers e.g. fnm on Windows)
+3. Install Git
+4. Run the following commands: 
 ```
 git clone https://github.com/Viren070/AIOStreams.git
 cd AIOStreams
