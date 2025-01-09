@@ -154,6 +154,7 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
       res
         .status(200)
         .json(invalidConfig(rootUrl(req), errorMessage ?? 'Unknown'));
+      return;
     }
 
     const aioStreams = new AIOStreams(configJson);
