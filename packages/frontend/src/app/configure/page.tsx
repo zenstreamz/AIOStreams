@@ -48,10 +48,10 @@ const defaultQualities: Quality[] = [
 ];
 
 const defaultVisualTags: VisualTag[] = [
+  { "HDR+DV": true },
   { 'HDR10+': true },
   { HDR10: true },
   { HDR: true },
-  { "HDR+DV": true },
   { DV: true },
   { IMAX: true },
   { AI: true },
