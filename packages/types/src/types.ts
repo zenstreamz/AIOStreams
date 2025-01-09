@@ -140,6 +140,7 @@ export interface Config {
   minMovieSize: number | null;
   maxEpisodeSize: number | null;
   minEpisodeSize: number | null;
+  cleanResults: boolean;
   maxResultsPerResolution: number | null;
   addons: {
     id: string;

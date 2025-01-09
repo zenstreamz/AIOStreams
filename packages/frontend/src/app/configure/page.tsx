@@ -155,6 +155,7 @@ export default function Configure() {
   const [minMovieSize, setMinMovieSize] = useState<number | null>(null);
   const [maxEpisodeSize, setMaxEpisodeSize] = useState<number | null>(null);
   const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
+  const [cleanResults, setCleanResults] = useState<boolean>(false);
   const [maxResultsPerResolution, setMaxResultsPerResolution] = useState<number | null>(null);
 
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
@@ -196,6 +197,7 @@ export default function Configure() {
       minMovieSize,
       maxEpisodeSize,
       minEpisodeSize,
+      cleanResults,
       maxResultsPerResolution,
       formatter: formatter || 'gdrive',
       addons,
@@ -774,6 +776,34 @@ export default function Configure() {
             </div>
           </div>
         </div>
+
+        <div className={styles.section}>
+          <div className={styles.setting}>
+            <div className={styles.settingDescription}>
+              <h2 style={{ padding: '5px' }}>Clean Results</h2>
+              <p style={{ padding: '5px' }}>
+                Attempt to remove duplicate results. This can be duplicate files within the same addon, or only keeping the highest priority 
+                service for a particular file. It also considers the addon&apos;s priority when removing duplicates. If you had 2 cached results 
+                for the same file from the same service, it would keep the one with the higher addon priority.
+              </p>
+            </div>
+            <div className={styles.settingInput}>
+              <input
+                type="checkbox"
+                checked={cleanResults}
+                onChange={(e) => setCleanResults(e.target.checked)}
+                // move to the right
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: '20px',
+                  width: '25px',
+                  height: '25px',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        
         <div className={styles.section}>
           <div className={styles.setting}>
             <div className={styles.settingDescription}>
