@@ -32,7 +32,7 @@ export class AIOStreams {
     const parsedStreams = await this.getParsedStreams(streamRequest);
     console.log(`Got ${parsedStreams.length} streams`);
 
-    const filteredResults = parsedStreams.filter((parsedStream) => {
+    let filteredResults = parsedStreams.filter((parsedStream) => {
       const resolutionFilter = this.config.resolutions.find(
         (resolution) => resolution[parsedStream.resolution]
       );
@@ -121,6 +121,19 @@ export class AIOStreams {
 
       return true;
     });
+    if (this.config.maxResultsPerResolution) {
+      const streamsByResolution = filteredResults.reduce((acc, stream) => {
+        acc[stream.resolution] = acc[stream.resolution] || [];
+        acc[stream.resolution].push(stream);
+        return acc;
+      }, {} as Record<string, ParsedStream[]>);
+
+      const limitedStreams = Object.values(streamsByResolution).map((streams) => {
+        return streams.slice(0, this.config.maxResultsPerResolution!);
+      });
+
+      filteredResults = limitedStreams.flat();
+    }
     console.log(`Filtered to ${filteredResults.length} streams`);
     // Apply sorting
 

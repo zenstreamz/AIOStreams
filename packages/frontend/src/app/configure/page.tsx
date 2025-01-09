@@ -155,6 +155,7 @@ export default function Configure() {
   const [minMovieSize, setMinMovieSize] = useState<number | null>(null);
   const [maxEpisodeSize, setMaxEpisodeSize] = useState<number | null>(null);
   const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
+  const [maxResultsPerResolution, setMaxResultsPerResolution] = useState<number | null>(null);
 
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
 
@@ -195,6 +196,7 @@ export default function Configure() {
       minMovieSize,
       maxEpisodeSize,
       minEpisodeSize,
+      maxResultsPerResolution,
       formatter: formatter || 'gdrive',
       addons,
       services,
@@ -769,6 +771,30 @@ export default function Configure() {
                   }}
                 />
               </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.section}>
+          <div className={styles.setting}>
+            <div className={styles.settingDescription}>
+              <h2 style={{ padding: '5px' }}>Limit results per resolution</h2>
+              <p style={{ padding: '5px' }}>
+                Limit the number of results per resolution. Leave empty to show all results.
+              </p>
+                
+            </div>
+            <div className={styles.settingInput}>
+              <input
+                type="number"
+                value={maxResultsPerResolution || ''}
+                onChange={(e) => setMaxResultsPerResolution(e.target.value ? parseInt(e.target.value) : null)}
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: '20px',
+                  width: '100px',
+                  height: '30px',
+                }}
+              />
             </div>
           </div>
         </div>
