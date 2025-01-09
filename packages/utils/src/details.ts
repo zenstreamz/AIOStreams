@@ -124,6 +124,8 @@ export const addonDetails: AddonDetail[] = [
       'torbox',
       'offcloud',
       'easydebrid',
+      'pikpak',
+      'seedr',
     ],
     options: [
       {
@@ -402,5 +404,33 @@ export const serviceDetails = [
         link: 'https://paradise-cloud.com/products/easydebrid',
       },
     ],
-  }
+  },
+  {
+    name: 'PikPak',
+    id: 'pikpak',
+    shortName: 'PKP',
+    knownNames: ['PP', 'PikPak', 'PKP'],
+    credentials: [
+      {
+        label: 'Email',
+        id: 'email',
+      },
+      {
+        label: 'Password',
+        id: 'password',
+      },
+    ],
+  },
+  {
+    name: 'Seedr',
+    id: 'seedr',
+    shortName: 'SDR',
+    knownNames: ['SR', 'Seedr', 'SDR'],
+    credentials: [
+      {
+        label: 'Encoded Token. Please authorise at MediaFusion and copy the token into here.',
+        id: 'apiKey',
+      },
+    ],
+  },
 ];

@@ -151,7 +151,7 @@ export async function getMediafusionStreams(
     // get the encrypted mediafusion string
     const mediafusionConfig = getMediaFusionConfig(
       debridService.id,
-      debridService.credentials.apiKey
+      debridService.credentials
     );
     const encryptedStr = await getConfigString(
       mediafusionConfig
@@ -175,7 +175,7 @@ export async function getMediafusionStreams(
   for (const service of servicesToUse) {
     const mediafusionConfig = getMediaFusionConfig(
       service.id,
-      service.credentials.apiKey
+      service.credentials
     );
     const encryptedStr = await getConfigString(
       mediafusionConfig
@@ -194,11 +194,13 @@ export async function getMediafusionStreams(
   return parsedStreams;
 }
 
-const getMediaFusionConfig = (service?: string, token?: string) => {
+const getMediaFusionConfig = (service?: string, credentials: { [key: string]: string } = {}): any => {
   return {
     streaming_provider: service
       ? {
-          token: token,
+          token: !["pikpak"].includes(service) ? credentials.apiKey : undefined,
+          email: credentials.email,
+          password: credentials.password,
           service: service,
           enable_watchlists_catalogs: false,
           download_via_browser: false,
@@ -285,7 +287,6 @@ async function getConfigString(
   data: any
 ): Promise<string> {
   const encryptUrl = `${Settings.MEDIAFUSION_URL}encrypt-user-data`;
-
   const response = await fetch(encryptUrl, {
     method: 'POST',
     headers: {
@@ -297,9 +298,8 @@ async function getConfigString(
   const encryptedData = await response.json();
   if (encryptedData.status !== 'success') {
     throw new Error(
-      'Failed to encrypt data for mediafusion' + encryptedData.message
+      'Failed to encrypt data for mediafusion - ' + encryptedData.message
     );
   }
-
   return encryptedData.encrypted_str;
 }
