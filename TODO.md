@@ -1,5 +1,12 @@
 - [ ] A custom formatter
 - [ ] Ability to clean up debrid results when using multiple services - Essentially removes duplicate files and only keeps 1 service, priority of each service can be customised 
-- [ ] Ability to sort by debrid, 
+- [ ] Ability to clean up the same files from different addons. 
+- [ ] Ability to sort by service 
+- [ ] Language filters - allow removing specific languages
+- [ ] Make prioritise language a multi select, and add languages to sort criteria allowing to customise the priority of languages
+- [ ] Add HDR+DV to visual tags allowing to filter files that have both HDR and DV
+- [ ] MediaFlow Proxy support   
+- [ ] Limiting number of results per resolution overall
+- [ ] Look into some results missing 
 - [ ] Adding pikpak and seedr.cc for mediafusion
 - [ ] More addons.
