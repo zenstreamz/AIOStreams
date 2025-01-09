@@ -11,6 +11,8 @@ import {
   VisualTag,
   AudioTag,
   Encode,
+  ServiceDetail,
+  ServiceCredential,
 } from '@aiostreams/types';
 import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
@@ -686,7 +688,7 @@ export default function Configure() {
             Enable the services you have accounts with and enter your
             credentials.
           </p>
-          {services.map((service) => (
+          {services.map((service, index) => (
             <ServiceInput
               key={service.id}
               serviceName={service.name}
@@ -701,8 +703,8 @@ export default function Configure() {
               }}
               fields={
                 serviceDetails
-                  .find((detail) => detail.id === service.id)
-                  ?.credentials.map((credential) => ({
+                  .find((detail: ServiceDetail) => detail.id === service.id)
+                  ?.credentials.map((credential: ServiceCredential) => ({
                     label: credential.label,
                     link: credential.link,
                     value: service.credentials[credential.id] || '',
@@ -722,6 +724,21 @@ export default function Configure() {
                     },
                   })) || []
               }
+              moveService={(direction) => {
+                const newServices = [...services];
+                const serviceIndex = newServices.findIndex(
+                  (s) => s.id === service.id
+                );
+                const [movedService] = newServices.splice(serviceIndex, 1);
+                if (direction === 'up' && serviceIndex > 0) {
+                  newServices.splice(serviceIndex - 1, 0, movedService);
+                } else if (direction === 'down' && serviceIndex < newServices.length) {
+                  newServices.splice(serviceIndex + 1, 0, movedService);
+                }
+                setServices(newServices);
+              }}
+              canMoveUp={index > 0}
+              canMoveDown={index < services.length - 1}
             />
           ))}
 

@@ -193,3 +193,17 @@ export interface AddonDetail {
   supportedServices: string[];
   options?: AddonOptionDetail[];
 }
+
+export interface ServiceDetail {
+  name: string;
+  id: string;
+  shortName: string;
+  knownNames: string[];
+  credentials: ServiceCredential[];
+}
+
+export interface ServiceCredential {
+  id: string;
+  label: string;
+  link?: string;
+}
