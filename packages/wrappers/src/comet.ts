@@ -44,7 +44,7 @@ export class Comet extends BaseWrapper {
     const debridMatch = RegExp(/^\[([a-zA-Z]{2})(\⚡)\]/).exec(stream.name!);
     const debrid = debridMatch
       ? {
-          id: serviceDetails.find((service) => {service.knownNames.includes(debridMatch[1])})?.id || debridMatch[1],
+          id: serviceDetails.find((service) => service.knownNames.includes(debridMatch[1]))?.id || debridMatch[1],
           cached: debridMatch[2] === '⚡',
         }
       : undefined;
