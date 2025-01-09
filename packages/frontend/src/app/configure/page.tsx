@@ -82,6 +82,7 @@ const defaultSortCriteria: SortBy[] = [
   { resolution: true },
   { size: true },
   { visualTag: false },
+  { service: false },
   { audioTag: false },
   { encode: false },
   { quality: false },

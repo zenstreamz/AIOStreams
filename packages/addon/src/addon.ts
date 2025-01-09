@@ -272,13 +272,23 @@ export class AIOStreams {
       let bHasProvider = b.provider;
       if (aHasProvider && !bHasProvider) return -1;
       if (!aHasProvider && bHasProvider) return 1;
-    } else if (field === 'provider') {
+    } else if (field === 'service') {
       // sort files with providers by name
-      let aProvider = a.provider?.name;
-      let bProvider = b.provider?.name;
+      let aProvider = a.provider?.id;
+      let bProvider = b.provider?.id;
 
       if (aProvider && bProvider) {
-        return aProvider.localeCompare(bProvider);
+        // look for the provider ID's position in the config.services array
+        // first check if the provider is in the config.services array
+        if (
+          this.config.addons.some((addon) => addon.id === aProvider) &&
+          this.config.addons.some((addon) => addon.id === bProvider)
+        ) {
+          return (
+            this.config.addons.findIndex((addon) => addon.id === aProvider) -
+            this.config.addons.findIndex((addon) => addon.id === bProvider)
+          );
+        }
       }
     } else if (field === 'size') {
       return (b.size || 0) - (a.size || 0);
