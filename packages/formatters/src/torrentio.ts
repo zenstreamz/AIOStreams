@@ -1,5 +1,6 @@
 import { ParsedStream } from '@aiostreams/types';
 import { formatSize, languageToEmoji } from './utils';
+import { serviceDetails } from '@aiostreams/utils';
 
 export function torrentioFormat(stream: ParsedStream): {
   name: string;
@@ -13,7 +14,8 @@ export function torrentioFormat(stream: ParsedStream): {
       : stream.provider.cached === undefined
         ? 'Unknown'
         : 'download';
-    name += `[${stream.provider.name} ${cacheStatus}]\n`;
+    const serviceShortName = serviceDetails.find((service) => service.id === stream.provider!.id)?.shortName || stream.provider.id;
+    name += `[${serviceShortName}${cacheStatus}]\n`;
   }
 
   if (stream.torrent?.infoHash) {

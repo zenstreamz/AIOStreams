@@ -1,5 +1,6 @@
 import { ParsedStream } from '@aiostreams/types';
 import { formatSize } from './utils';
+import { serviceDetails } from '@aiostreams/utils';
 
 export function torboxFormat(stream: ParsedStream): {
   name: string;
@@ -9,7 +10,8 @@ export function torboxFormat(stream: ParsedStream): {
 
   name += `${stream.addon.name}`;
   if (stream.provider) {
-    name += ` (${stream.provider.name}${stream.provider.cached === undefined ? ' Unknown' : stream.provider.cached ? ' Instant' : ''})`;
+    const serviceShortName = serviceDetails.find((service) => service.id === stream.provider!.id)?.shortName || stream.provider.id;
+    name += ` (${serviceShortName}${stream.provider.cached === undefined ? ' Unknown' : stream.provider.cached ? ' Instant' : ''})`;
   }
 
   if (stream.torrent?.infoHash) {

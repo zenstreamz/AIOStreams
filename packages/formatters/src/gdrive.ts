@@ -1,5 +1,6 @@
 import { ParsedStream } from '@aiostreams/types';
 import { formatSize } from './utils';
+import { serviceDetails } from '@aiostreams/utils';
 
 export function gdriveFormat(stream: ParsedStream): {
   name: string;
@@ -7,13 +8,14 @@ export function gdriveFormat(stream: ParsedStream): {
 } {
   let name: string = '';
 
-  if (stream.provider) {
+  if (stream.provider) {  
     const cacheStatus = stream.provider.cached
       ? '⚡'
       : stream.provider.cached === undefined
         ? '❓'
         : '⏳';
-    name += `[${stream.provider.name}${cacheStatus}]\n`;
+    const serviceShortName = serviceDetails.find((service) => service.id === stream.provider!.id)?.shortName || stream.provider.id;
+    name += `[${serviceShortName}${cacheStatus}]\n`;
   }
 
   if (stream.torrent?.infoHash) {

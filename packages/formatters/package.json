@@ -8,6 +8,7 @@
   },
   "description": "Library to take parsed information and return a formatted Stremio stream name and description",
   "dependencies": {
-    "@aiostreams/types": "^1.0.0"
+    "@aiostreams/types": "^1.0.0",
+    "@aiostreams/utils": "^1.0.0"
   }
 }

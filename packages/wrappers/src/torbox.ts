@@ -82,7 +82,7 @@ export class Torbox extends BaseWrapper {
 
     const sizeInBytes = stream.size;
     const provider = {
-      name: 'TB',
+      id: 'torbox',
       cached: stream.is_cached,
     };
 

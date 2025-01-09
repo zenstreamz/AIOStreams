@@ -41,10 +41,10 @@ export class MediaFusion extends BaseWrapper {
     const debrid =
       provider !== 'P2P' && (emoji === '⏳' || emoji === '⚡️')
         ? {
-            name:
+            id:
               serviceDetails.find((service) =>
                 service.knownNames.includes(provider)
-              )?.shortName || provider,
+              )?.id || provider,
             cached: emoji === '⚡️',
           }
         : undefined;

@@ -213,7 +213,7 @@ export class BaseWrapper {
           }
 
           provider = {
-            name: service.shortName,
+            id: service.id,
             cached: cached,
           };
         }

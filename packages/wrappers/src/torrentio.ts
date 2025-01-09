@@ -2,7 +2,7 @@ import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails } from '@aiostreams/utils'
+import { addonDetails, serviceDetails } from '@aiostreams/utils'
 import { Settings } from '@aiostreams/utils';
 
 export class Torrentio extends BaseWrapper {
@@ -34,7 +34,7 @@ export class Torrentio extends BaseWrapper {
     );
     const debrid = debridMatch
       ? {
-          name: debridMatch[1],
+          id: serviceDetails.find((service) => service.knownNames.includes(debridMatch[1]))?.id || debridMatch[1],
           cached: debridMatch[2] === '+',
         }
       : undefined;
