@@ -48,6 +48,13 @@ export class AIOStreams {
       );
       if (visualTagFilter) return false;
 
+      if (
+        parsedStream.visualTags.some((tag) => tag.startsWith('HDR')) && // contains any HDR tag
+        parsedStream.visualTags.includes('DV') && // and contains DV
+        (this.config.visualTags.some((visualTag) => visualTag['HDR+DV'] === false)) // and HDR+DV is explicitly disabled
+      )
+        return false;
+
       const audioTagFilter = parsedStream.audioTags.find(
         (tag) => !this.config.audioTags.some((audioTag) => audioTag[tag])
       );
@@ -286,19 +293,39 @@ export class AIOStreams {
       );
     } else if (field === 'visualTag') {
       // Find the highest priority visual tag in each file
-      const getIndexOfTag = (tag: string) =>
-        tag.startsWith('HDR')
-          ? this.config.visualTags.findIndex((t) => t['HDR10+'])
-          : this.config.visualTags.findIndex((t) => t[tag]);
-      const aVisualTagIndex = a.visualTags.reduce(
-        (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
-        this.config.visualTags.length
-      );
-
-      const bVisualTagIndex = b.visualTags.reduce(
-        (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
-        this.config.visualTags.length
-      );
+      const getIndexOfTag = (tag: string) => this.config.visualTags.findIndex((t) => t[tag]);
+    
+      const getHighestPriorityTagIndex = (tags: string[]) => {
+        // Check if the file contains both any HDR tag and DV
+        const hasHDR = tags.some((tag) => tag.startsWith('HDR'));
+        const hasDV = tags.includes('DV');
+    
+        if (hasHDR && hasDV) {
+          // Sort according to the position of the HDR+DV tag
+          const hdrDvIndex = this.config.visualTags.findIndex((t) => t['HDR+DV']);
+          if (hdrDvIndex !== -1) {
+            return hdrDvIndex;
+          }
+        }
+    
+        // If the file contains multiple HDR tags, look at the HDR tag that has the highest priority
+        const hdrTagIndices = tags
+          .filter((tag) => tag.startsWith('HDR'))
+          .map((tag) => getIndexOfTag(tag));
+        if (hdrTagIndices.length > 0) {
+          return Math.min(...hdrTagIndices);
+        }
+    
+        // Always consider the highest priority visual tag when a file has multiple visual tags
+        return tags.reduce(
+          (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
+          this.config.visualTags.length
+        );
+      };
+    
+      const aVisualTagIndex = getHighestPriorityTagIndex(a.visualTags);
+      const bVisualTagIndex = getHighestPriorityTagIndex(b.visualTags);
+    
       // Sort by the visual tag index
       return aVisualTagIndex - bVisualTagIndex;
     } else if (field === 'audioTag') {
