@@ -80,16 +80,16 @@ const defaultEncodes: Encode[] = [
 ];
 
 const defaultSortCriteria: SortBy[] = [
-  { cached: true },
+  { cached: true, direction: 'desc' },
   { resolution: true },
-  { language: true },
-  { size: true },
+  { language: true},
+  { size: true, direction: 'desc' },
   { visualTag: false },
-  { service: false },
+  { service: false, },
   { audioTag: false },
   { encode: false },
   { quality: false },
-  { seeders: false },
+  { seeders: false, direction: 'desc' },
   { addon: false },
 ];
 
@@ -281,6 +281,7 @@ export default function Configure() {
 
   const getManifestUrl = async () => {
     const config = createConfig();
+    console.log('Config', config)
     const protocol = window.location.protocol;
     const root = window.location.host;
 
@@ -468,6 +469,21 @@ export default function Configure() {
     });
   };
 
+  const loadValidSortCriteria = (sortCriteria: Config['sortBy']) => {
+    if (!sortCriteria) {
+      return defaultSortCriteria;
+    }
+    return defaultSortCriteria.map((defaultSort) => {
+      // we find the one with the same key in the first index. 
+      // and we only load direction if it exists in the defaultSort
+      const sort = sortCriteria.find((s) => Object.keys(s)[0] === Object.keys(defaultSort)[0]);
+      if (sort && defaultSort.direction) {
+        return { ...sort, direction: sort.direction || defaultSort.direction };
+      }
+      return sort || defaultSort;
+    });
+  };
+
   const validateValue = (value: string | null, validValues: string[]) => {
     if (!value) {
       return null;
@@ -528,7 +544,7 @@ export default function Configure() {
         loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes)
       );
       setSortCriteria(
-        loadValidValuesFromObject(decodedConfig.sortBy, defaultSortCriteria)
+        loadValidSortCriteria(decodedConfig.sortBy)
       );
       setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
       // create an array for prioritised languages. if the old prioritiseLanguage is set, add it to the array

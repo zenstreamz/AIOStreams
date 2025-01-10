@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import styles from './SortableCardList.module.css';
 
 interface SortableCardListProps {
-  items: { [key: string]: boolean }[];
-  setItems: (items: { [key: string]: boolean }[]) => void;
+  items: { [key: string]: boolean | string }[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setItems: (items: { [key: string]: any }[]) => void;
 }
 
 const SortableCardList: React.FC<SortableCardListProps> = ({
@@ -24,21 +25,32 @@ const SortableCardList: React.FC<SortableCardListProps> = ({
   const toggleItem = (itemKey: string) => {
     const newItems = items.map((item) => {
       if (Object.keys(item)[0] === itemKey) {
-        return { [itemKey]: !item[itemKey] };
+        return { [itemKey]: !item[itemKey], direction: item.direction };
       }
       return item;
     });
     setItems(newItems);
   };
 
+  const toggleDirection = (itemKey: string) => {
+    const newItems = items.map((item) => {
+      if (Object.keys(item)[0] === itemKey) {
+        return { [itemKey]: item[itemKey], direction: item.direction === 'asc' ? 'desc' : 'asc' };
+      }
+      return item;
+    });
+    setItems(newItems);
+  }
+
   return (
     <div className={styles.container}>
       {items.map((item, index) => {
         const itemKey = Object.keys(item)[0];
-        const isEnabled = item[itemKey];
+        const isEnabled = typeof item[itemKey] === 'boolean' ? item[itemKey] : false;
+        const directionChangeable = item.direction;
         return (
+          <div key={itemKey}>
           <div
-            key={itemKey}
             className={`${styles.card} ${!isEnabled ? styles.disabled : ''}`}
           >
             <div className={styles.actions}>
@@ -119,6 +131,19 @@ const SortableCardList: React.FC<SortableCardListProps> = ({
               onChange={() => toggleItem(itemKey)}
               className={styles.checkbox}
             />
+
+          </div>
+          {directionChangeable &&
+           (
+              <div className={`${styles.directionBar} ${!isEnabled ? styles.disabled : ''}`}  key={`direction-${itemKey}`}>
+                <button
+                  className={`${styles.directionButton} ${!isEnabled ? styles.disabled : ''}`}
+                  onClick={() => toggleDirection(itemKey)}
+                >
+                  {item.direction === 'asc' ? '↑ Ascending ↑' : '↓ Descending ↓'}
+                </button>
+              </div>
+            )}
           </div>
         );
       })}

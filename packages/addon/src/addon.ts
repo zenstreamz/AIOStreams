@@ -366,7 +366,9 @@ export class AIOStreams {
         // prioritise a false value over undefined
         if (aCached === false && bCached === undefined) return -1;
         if (aCached === undefined && bCached === false) return 1;
-        return aCached ? -1 : 1;
+        return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'cached')?.direction === 'asc'
+          ? aCached ? 1 : -1 // uncached > cached
+          : aCached ? -1 : 1; // cached > uncached
       }
     } else if (field === 'hasProvider') {
       // files from a provider should be prioritised and then
@@ -389,10 +391,14 @@ export class AIOStreams {
         return aIndex - bIndex;
       }
     } else if (field === 'size') {
-      return (b.size || 0) - (a.size || 0);
+      return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'size')?.direction === 'asc'
+        ? (a.size || 0) - (b.size || 0)
+        : (b.size || 0) - (a.size || 0)
     } else if (field === 'seeders') {
       if (a.torrent?.seeders && b.torrent?.seeders) {
-        return b.torrent.seeders - a.torrent.seeders;
+        return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'seeders')?.direction === 'asc'
+          ? a.torrent.seeders - b.torrent.seeders
+          : b.torrent.seeders - a.torrent.seeders;
       }
     } else if (field === 'quality') {
       return (
