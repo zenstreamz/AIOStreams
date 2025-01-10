@@ -1058,16 +1058,6 @@ export default function Configure() {
                 />
               </div>
             </div>
-            <div>
-              <div >
-                <h3 style={{ padding: '5px' }}>Public IP</h3>
-                <p style={{ padding: '5px' }}>
-                  The public IP of the MediaFlow proxy server. 
-                  Configure this only when running MediaFlow locally with a proxy service. 
-                  Leave empty if MediaFlow is configured locally without a proxy server or if it&apos;s hosted on a remote server.
-                </p>
-              </div>
-            </div>
           </div>
           )}
         </div>

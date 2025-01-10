@@ -148,6 +148,6 @@
 
 .mediaFlowConfig.hidden {
   opacity: 0;
-  margin-top: -340px;
+  margin-top: -210px;
   transform: scale(0);
 }
