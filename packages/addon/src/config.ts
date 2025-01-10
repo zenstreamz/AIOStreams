@@ -253,5 +253,13 @@ export function validateConfig(config: Config): {
     );
   }
 
+  if (config.maxResultsPerResolution && config.maxResultsPerResolution < 1) {
+    return createResponse(
+      false,
+      'invalidMaxResultsPerResolution',
+      'Max results per resolution must be greater than 0'
+    );
+  }
+
   return createResponse(true, null, null);
 }
