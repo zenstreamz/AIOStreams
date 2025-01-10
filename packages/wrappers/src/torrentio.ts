@@ -42,7 +42,7 @@ export class Torrentio extends BaseWrapper {
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.title!);
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
-    const indexerMatch = RegExp(/⚙️ ([a-zA-Z0-9]+)/).exec(stream.title!);
+    const indexerMatch = RegExp(/⚙️ (.+)/).exec(stream.title?.split('\n')[1] || '');
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
 
     const parsedStream: ParsedStream = this.createParsedResult(
