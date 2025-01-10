@@ -12,7 +12,15 @@
         - [Hugging Face](#hugging-face)
         - [Cloudflare Workers](#cloudflare-workers)
         - [Render](#render)
+    - [Self Hosting](#self-hosting)
+        - [Docker](#docker)
+        - [From Source](#from-source)
 - [Configuring](#configuring)
+  - [Environment Variables](#environment-variables)
+  - [Cloudflare Workers](#cloudflare-workers-1)
+  - [Render](#render-1)
+  - [Hugging Face](#hugging-face-1)
+  - [Local](#local)
 - [Development](#development)
 - [Credits](#credits)
   
@@ -105,15 +113,15 @@ Rather than hosting the addon locally, you can make use of some services to depl
 
 #### Hugging Face
 
-This addon can be deployed as a [Huggingface](https://huggingface.co/) space.
+This addon can be deployed as a [Hugging Face](https://huggingface.co/) space.
 
 > [!WARNING]
-> Huggingface is centered around AI and as this addon is not related to AI, they may take it down.
+> Hugging Face is centered around AI and as this addon is not related to AI, they may take it down.
 
 > [!NOTE]
-> GDrive doesn't seem to work on Huggingface Spaces. I'm not sure why.
+> GDrive doesn't seem to work on Hugging Face Spaces. I'm not sure why.
 
-1. Create a Huggingface account and on the [home page](https://huggingface.co) create a new space.
+1. Create a Hugging Face account and on the [home page](https://huggingface.co) create a new space.
 
 ![Screenshot 2024-12-29 133648](https://github.com/user-attachments/assets/9d20a1ac-8eff-4748-8ed7-29da174bd438)
 
@@ -282,9 +290,12 @@ You can change the PORT environment variable to change the port that the addon w
 
 ## Configuring
 
+Outside of the configuration page, the behaviour of this addon can also be changed with environment variables.  
 Most users don't need to set any environment variables. However, if you do, the SECRET_KEY is the one you might want to configure. This key enables encrypted manifest URLs, which help protect your API keys.
 
 With encryption, someone who has your manifest URL can't directly see your API keys. However, they can still install the addon using the encrypted URL. Once installed, they can view API keys within other addons' URLs that are contained within AIOStreams' responses, as most addons don’t encrypt their manifest URLs.
+
+### Environment Variables
 
 To modify the behaviour of the addon, you can provide the following environment variables:
 
@@ -407,7 +418,7 @@ You can set environment variables in the Render dashboard.
 5. Once you have added all the environment variables you want to set, click `Save, build, and deploy`.
 
 
-### Huggingface
+### Hugging Face
 
 1. Go to your Hugging Face space and click on the `Settings` tab.
 2. Scroll down to `Variables and Secrets` and click on `New secret`. 
