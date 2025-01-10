@@ -149,7 +149,6 @@ export interface Config {
     mediaFlowEnabled: boolean;
     proxyUrl: string;
     apiPassword: string;
-    publicIp: string;
   };
   addons: {
     id: string;

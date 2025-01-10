@@ -233,8 +233,6 @@ export default function Configure() {
   const [mediaFlowEnabled, setMediaFlowEnabled] = useState<boolean>(false);
   const [mediaFlowProxyUrl, setmediaFlowProxyUrl] = useState<string>('');
   const [mediaFlowApiPassword, setmediaFlowApiPassword] = useState<string>('');
-  const [mediaFlowPublicIp, setmediaFlowPublicIp] = useState<string>('');
-
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
 
   const getChoosableAddons = () => {
@@ -282,7 +280,6 @@ export default function Configure() {
         mediaFlowEnabled,
         proxyUrl: mediaFlowProxyUrl,
         apiPassword: mediaFlowApiPassword,
-        publicIp: mediaFlowPublicIp,
       },
       addons,
       services,
@@ -1069,19 +1066,6 @@ export default function Configure() {
                   Configure this only when running MediaFlow locally with a proxy service. 
                   Leave empty if MediaFlow is configured locally without a proxy server or if it&apos;s hosted on a remote server.
                 </p>
-              </div>
-              <div>
-                <input
-                  type="text"
-                  value={mediaFlowPublicIp}
-                  onChange={(e) => setmediaFlowPublicIp(e.target.value)}
-                  placeholder='Enter your public IP'
-                  disabled={!mediaFlowEnabled}
-                  style={{
-                    marginLeft: 'auto',
-                    marginRight: '20px',
-                  }}
-                />
               </div>
             </div>
           </div>
