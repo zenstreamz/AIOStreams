@@ -204,6 +204,78 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
   {
+    name: 'Easynews',
+    id: 'easynews',
+    requiresService: true,
+    supportedServices: ['easynews'],
+    options: [
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description:
+          "Override the name of the addon that shows up in the results. Leave it empty to use the default name of 'Easynews'.",
+        type: 'text',
+      },
+      {
+        id: 'overrideUrl',
+        required: false,
+        label: 'Override URL',
+        description:
+          'Override the URL used to fetch streams from the Easynews addon. By default, the URL is generated based on the username and password provided for the Easynews service. Use this option to override the URL with a custom URL.',
+        type: 'text',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description:
+          'The timeout for fetching streams from the Easynews addon in milliseconds. This is the time in milliseconds that the addon will wait for a response from Easynews before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
+        },
+      }
+    ]
+  },
+  {
+    name: 'Easynews Plus',
+    id: 'easynewsplus',
+    requiresService: true,
+    supportedServices: ['easynews'],
+    options: [
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description:
+          "Override the name of the addon that shows up in the results. Leave it empty to use the default name of 'Easynews Plus'.",
+        type: 'text',
+      },
+      {
+        id: 'overrideUrl',
+        required: false,
+        label: 'Override URL',
+        description:
+          'Override the URL used to fetch streams from the Easynews Plus addon. By default, the URL is generated based on the username and password provided for the Easynews service. Use this option to override the URL with a custom URL.',
+        type: 'text',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description:
+          'The timeout for fetching streams from the Easynews Plus addon in milliseconds. This is the time in milliseconds that the addon will wait for a response from Easynews Plus before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
+        },
+      }
+    ]
+  },
+  {
     name: 'Stremio GDrive',
     id: 'gdrive',
     requiresService: false,

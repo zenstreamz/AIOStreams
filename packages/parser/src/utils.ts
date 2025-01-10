@@ -17,3 +17,15 @@ export function extractSizeInBytes(string: string, k: number): number {
       return 0;
   }
 }
+
+export function extractDurationInMs(string: string): number {
+  const durationPattern = /(?:(\d+)h:)?(?:(\d+)m:)?(\d+)s/;
+  const match = string.match(durationPattern);
+  if (!match) return 0;
+
+  const hours = parseInt(match[1] || '0');
+  const minutes = parseInt(match[2] || '0');
+  const seconds = parseInt(match[3]);
+
+  return (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+}

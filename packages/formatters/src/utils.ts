@@ -6,6 +6,23 @@ export function formatSize(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+export function formatDuration(durationInMs: number): string {
+  const seconds = Math.floor(durationInMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  const formattedSeconds = seconds % 60;
+  const formattedMinutes = minutes % 60;
+
+  if (hours > 0) {
+    return `${hours}h:${formattedMinutes}m:${formattedSeconds}s`;
+  } else if (formattedSeconds > 0) {
+    return `${formattedMinutes}m:${formattedSeconds}s`;
+  } else {
+    return `${formattedMinutes}m`;
+  }
+}
+
 export function languageToEmoji(language: string): string | undefined {
   return languageEmojiMap[language.toLowerCase()];
 }

@@ -98,7 +98,8 @@ export class BaseWrapper {
     provider?: ParsedStream['provider'],
     seeders?: number,
     usenetAge?: string,
-    indexer?: string
+    indexer?: string,
+    duration?: number
   ): ParsedStream {
     return {
       ...parsedInfo,
@@ -118,6 +119,7 @@ export class BaseWrapper {
         age: usenetAge,
       },
       indexers: indexer,
+      duration: duration,
       stream: {
         subtitles: stream.subtitles,
         behaviorHints: {
