@@ -68,16 +68,7 @@ export class Torbox extends BaseWrapper {
       ) &&
       language !== 'Unknown'
     ) {
-      if (
-        !(
-          language === 'BENGALI' &&
-          RegExp(
-            /(?<![^ [_\-.])(ben[ _\-.]?the[ _\-.]?men)(?=[ \]_.-]|$)/i
-          ).test(filename)
-        )
-      ) {
-        parsedFilename.languages.push(language);
-      }
+      parsedFilename.languages.push(language.charAt(0).toUpperCase() + language.slice(1).toLowerCase());
     }
 
     const sizeInBytes = stream.size;
