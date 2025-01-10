@@ -19,7 +19,7 @@ export function extractSizeInBytes(string: string, k: number): number {
 }
 
 export function extractDurationInMs(string: string): number {
-  const durationPattern = /(?:(\d+)h:)?(?:(\d+)m:)?(\d+)s/;
+  const durationPattern = /(?:(\d+)h[:\s])?(?:(\d+)m[:\s])?(\d+)s/;
   const match = string.match(durationPattern);
   if (!match) return 0;
 
