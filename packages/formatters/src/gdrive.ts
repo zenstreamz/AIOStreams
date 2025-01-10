@@ -1,5 +1,5 @@
 import { ParsedStream } from '@aiostreams/types';
-import { formatSize } from './utils';
+import { formatDuration, formatSize } from './utils';
 import { serviceDetails } from '@aiostreams/utils';
 
 export function gdriveFormat(stream: ParsedStream): {
@@ -47,8 +47,14 @@ export function gdriveFormat(stream: ParsedStream): {
 
     description += stream.usenet?.age ? `📅 ${stream.usenet.age}` : '';
   }
-  if (stream.languages.length !== 0) {
-    description += `\n🔊 ${stream.languages.join(' | ')}`;
+  if (stream.languages.length !== 0 || stream.duration) {
+    description += '\n';
+    if (stream.duration) {
+      description += `🕒 ${formatDuration(stream.duration)} `;
+    }
+    if (stream.languages.length !== 0) {
+      description += `🔊 ${stream.languages.join(' | ')}`;
+    }
   }
 
   description += `\n📄 ${stream.filename ? stream.filename : 'Unknown'}`;
