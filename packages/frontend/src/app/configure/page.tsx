@@ -785,9 +785,7 @@ export default function Configure() {
             <div className={styles.settingDescription}>
               <h2 style={{ padding: '5px' }}>Clean Results</h2>
               <p style={{ padding: '5px' }}>
-                Attempt to remove duplicate results. This can be duplicate files within the same addon, or only keeping the highest priority 
-                service for a particular file. It also considers the addon&apos;s priority when removing duplicates. If you had 2 cached results 
-                for the same file from the same service, it would keep the one with the higher addon priority.
+                Attempt to remove duplicate results. For a given file with duplicate streams: one uncached stream from all uncached streams is selected per provider. One cached stream from only one provider is selected. For duplicates without a provider, one stream is selected at random.
               </p>
             </div>
             <div className={styles.settingInput}>
