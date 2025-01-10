@@ -228,6 +228,9 @@ export default function Configure() {
         signal: controller.signal,
       });
       clearTimeout(timeout);
+      if (!response.ok) {
+        throw new Error('encrypt-user-data failed with status ' + response.status);
+      }
       const data = await response.json();
       if (!data.success) {
         // fallback to base64 encoding if encryption fails
@@ -253,7 +256,7 @@ export default function Configure() {
         manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json`,
       };
     } catch (error) {
-      console.error('Failed to get manifest URL', error);
+      console.error('Failed to encrypt manifest URL', error, '\nFalling back to base64 encoding');
       clearTimeout(timeout);
       try {
         const base64Config = btoa(JSON.stringify(config));
