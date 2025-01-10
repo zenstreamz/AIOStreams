@@ -256,15 +256,57 @@ export class AIOStreams {
     console.log('Sorted streams');
 
     // Create stream objects
-    filteredResults.map((parsedStream) => {
-      streams.push(this.createStreamObject(parsedStream));
-    });
+    for (const parsedStream of filteredResults) {
+      const stream = await this.createStreamObject(parsedStream);
+      if (stream) streams.push(stream);
+    }
 
     console.log('Created stream objects');
     return streams;
   }
 
-  private createStreamObject(parsedStream: ParsedStream): Stream {
+  private async createMediaFlowStreamUrl(parsedStream: ParsedStream): Promise<string> {
+    const streamUrl = parsedStream.url;
+    const headers = parsedStream.stream?.behaviorHints?.proxyHeaders
+    
+    const mediaFlowConfig = this.config.mediaFlowConfig;
+    const mediaFlowUrl = mediaFlowConfig.proxyUrl?.replace(/\/$/, '');
+    const mediaFlowApiPassword = mediaFlowConfig.apiPassword;
+
+    const mediaFlowHeaders = {
+      'Content-Type': 'application/json'
+    };
+
+    const data = {
+      mediaflow_proxy_url: mediaFlowUrl, 
+      endpoint: '/proxy/stream',
+      destination_url: streamUrl,
+      request_headers: headers?.request,
+      response_headers: headers?.response,
+      expiration: 3600,  // URL will expire in 1 hour
+      api_password: mediaFlowApiPassword
+    };
+
+    const response = await fetch(`${mediaFlowUrl}/generate_encrypted_or_encoded_url`,
+      {
+      method: 'POST',
+      headers: mediaFlowHeaders,
+      body: JSON.stringify(data)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Failed to create MediaFlow stream URL: ${response.statusText}`);
+    }
+  
+    const responseData = await response.json();
+    if (!responseData.encoded_url) {
+      throw new Error('Failed to create MediaFlow stream URL');
+    }
+    return responseData.encoded_url
+
+  }
+
+  private async createStreamObject(parsedStream: ParsedStream): Promise<Stream | null> {
     let name: string = '';
     let description: string = '';
     switch (this.config.formatter) {
@@ -304,9 +346,17 @@ export class AIOStreams {
     ];
 
     let stream: Stream;
-
+    let parsedStreamUrl = parsedStream.url;
+    if (this.config.mediaFlowConfig.mediaFlowEnabled && parsedStream.url) {
+      try {
+        parsedStreamUrl = await this.createMediaFlowStreamUrl(parsedStream);
+      } catch (error) {
+        console.error(`Failed to create MediaFlow stream URL: ${error}`);
+        return null;
+      }
+    }
     stream = {
-      url: parsedStream.url,
+      url: parsedStreamUrl,
       externalUrl: parsedStream.externalUrl,
       infoHash: parsedStream.torrent?.infoHash,
       fileIdx: parsedStream.torrent?.fileIdx,

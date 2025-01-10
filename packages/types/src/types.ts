@@ -145,6 +145,12 @@ export interface Config {
   minEpisodeSize: number | null;
   cleanResults: boolean;
   maxResultsPerResolution: number | null;
+  mediaFlowConfig: {
+    mediaFlowEnabled: boolean;
+    proxyUrl: string;
+    apiPassword: string;
+    publicIp: string;
+  };
   addons: {
     id: string;
     options: { [key: string]: string | undefined };

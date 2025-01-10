@@ -136,3 +136,18 @@
   padding: 5px;
   border-radius: var(--borderRadius);
 }
+
+.mediaFlowConfig {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--borderRadius);
+  border-color: #777777;
+  padding: 10px;
+  transition: margin-top 0.5s, opacity 0.2s, transform 1s;
+}
+
+.mediaFlowConfig.hidden {
+  opacity: 0;
+  margin-top: -340px;
+  transform: scale(0);
+}

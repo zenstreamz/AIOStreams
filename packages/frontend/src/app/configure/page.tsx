@@ -230,6 +230,10 @@ export default function Configure() {
   const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
   const [cleanResults, setCleanResults] = useState<boolean>(false);
   const [maxResultsPerResolution, setMaxResultsPerResolution] = useState<number | null>(null);
+  const [mediaFlowEnabled, setMediaFlowEnabled] = useState<boolean>(false);
+  const [mediaFlowProxyUrl, setmediaFlowProxyUrl] = useState<string>('');
+  const [mediaFlowApiPassword, setmediaFlowApiPassword] = useState<string>('');
+  const [mediaFlowPublicIp, setmediaFlowPublicIp] = useState<string>('');
 
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
 
@@ -274,6 +278,12 @@ export default function Configure() {
       cleanResults,
       maxResultsPerResolution,
       formatter: formatter || 'gdrive',
+      mediaFlowConfig: {
+        mediaFlowEnabled,
+        proxyUrl: mediaFlowProxyUrl,
+        apiPassword: mediaFlowApiPassword,
+        publicIp: mediaFlowPublicIp,
+      },
       addons,
       services,
     };
@@ -985,6 +995,97 @@ export default function Configure() {
             addons={addons}
             setAddons={setAddons}
           />
+        </div>
+        
+        <div className={styles.section}>
+          <div className={styles.setting}>
+            <div className={styles.settingDescription}>
+              <h2 style={{ padding: '5px' }}>MediaFlow</h2>
+              <p style={{ padding: '5px' }}>
+                Use MediaFlow to proxy your streams
+              </p>
+            </div>
+            <div className={styles.settingInput}>
+              <input
+                type="checkbox"
+                checked={mediaFlowEnabled}
+                onChange={(e) => {
+                  setMediaFlowEnabled(e.target.checked);
+                }}
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: '20px',
+                  width: '25px',
+                  height: '25px',
+                }}
+              />
+            </div>
+          </div>
+          {(
+            <div className={`${styles.mediaFlowConfig} ${mediaFlowEnabled ? '' : styles.hidden}`}>
+            <div>
+              <div>
+                <h3 style={{ padding: '5px' }}>Proxy URL</h3>
+                <p style={{ padding: '5px' }}>
+                  The URL of the MediaFlow proxy server
+                </p>
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder='https://mediaflow-proxy.example.com'
+                  value={mediaFlowProxyUrl}
+                  onChange={(e) => setmediaFlowProxyUrl(e.target.value)}
+                  disabled={!mediaFlowEnabled}
+                />
+              </div>
+            </div>
+            <div>
+              <div>
+                <h3 style={{ padding: '5px' }}>API Password</h3>
+                <p style={{ padding: '5px' }}>
+                  Your MediaFlow&apos;s API password
+                </p>
+              </div>
+              <div>
+                <input
+                  type='text'
+                  placeholder='Enter your API password'
+                  value={mediaFlowApiPassword}
+                  onChange={(e) => setmediaFlowApiPassword(e.target.value)}
+                  disabled={!mediaFlowEnabled}
+                  style={{
+                    marginLeft: 'auto',
+                    marginRight: '20px',
+                  }}
+                />
+              </div>
+            </div>
+            <div>
+              <div >
+                <h3 style={{ padding: '5px' }}>Public IP</h3>
+                <p style={{ padding: '5px' }}>
+                  The public IP of the MediaFlow proxy server. 
+                  Configure this only when running MediaFlow locally with a proxy service. 
+                  Leave empty if MediaFlow is configured locally without a proxy server or if it&apos;s hosted on a remote server.
+                </p>
+              </div>
+              <div>
+                <input
+                  type="text"
+                  value={mediaFlowPublicIp}
+                  onChange={(e) => setmediaFlowPublicIp(e.target.value)}
+                  placeholder='Enter your public IP'
+                  disabled={!mediaFlowEnabled}
+                  style={{
+                    marginLeft: 'auto',
+                    marginRight: '20px',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          )}
         </div>
 
         <div className={styles.installButtons}>
