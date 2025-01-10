@@ -22,10 +22,11 @@ export class Torrentio extends BaseWrapper {
   }
 
   protected parseStream(stream: Stream): ParsedStream {
-    const filename = stream?.behaviorHints?.filename
-      ? stream.behaviorHints.filename.trim()
-      : stream.title!.split('\n')[0];
-    const parsedFilename: ParsedNameData = parseFilename(filename);
+    const filename = stream.title 
+      ? stream.title.split('\n')[0] 
+      : stream.behaviorHints?.filename?.trim();
+  
+    const parsedFilename: ParsedNameData = parseFilename(filename || '');
     const sizeInBytes = stream.title
       ? extractSizeInBytes(stream.title, 1024)
       : 0;
