@@ -1,6 +1,23 @@
 <p align="center"><img src="https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/logo.png" /></p>
 <h1 align="center" id="title">AIOStreams</h1>
 
+## Table of Contents 
+
+- [Description](#description)
+- [FAQ](#faq)
+    - [How does it work?](#how-does-it-work)
+- [Usage](#usage)
+    - [Public Instance](#public-instance)
+    - [Personal Instance](#deploying-your-own-instance)
+        - [Hugging Face](#hugging-face)
+        - [Cloudflare Workers](#cloudflare-workers)
+        - [Render](#render)
+- [Configuring](#configuring)
+- [Development](#development)
+- [Credits](#credits)
+  
+## Description
+
 Combines streams from other addons into one and provides much greater customisation:
 
 - Change the format of the resutls
@@ -74,11 +91,19 @@ The addon can display your results in different formats. The formats available a
 
   ![image](https://github.com/user-attachments/assets/21f90ee2-e81d-4a56-9e64-8937fb7ab2bc)
 
-## Deploying your own instance
+## Usage
+### Public Instance 
+
+[ElfHosted](https://elfhosted.com/) have been kind enough to host a [community instance of AIOStreams](https://aiostreams.elfhosted.com/configure). 
+
+This community instance does have a ratelimit in place, but it is unlikely you will reach it. It also avoids the ratelimits of ElfHosted addons like Comet and MediaFusion as AIOStreams' requests to these addons are routed internally. 
+However, other non-ElfHosted addons may rate limit the community instance. 
+
+### Deploying your own instance
 
 Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it.
 
-### Huggingface
+#### Hugging Face
 
 This addon can be deployed as a [Huggingface](https://huggingface.co/) space.
 
@@ -157,11 +182,11 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy
 
 
-#### Updating 
+##### Updating 
 
 To update the addon, you can simply go to the `Settings` tab and click `Factory rebuild`. This will rebuild the addon with the latest changes. 
 
-### Cloudflare Workers
+#### Cloudflare Workers
 
 This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
 
@@ -180,7 +205,7 @@ npm run build
 npm run deploy:cloudflare-worker
 ```
 
-#### Updating
+##### Updating
 
 To update the addon, you can simply run the following commands to pull the latest changes, build the project, and deploy the worker.
 This will update the worker with the latest changes, which may not be stable.
@@ -191,7 +216,7 @@ npm run build
 npm run deploy:cloudflare-worker
 ```
 
-### Render
+#### Render
 
 https://render.com/
 
@@ -203,15 +228,15 @@ https://render.com/
 3. Enter `https://github.com/Viren070/AIOStreams`
 4. Deploy
 
-#### Updating 
+##### Updating 
 
 When you deploy with Render, it automatically builds the addon every time a commit is pushed to this repository. You can also manually trigger a build by clicking the `Deploy` button. 
 
 It is recommend to disable the `Auto Deploy` feature as the latest changes may not be stable. You can do this by going to the `Settings` tab and scrolling down to the `Auto Deploy` setting near the bottom of the `Build & Deploy` section.
 
-## Self-Hosting
+### Self-Hosting
 
-### Docker
+#### Docker
 
 Use the Dockerfile with [Docker](https://docs.docker.com/get-docker/) installed .
 
@@ -228,7 +253,7 @@ docker build -t aiostreams .
 docker run -p 8080:3000 aiostreams
 ```
 
-### From source
+#### From source
 
 You need Node.js and git installed. Node v22 and npm v10.9 were used in the development of this project. I can not guarantee earlier versions will work.
 
