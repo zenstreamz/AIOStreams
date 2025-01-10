@@ -240,9 +240,6 @@ export class AIOStreams {
 
     // then apply our this.config sorting
     filteredResults.sort((a, b) => {
-      const languageComparison = this.compareLanguages(a, b);
-      if (languageComparison !== 0) return languageComparison;
-
       for (const sortByField of this.config.sortBy) {
         const field = Object.keys(sortByField)[0];
         const value = sortByField[field];
@@ -337,14 +334,10 @@ export class AIOStreams {
       const bHasPrioritisedLanguage = b.languages.includes(
         this.config.prioritiseLanguage
       );
-      const aHasMultiLanguage = a.languages.includes('Multi');
-      const bHasMultiLanguage = b.languages.includes('Multi');
 
       if (aHasPrioritisedLanguage && !bHasPrioritisedLanguage) return -1;
       if (!aHasPrioritisedLanguage && bHasPrioritisedLanguage) return 1;
 
-      if (aHasMultiLanguage && !bHasMultiLanguage) return -1;
-      if (!aHasMultiLanguage && bHasMultiLanguage) return 1;
     }
     return 0;
   }
@@ -387,17 +380,13 @@ export class AIOStreams {
       let bProvider = b.provider?.id;
 
       if (aProvider && bProvider) {
-        // look for the provider ID's position in the config.services array
-        // first check if the provider is in the config.services array
-        if (
-          this.config.addons.some((addon) => addon.id === aProvider) &&
-          this.config.addons.some((addon) => addon.id === bProvider)
-        ) {
-          return (
-            this.config.addons.findIndex((addon) => addon.id === aProvider) -
-            this.config.addons.findIndex((addon) => addon.id === bProvider)
-          );
-        }
+        const aIndex = this.config.services.findIndex(
+          (service) => service.id === aProvider
+        );
+        const bIndex = this.config.services.findIndex(
+          (service) => service.id === bProvider
+        );
+        return aIndex - bIndex;
       }
     } else if (field === 'size') {
       return (b.size || 0) - (a.size || 0);
@@ -475,6 +464,40 @@ export class AIOStreams {
         return `${addon.id}-${JSON.stringify(addon.options)}`;
       });
       return addonIds.indexOf(aAddon) - addonIds.indexOf(bAddon);
+    } else if (field === 'language') {
+      if (this.config.prioritiseLanguage) {
+        return this.compareLanguages(a, b);
+      }
+      if (!this.config.prioritisedLanguages) {
+        return 0;
+      }
+      // else, we look at the array of prioritisedLanguages. 
+      // any file with a language in the prioritisedLanguages array should be prioritised
+      // if both files contain a prioritisedLanguage, we compare the index of the highest priority language
+
+      const aHasPrioritisedLanguage = a.languages.some((lang) =>
+        this.config.prioritisedLanguages?.includes(lang)
+      );
+      const bHasPrioritisedLanguage = b.languages.some((lang) =>
+        this.config.prioritisedLanguages?.includes(lang)
+      );
+
+      if (aHasPrioritisedLanguage && !bHasPrioritisedLanguage) return -1;
+      if (!aHasPrioritisedLanguage && bHasPrioritisedLanguage) return 1;
+
+      if (aHasPrioritisedLanguage && bHasPrioritisedLanguage) {
+        const aPrioritisedLanguage = a.languages.find((lang) =>
+          this.config.prioritisedLanguages?.includes(lang)
+        );
+        const bPrioritisedLanguage = b.languages.find((lang) =>
+          this.config.prioritisedLanguages?.includes(lang)
+        );
+
+        return (
+          (this.config.prioritisedLanguages?.indexOf(aPrioritisedLanguage!) || 0) -
+          (this.config.prioritisedLanguages?.indexOf(bPrioritisedLanguage!) || 0)
+        );
+      }
     }
     return 0;
   }

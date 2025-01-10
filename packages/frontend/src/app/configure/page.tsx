@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
+import Select, { StylesConfig } from 'react-select';
 import Image from 'next/image';
 import styles from './page.module.css';
 import {
@@ -80,6 +82,7 @@ const defaultEncodes: Encode[] = [
 const defaultSortCriteria: SortBy[] = [
   { cached: true },
   { resolution: true },
+  { language: true },
   { size: true },
   { visualTag: false },
   { service: false },
@@ -130,7 +133,78 @@ const defaultServices = serviceDetails.map((service) => ({
   credentials: {},
 }));
 
+const selectStyles: StylesConfig = {
+  control: (baseStyles: any, state: { isFocused: boolean; }) => ({
+    ...baseStyles,
+    borderWidth: '0px',
+    backgroundColor: 'white',
+    borderRadius: 'var(--borderRadius)',
+    borderColor: 'gray',
+    outline: '0',
+    color: 'black',
+    margin: '10px 0 0 -0px',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    boxShadow: state.isFocused ? '0 0 0 3px rgb(112, 112, 112)' : 'none',
+    "&:hover": {
+      borderColor: '#5c5c5c',
+      boxShadow: state.isFocused ? '0 0 0 3px rgb(128, 128, 128)' : '0 0 0 2px rgb(161, 161, 161)',
+    }
+  }),
+  input: (baseStyles: any) => ({
+    ...baseStyles,
+    color: 'var(--ifm-color-primary-lightest)',
+  }),
+  multiValue: (baseStyles: any) => ({
+    ...baseStyles,
+    backgroundColor: 'rgb(26, 26, 26)',
+    borderRadius: 'var(--borderRadius)',
+    height: '25px',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '3px',
+  }),
+  multiValueLabel: (baseStyles: any) => ({
+    ...baseStyles,
+    color: 'white',
+    fontSize: '0.8rem',
+  }),
+  multiValueRemove: (baseStyles: any) => ({
+    ...baseStyles,
+    color: 'white',
+    transition: 'color 0.2s',
+    "&:hover": {
+      backgroundColor: 'transparent',
+      color: 'rgb(141, 141, 141)',
+      cursor: 'pointer',
+    },
+  }),
+  menu: (baseStyles: any) => ({
+    ...baseStyles,
+    color: 'white',
+    backgroundColor: 'white',
+    margin: '5px',
+    borderRadius: 'var(--borderRadius)',
+  }),
+  valueContainer: (baseStyles: any) => ({
+    ...baseStyles,
+  }),
+  option: (baseStyles: any, state: { isFocused: any; }) => ({
+    ...baseStyles,
+    color: state.isFocused ? 'white' : 'black',
+    backgroundColor: state.isFocused ? 'rgb(68, 68, 68)' : 'white',
+    "&:hover": {
+      backgroundColor: 'rgb(68, 68, 68)', //'#9c9c9c',
+    },
+    "&:active": {
+        transition: 'background-color 0.4s, color 0.1s',
+        backgroundColor: 'rgb(26, 26, 26)',
+        color: 'white',
+    },
+  }),
+};
+
 export default function Configure() {
+  const [isClient, setIsClient] = useState(false);
   const [resolutions, setResolutions] =
     useState<Resolution[]>(defaultResolutions);
   const [qualities, setQualities] = useState<Quality[]>(defaultQualities);
@@ -143,9 +217,8 @@ export default function Configure() {
   const [services, setServices] = useState<Config['services']>(defaultServices);
   const [onlyShowCachedStreams, setOnlyShowCachedStreams] =
     useState<boolean>(false);
-  const [prioritiseLanguage, setPrioritiseLanguage] = useState<string | null>(
-    null
-  );
+  const [prioritisedLanguages, setPrioritisedLanguages] = useState<string[] | null>(null);
+  const [excludedLanguages, setExcludedLanguages] = useState<string[] | null>(null);
   const [addons, setAddons] = useState<Config['addons']>([]);
   /*
   const [maxSize, setMaxSize] = useState<number | null>(null);
@@ -192,7 +265,8 @@ export default function Configure() {
       encodes,
       sortBy: sortCriteria,
       onlyShowCachedStreams,
-      prioritiseLanguage,
+      prioritisedLanguages,
+      excludedLanguages,
       maxMovieSize,
       minMovieSize,
       maxEpisodeSize,
@@ -422,7 +496,7 @@ export default function Configure() {
 
   // Load config from the window path if it exists
    useEffect(()  => {
-
+    setIsClient(true);
     async function decodeConfig(config: string) {
       let decodedConfig: Config;
       if (config.startsWith('E-')) {
@@ -457,9 +531,20 @@ export default function Configure() {
         loadValidValuesFromObject(decodedConfig.sortBy, defaultSortCriteria)
       );
       setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
-      setPrioritiseLanguage(
-        validateValue(decodedConfig.prioritiseLanguage, allowedLanguages) ||
-          null
+      // create an array for prioritised languages. if the old prioritiseLanguage is set, add it to the array
+      const finalPrioritisedLanguages = decodedConfig.prioritisedLanguages || [];
+      if (decodedConfig.prioritiseLanguage) {
+        finalPrioritisedLanguages.push(decodedConfig.prioritiseLanguage);
+      }
+      setPrioritisedLanguages(
+        finalPrioritisedLanguages.filter((lang) =>
+          allowedLanguages.includes(lang)
+        ) || null
+      );
+      setExcludedLanguages(
+        decodedConfig.excludedLanguages?.filter((lang) =>
+          allowedLanguages.includes(lang)
+        ) || null
       );
       setFormatter(
         validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive'
@@ -585,26 +670,72 @@ export default function Configure() {
         </div>
 
         <div className={styles.section}>
-          <div className={styles.setting}>
-            <div className={styles.settingDescription}>
-              <h2 style={{ padding: '5px' }}>Prioritise Language</h2>
-              <p style={{ padding: '5px' }}>
-                Any results that are detected to have the prioritised language
-                will be moved to the top, ignoring all other sort criteria
+          <h2
+          style={{ padding: '5px', margin: '0px '}}
+          >Languages
+          </h2>
+          <p style={{margin: '5px 0 12px 5px' }}>
+            Choose which languages you want to prioritise and exclude from the results
+          </p>
+          <div className={styles.section}>
+            <div>
+              <h3 style={{ margin: '2px 0 2px 0'}}>Prioritise Languages</h3>
+              <p style={{ margin: '10px 0 10px 0'}}>
+                Any results that are detected to have one of the prioritised languages will be sorted according to your sort criteria. 
+                You must have the <code>Langage</code> sort criteria enabled for this to work.
+                If there are multiple results with a different prioritised language, the order is determined by the order of the prioritised languages.
               </p>
             </div>
-            <div className={styles.settingInput}>
-              <select
-                value={prioritiseLanguage || ''}
-                onChange={(e) => setPrioritiseLanguage(e.target.value || null)}
-              >
-                <option value="">None</option>
-                {allowedLanguages.map((language) => (
-                  <option key={language} value={language}>
-                    {language}
-                  </option>
-                ))}
-              </select>
+            <div>
+              {isClient ? ( // https://github.com/JedWatson/react-select/issues/5859
+              <Select 
+                isMulti
+                closeMenuOnSelect={false}
+                options={allowedLanguages.sort((a,b) => a.localeCompare(b)).map((language) => ({ value: language, label: language }))}
+                value={prioritisedLanguages?.map((language) => ({ value: language, label: language })) || []}
+                onChange={(selectedOptions: any) => {
+                  const selectedLanguages = selectedOptions.map((option: any) => option.value);
+                  setPrioritisedLanguages(selectedLanguages || null);
+                }}
+                styles={selectStyles}
+              />
+              ) :
+              // render a fake select box until the actual one is rendered
+              <div style={{ height: '42px', margin: '0', backgroundColor: 'white', borderRadius: 'var(--borderRadius)', display: 'flex', alignItems: 'center'}}><p style={{margin: '10px', color: '#808090'}}>Select...</p></div>
+            }
+              
+             
+            </div>
+          </div>
+          <div style={{marginBottom: '0px'}} className={styles.section} >
+            <div>
+              <h3
+                style={{ margin: '2px 0 2px 0'}}
+              >Exclude Languages</h3>
+              <p style={{ margin: '10px 0 10px 0'}}>
+                Any results that are detected to have an excluded language will
+                be removed from the results. A result will only be excluded if 
+                it only has one of or more of the excluded languages. If it contains a 
+                language that is not excluded, it will still be included.
+              </p>
+            </div>
+            <div>
+              {isClient ? (
+              <Select 
+                isMulti
+                closeMenuOnSelect={false}
+                options={allowedLanguages.sort((a,b) => a.localeCompare(b)).map((language) => ({ value: language, label: language }))}
+                value={excludedLanguages?.map((language) => ({ value: language, label: language })) || []}
+                onChange={(selectedOptions: any) => {
+                  const selectedLanguages = selectedOptions.map((option: any) => option.value);
+                  setExcludedLanguages(selectedLanguages || null);
+                }}
+                styles={selectStyles}
+              />
+              ) :
+              // render a fake select box until the actual one is rendered
+              <div style={{ height: '42px', margin: '0', backgroundColor: 'white', borderRadius: 'var(--borderRadius)', display: 'flex', alignItems: 'center'}}><p style={{margin: '10px', color: '#808090'}}>Select...</p></div>
+              }
             </div>
           </div>
         </div>

@@ -101,7 +101,9 @@ export interface Config {
   encodes: Encode[];
   sortBy: SortBy[];
   onlyShowCachedStreams: boolean;
-  prioritiseLanguage: string | null;
+  prioritiseLanguage?: string // from older configurations
+  prioritisedLanguages: string[] | null;
+  excludedLanguages: string[] | null;
   formatter: string;
   customFormatter?: {
     splitter: string; // e.g. ' - ', ' | ' etc. the string used to split the tags
