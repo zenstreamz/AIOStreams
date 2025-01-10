@@ -27,7 +27,7 @@ export function gdriveFormat(stream: ParsedStream): {
   let description: string = `${stream.quality !== 'Unknown' ? '🎥 ' + stream.quality + ' ' : ''}${stream.encode !== 'Unknown' ? '🎞️ ' + stream.encode : ''}`;
 
   if (stream.visualTags.length > 0 || stream.audioTags.length > 0) {
-    description += '\n';
+    description += ' ';
 
     description +=
       stream.visualTags.length > 0
