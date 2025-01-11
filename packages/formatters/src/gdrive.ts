@@ -41,7 +41,7 @@ export function gdriveFormat(stream: ParsedStream): {
 
     description += `📦 ${formatSize(stream.size || 0)} `;
     description += stream.duration ? `⏱️ ${formatDuration(stream.duration)} ` : '';
-    description += stream.torrent?.seeders
+    description += stream.torrent?.seeders !== undefined
       ? `👥 ${stream.torrent.seeders}`
       : '';
 

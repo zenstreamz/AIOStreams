@@ -37,7 +37,7 @@ export function torrentioFormat(stream: ParsedStream): {
   ) {
     description += '\n';
 
-    description += stream.torrent?.seeders
+    description += stream.torrent?.seeders !== undefined
       ? `👤 ${stream.torrent.seeders} `
       : '';
 
