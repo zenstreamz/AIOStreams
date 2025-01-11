@@ -4,6 +4,7 @@ import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
 export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
 
 export const allowedLanguages = [
+  'Multi',
   'English',
   'Japanese',
   'Chinese',
