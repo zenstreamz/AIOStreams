@@ -36,25 +36,19 @@ export function gdriveFormat(stream: ParsedStream): {
     description +=
       stream.audioTags.length > 0 ? `🎧 ${stream.audioTags.join(' | ')}` : '';
   }
-  if (stream.size || stream.torrent?.seeders || stream.usenet?.age) {
+  if (stream.size || stream.torrent?.seeders || stream.usenet?.age || stream.duration) {
     description += '\n';
 
     description += `📦 ${formatSize(stream.size || 0)} `;
-
+    description += stream.duration ? `⏱️ ${formatDuration(stream.duration)} ` : '';
     description += stream.torrent?.seeders
       ? `👥 ${stream.torrent.seeders}`
       : '';
 
     description += stream.usenet?.age ? `📅 ${stream.usenet.age}` : '';
   }
-  if (stream.languages.length !== 0 || stream.duration) {
-    description += '\n';
-    if (stream.duration) {
-      description += `🕒 ${formatDuration(stream.duration)} `;
-    }
-    if (stream.languages.length !== 0) {
-      description += `🔊 ${stream.languages.join(' | ')}`;
-    }
+  if (stream.languages.length !== 0) {
+    description += `\n🔊 ${stream.languages.join(' | ')}`;
   }
 
   description += `\n📄 ${stream.filename ? stream.filename : 'Unknown'}`;
