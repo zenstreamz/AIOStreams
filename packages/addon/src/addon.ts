@@ -134,22 +134,23 @@ export class AIOStreams {
       const uniqueStreams: ParsedStream[] = [];
   
       // Group streams by normalized filename
-      const streamsByHash = filteredResults.reduce((acc, stream) => {
+      const streamsByHashOrName = filteredResults.reduce((acc, stream) => {
           const normalizedFilename = stream.filename
               ? stream.filename.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()
               : undefined;
-  
-          if (!normalizedFilename) {
+          const key = stream._infoHash || normalizedFilename;
+
+          if (!key) {
               uniqueStreams.push(stream);
               return acc;
           }
-  
-          acc[normalizedFilename] = acc[normalizedFilename] || [];
-          acc[normalizedFilename].push(stream);
+         
+          acc[key] = acc[key] || [];
+          acc[key].push(stream);
           return acc;
       }, {} as Record<string, ParsedStream[]>);
   
-      Object.values(streamsByHash).forEach((groupedStreams) => {
+      Object.values(streamsByHashOrName).forEach((groupedStreams) => {
           if (groupedStreams.length === 1) {
               uniqueStreams.push(groupedStreams[0]);
               return;

@@ -20,6 +20,7 @@ export interface ParsedStream extends ParsedNameData {
     id: string;
     cached?: boolean;
   };
+  _infoHash?: string; // this infohash is used to determine duplicates, provided so that debrid strems aren't mistaken for torrent streams by providing torrent.infoHash
   torrent?: {
     infoHash?: string;
     fileIdx?: number;
