@@ -32,7 +32,7 @@ export class AIOStreams {
     const streams: Stream[] = [];
 
     const parsedStreams = await this.getParsedStreams(streamRequest);
-    console.log(`Got ${parsedStreams.length} streams`);
+    console.log(`Got ${parsedStreams.length} total streams`);
 
     let filteredResults = parsedStreams.filter((parsedStream) => {
       const resolutionFilter = this.config.resolutions.find(
@@ -130,6 +130,8 @@ export class AIOStreams {
       return true;
     });
 
+    console.log(`Initial filter to ${filteredResults.length} streams`);
+
     if (this.config.cleanResults) {
       const uniqueStreams: ParsedStream[] = [];
   
@@ -223,9 +225,8 @@ export class AIOStreams {
       });
   
       filteredResults = uniqueStreams;
+      console.log(`Cleaned duplicates to ${filteredResults.length} streams`);
     }
-
-    console.log(`Filtered to ${filteredResults.length} streams`);
     // Apply sorting
 
     // initially sort by filename to ensure consistent results
@@ -261,6 +262,7 @@ export class AIOStreams {
       });
 
       filteredResults = limitedStreams.flat();
+      console.log(`Limited results to ${filteredResults.length} streams after applying maxResultsPerResolution`);
     }
 
     console.log('Sorted streams');
