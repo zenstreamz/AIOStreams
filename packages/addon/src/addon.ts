@@ -568,17 +568,17 @@ export class AIOStreams {
       if (!aHasPrioritisedLanguage && bHasPrioritisedLanguage) return 1;
 
       if (aHasPrioritisedLanguage && bHasPrioritisedLanguage) {
-        const aPrioritisedLanguage = a.languages.find((lang) =>
-          this.config.prioritisedLanguages?.includes(lang)
-        );
-        const bPrioritisedLanguage = b.languages.find((lang) =>
-          this.config.prioritisedLanguages?.includes(lang)
-        );
-
-        return (
-          (this.config.prioritisedLanguages?.indexOf(aPrioritisedLanguage!) || 0) -
-          (this.config.prioritisedLanguages?.indexOf(bPrioritisedLanguage!) || 0)
-        );
+        const getHighestPriorityLanguageIndex = (languages: string[]) => {
+          return languages.reduce((minIndex, lang) => {
+            const index = this.config.prioritisedLanguages?.indexOf(lang) ?? this.config.prioritisedLanguages!.length;
+            return index !== -1 ? Math.min(minIndex, index) : minIndex;
+          }, this.config.prioritisedLanguages!.length);
+        };
+  
+        const aHighestPriorityLanguageIndex = getHighestPriorityLanguageIndex(a.languages);
+        const bHighestPriorityLanguageIndex = getHighestPriorityLanguageIndex(b.languages);
+  
+        return aHighestPriorityLanguageIndex - bHighestPriorityLanguageIndex;
       }
     }
     return 0;
