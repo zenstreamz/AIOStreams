@@ -475,6 +475,10 @@ export class AIOStreams {
         return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'seeders')?.direction === 'asc'
           ? a.torrent.seeders - b.torrent.seeders
           : b.torrent.seeders - a.torrent.seeders;
+      } else if (a.torrent?.seeders && !b.torrent?.seeders) {
+        return -1;
+      } else if (!a.torrent?.seeders && b.torrent?.seeders) {
+        return 1;
       }
     } else if (field === 'quality') {
       return (
