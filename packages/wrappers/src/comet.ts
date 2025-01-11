@@ -176,7 +176,8 @@ export async function getCometStreams(
   if (servicesToUse.length < 1) {
     throw new Error('No supported service(s) enabled');
   }
-  for (const service of servicesToUse) {
+
+  const streamPromises = servicesToUse.map(async (service) => {
     const cometConfig = getCometConfig(service.id, service.credentials.apiKey);
     const configString = Buffer.from(JSON.stringify(cometConfig)).toString(
       'base64'
@@ -188,9 +189,11 @@ export async function getCometStreams(
       cometOptions.overrideName,
       addonId
     );
-    const streams = await comet.getParsedStreams(streamRequest);
-    parsedStreams.push(...streams);
-  }
+    return comet.getParsedStreams(streamRequest);
+  });
+
+  const streamsArray = await Promise.all(streamPromises);
+  streamsArray.forEach((streams) => parsedStreams.push(...streams));
 
   return parsedStreams;
 }

@@ -172,7 +172,7 @@ export async function getMediafusionStreams(
   if (servicesToUse.length < 1) {
     throw new Error('No supported service(s) enabled');
   }
-  for (const service of servicesToUse) {
+  const promises = servicesToUse.map(async (service) => {
     const mediafusionConfig = getMediaFusionConfig(
       service.id,
       service.credentials
@@ -187,9 +187,11 @@ export async function getMediafusionStreams(
       mediafusionOptions.overrideName,
       addonId,
     );
-    const streams = await mediafusion.getParsedStreams(streamRequest);
-    parsedStreams.push(...streams);
-  }
+    return mediafusion.getParsedStreams(streamRequest);
+  });
+
+  const results = await Promise.all(promises);
+  results.forEach((streams) => parsedStreams.push(...streams));
 
   return parsedStreams;
 }

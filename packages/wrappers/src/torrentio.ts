@@ -119,9 +119,9 @@ export async function getTorrentioStreams(
   };
 
   if (torrentioOptions.useMultipleInstances === 'true') {
-    for (const service of usableServices) {
+    const promises = usableServices.map(async (service) => {
       if (!service.enabled) {
-        continue;
+        return [];
       }
       console.log('Creating Torrentio instance with service:', service.id);
       let configString = getServicePair(service.id, service.credentials);
@@ -132,9 +132,10 @@ export async function getTorrentioStreams(
         torrentioOptions.overrideName,
         addonId
       );
-      const streams = await torrentio.getParsedStreams(streamRequest);
-      parsedStreams.push(...streams);
-    }
+      return await torrentio.getParsedStreams(streamRequest);
+    });
+    const results = await Promise.all(promises);
+    results.forEach((streams) => parsedStreams.push(...streams));
     return parsedStreams;
   } else {
     let configString = '';
