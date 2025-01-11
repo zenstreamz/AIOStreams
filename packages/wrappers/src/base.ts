@@ -108,7 +108,7 @@ export class BaseWrapper {
       size: size,
       url: stream.url,
       externalUrl: stream.externalUrl,
-      _infoHash: stream.infoHash || (stream.url ? (stream.url.match(/[a-fA-F0-9]{40}/)?.[0]) : undefined),
+      _infoHash: stream.infoHash || stream.url ? (stream.url.match(/[a-fA-F0-9]{40}/)?.[0]) : undefined,
       torrent: {
         infoHash: stream.infoHash,
         fileIdx: stream.fileIdx,
@@ -185,7 +185,10 @@ export class BaseWrapper {
     // look for indexer
     let indexer: string | undefined;
     if (description) {
-      indexer = description.match(/(🌐|⚙️|🔗) ?(\w+)/)?.[2];
+      const indexerMatch = RegExp(/[🌐⚙️🔗] ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u).exec(
+        stream.description || ''
+      );
+      indexer = indexerMatch ? indexerMatch[1] : undefined
     }
 
     // look for providers
