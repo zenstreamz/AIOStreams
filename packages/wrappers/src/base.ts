@@ -186,7 +186,7 @@ export class BaseWrapper {
     let indexer: string | undefined;
     if (description) {
       const indexerMatch = RegExp(/[🌐⚙️🔗] ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u).exec(
-        stream.description || ''
+        description || ''
       );
       indexer = indexerMatch ? indexerMatch[1] : undefined
     }
