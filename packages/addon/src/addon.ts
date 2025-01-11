@@ -1,6 +1,8 @@
 import {
   BaseWrapper,
   getCometStreams,
+  getEasynewsPlusStreams,
+  getEasynewsStreams,
   getMediafusionStreams,
   getTorboxStreams,
   getTorrentioStreams,
@@ -624,6 +626,22 @@ export class AIOStreams {
           addon.options,
           streamRequest,
           addonId,
+        );
+      }
+      case 'easynews': {
+        return await getEasynewsStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        )
+      }
+      case 'easynewsPlus': {
+        return await getEasynewsPlusStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
         );
       }
       case 'gdrive': {
