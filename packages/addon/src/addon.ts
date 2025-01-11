@@ -277,7 +277,7 @@ export class AIOStreams {
     return streams;
   }
 
-  private async createMediaFlowStreamUrl(parsedStream: ParsedStream): Promise<string> {
+  private async createMediaFlowStream(parsedStream: ParsedStream, name: string, description: string): Promise<Stream> {
     const streamUrl = parsedStream.url;
     const headers = parsedStream.stream?.behaviorHints?.proxyHeaders
     
@@ -314,7 +314,18 @@ export class AIOStreams {
     if (!responseData.encoded_url) {
       throw new Error('Failed to create MediaFlow stream URL');
     }
-    return responseData.encoded_url
+    return {
+      url: responseData.encoded_url,
+      name: `🚀 ${name}`,
+      description: description,
+      subtitles: parsedStream.stream?.subtitles,
+      behaviorHints: {
+        notWebReady: parsedStream.stream?.behaviorHints?.notWebReady,
+        filename: parsedStream.filename,
+        videoSize: Math.floor(parsedStream.size || 0) || undefined,
+        videoHash: parsedStream.stream?.behaviorHints?.videoHash,
+      }
+    }
 
   }
 
@@ -358,17 +369,20 @@ export class AIOStreams {
     ];
 
     let stream: Stream;
-    let parsedStreamUrl = parsedStream.url;
     if (this.config.mediaFlowConfig.mediaFlowEnabled && parsedStream.url) {
       try {
-        parsedStreamUrl = await this.createMediaFlowStreamUrl(parsedStream);
+        const mediaFlowStream = await this.createMediaFlowStream(parsedStream, name, description);
+        if (!mediaFlowStream) {
+          throw new Error('Unknown error creating MediaFlow stream');
+        }
+        return mediaFlowStream;
       } catch (error) {
         console.error(`Failed to create MediaFlow stream URL: ${error}`);
         return null;
       }
     }
     stream = {
-      url: parsedStreamUrl,
+      url: parsedStream.url,
       externalUrl: parsedStream.externalUrl,
       infoHash: parsedStream.torrent?.infoHash,
       fileIdx: parsedStream.torrent?.fileIdx,
