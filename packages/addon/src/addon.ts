@@ -369,7 +369,7 @@ export class AIOStreams {
     ];
 
     let stream: Stream;
-    if (this.config.mediaFlowConfig.mediaFlowEnabled && parsedStream.url) {
+    if (this.config.mediaFlowConfig?.mediaFlowEnabled && parsedStream.url) {
       try {
         const mediaFlowStream = await this.createMediaFlowStream(parsedStream, name, description);
         if (!mediaFlowStream) {
