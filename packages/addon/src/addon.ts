@@ -639,7 +639,7 @@ export class AIOStreams {
           addonId
         )
       }
-      case 'easynewsPlus': {
+      case 'easynews-plus': {
         return await getEasynewsPlusStreams(
           this.config,
           addon.options,
