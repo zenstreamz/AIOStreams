@@ -49,7 +49,7 @@ export class MediaFusion extends BaseWrapper {
           }
         : undefined;
 
-    const indexerMatch = RegExp(/🔗 ([a-zA-Z0-9]+)/).exec(
+    const indexerMatch = RegExp(/🔗 ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u).exec(
       stream.description || ''
     );
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
