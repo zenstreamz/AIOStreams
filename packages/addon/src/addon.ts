@@ -471,13 +471,13 @@ export class AIOStreams {
         ? (a.size || 0) - (b.size || 0)
         : (b.size || 0) - (a.size || 0)
     } else if (field === 'seeders') {
-      if (a.torrent?.seeders && b.torrent?.seeders) {
+      if (a.torrent?.seeders !== undefined && b.torrent?.seeders !== undefined) {
         return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'seeders')?.direction === 'asc'
           ? a.torrent.seeders - b.torrent.seeders
           : b.torrent.seeders - a.torrent.seeders;
-      } else if (a.torrent?.seeders && !b.torrent?.seeders) {
+      } else if (a.torrent?.seeders !== undefined && b.torrent?.seeders === undefined) {
         return -1;
-      } else if (!a.torrent?.seeders && b.torrent?.seeders) {
+      } else if (a.torrent?.seeders === undefined && b.torrent?.seeders !== undefined) {
         return 1;
       }
     } else if (field === 'quality') {
