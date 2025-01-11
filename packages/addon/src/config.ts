@@ -50,6 +50,7 @@ export const allowedLanguages = [
   'Swedish',
   'Norwegian',
   'Malay',
+  'Latino',
 ];
 
 export function validateConfig(config: Config): {
