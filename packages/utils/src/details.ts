@@ -240,7 +240,7 @@ export const addonDetails: AddonDetail[] = [
     ]
   },
   {
-    name: 'Easynews Plus',
+    name: 'Easynews+',
     id: 'easynews-plus',
     requiresService: true,
     supportedServices: ['easynews'],

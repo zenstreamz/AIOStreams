@@ -11,7 +11,7 @@ export class EasynewsPlus extends BaseWrapper {
     configString: string | null,
     overrideUrl: string | null,
     indexerTimeout: number = Settings.DEFAULT_EASYNEWS_PLUS_TIMEMOUT,
-    addonName: string = 'Easynews Plus',
+    addonName: string = 'Easynews+',
     addonId: string,
   ) {
     let url = overrideUrl
