@@ -12,8 +12,8 @@ export function torrentioFormat(stream: ParsedStream): {
     const cacheStatus = stream.provider.cached
       ? '+'
       : stream.provider.cached === undefined
-        ? 'Unknown'
-        : 'download';
+        ? ' Unknown'
+        : ' download';
     const serviceShortName = serviceDetails.find((service) => service.id === stream.provider!.id)?.shortName || stream.provider.id;
     name += `[${serviceShortName}${cacheStatus}] `;
   }
