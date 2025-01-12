@@ -146,7 +146,7 @@ export interface Config {
   minEpisodeSize: number | null;
   cleanResults: boolean;
   maxResultsPerResolution: number | null;
-  mediaFlowConfig: {
+  mediaFlowConfig?: {
     mediaFlowEnabled: boolean;
     proxyUrl: string;
     apiPassword: string;
