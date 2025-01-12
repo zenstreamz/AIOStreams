@@ -1,12 +1,13 @@
 - [ ] A custom formatter
-- [ ] Ability to clean up debrid results when using multiple services - Essentially removes duplicate files and only keeps 1 service, priority of each service can be customised 
-- [ ] Ability to clean up the same files from different addons. 
-- [ ] Ability to sort by service 
-- [ ] Language filters - allow removing specific languages
-- [ ] Make prioritise language a multi select, and add languages to sort criteria allowing to customise the priority of languages
-- [ ] Add HDR+DV to visual tags allowing to filter files that have both HDR and DV
-- [ ] MediaFlow Proxy support   
-- [ ] Limiting number of results per resolution overall
-- [ ] Look into some results missing 
-- [ ] Adding pikpak and seedr.cc for mediafusion
-- [ ] More addons.
+- [ ] Extract languages from torrentio, mediafusion, and comet.
+- [x] Ability to clean up debrid results when using multiple services - Essentially removes duplicate files and only keeps 1 service, priority of each service can be customised 
+- [x] Ability to clean up the same files from different addons. 
+- [x] Ability to sort by service 
+- [x] Language filters - allow removing specific languages
+- [x] Make prioritise language a multi select, and add languages to sort criteria allowing to customise the priority of languages
+- [x] Add HDR+DV to visual tags allowing to filter files that have both HDR and DV
+- [x] MediaFlow Proxy support   
+- [x] Limiting number of results per resolution overall
+- [x] Look into some results missing 
+- [x] Adding pikpak and seedr.cc for mediafusion
+- [x] More addons.
