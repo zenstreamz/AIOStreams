@@ -156,7 +156,6 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
               const iv = Buffer.from(ivHex, 'hex');
               const encrypted = Buffer.from(encryptedHex, 'hex');
               const decrypted = decryptAndDecompress(encrypted, iv);
-              console.log(`Decrypted ${value} for service ${service.id} and got ${decrypted}`);
               service.credentials[key] = decrypted;
             } catch (error: any) {
               console.error(`Failed to decrypt ${key} for service ${service.id}`);
