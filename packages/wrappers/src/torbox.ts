@@ -3,19 +3,28 @@ import {
   Config,
   ParsedNameData,
   ParsedStream,
+  Stream,
   StreamRequest,
 } from '@aiostreams/types';
-import { parseFilename } from '@aiostreams/parser';
+import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
 import { Settings } from '@aiostreams/utils';
 
-interface TorboxStream {
+interface TorboxStream extends Stream {
   name: string;
-  description: string;
-  size: number;
   url: string;
-  type: string;
-  seeders: number;
+  hash: string;
   is_cached: boolean;
+  size: number;
+  description: string;
+  magnet?: string;
+  nzb?: string;
+  seeders?: number;
+  peers?: number;
+  quality?: string;
+  resolution?: string;
+  language?: string;
+  type?: string;
+  adult?: boolean;
 }
 
 export class Torbox extends BaseWrapper {
@@ -34,26 +43,27 @@ export class Torbox extends BaseWrapper {
   }
 
   protected parseStream(stream: TorboxStream): ParsedStream | undefined {
-    if (stream.name.includes('Your Media')) {
-      return undefined;
-    }
     let type = stream.type;
-    const [quality, filename, _, language, ageOrSeeders] = stream.description
+    const [dQuality, dFilename, dSize, dLanguage, dAgeOrSeeders] = stream.description
       .split('\n')
       .map((field: string) => {
         if (field.startsWith('Type')) {
-          const [typeField, ageOrSeeders] = field.split('|');
-          if (!['torrent', 'usenet'].includes(type)) {
-            type = typeField.split(':')[1].trim().toLowerCase();
-          }
-          const [_, value] = ageOrSeeders.split(':');
-          return value.trim();
+          // the last line can either contain only the type or the type and the seeders/age
+          // we will always return the age or seeders and assign the type to the variable declared outside the map
+          const parts = field.split('|');
+          type = ['torrent', 'usenet', 'web'].includes(type || '') ? type : parts[0].split(':')[1].trim().toLowerCase();
+          if (parts.length > 1) {
+            return parts[1].split(':')[1].trim();
+          } 
+          // since the last line only contains the type, we will return undefined
+          return undefined;
+
         }
         const [_, value] = field.split(':');
         return value.trim();
       });
-
-    const parsedFilename: ParsedNameData = parseFilename(filename);
+    const filename = stream.behaviorHints?.filename || dFilename
+    const parsedFilename: ParsedNameData = parseFilename(filename || stream.description);
 
     /* If the quality from Torbox is not one of the qualities in the Config, they get filtered out
     So, for now, we will not update the quality from Torbox
@@ -62,23 +72,32 @@ export class Torbox extends BaseWrapper {
       parsedFilename.quality = quality;
     }
     */
-    if (
-      !parsedFilename.languages.some(
-        (lang: string) => lang.toLowerCase() === language.toLowerCase()
-      ) &&
-      language !== 'Unknown'
-    ) {
-      parsedFilename.languages.push(language.charAt(0).toUpperCase() + language.slice(1).toLowerCase());
+  
+    const language = stream.language || dLanguage;
+    const normaliseLanguage = (lang: string) => {
+      if (lang.toLowerCase() === 'multi audio') {
+      return 'Multi';
+      }
+      return lang.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    };
+    if (language) {
+      const normalisedLanguage = normaliseLanguage(language);
+      if (normalisedLanguage !== 'Unknown' && !parsedFilename.languages.includes(normalisedLanguage)) {
+        parsedFilename.languages.push(normalisedLanguage);
+      }
     }
 
-    const sizeInBytes = stream.size;
+    // usenet results provide size as a string, we need to convert it to a number
+    const validateBehaviorHintSize = (size: string | number | undefined) => typeof size === 'string' ? parseInt(size) : size;
+    const sizeInBytes = stream.size || validateBehaviorHintSize(stream.behaviorHints?.videoSize) || (dSize ? extractSizeInBytes(dSize, 1000) : undefined)
+    
     const provider = {
       id: 'torbox',
       cached: stream.is_cached,
     };
 
-    const seeders = type === 'torrent' ? stream.seeders : undefined;
-    const age = type === 'usenet' ? ageOrSeeders : undefined;
+    const seeders = type === 'torrent' ? (stream.seeders || (dAgeOrSeeders ? parseInt(dAgeOrSeeders) : undefined)) : undefined;
+    const age = type === 'usenet' ? dAgeOrSeeders || undefined : undefined;
 
     const parsedStream: ParsedStream = this.createParsedResult(
       parsedFilename,
