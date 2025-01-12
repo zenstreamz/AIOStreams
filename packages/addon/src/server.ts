@@ -47,13 +47,6 @@ app.get(['/_next/*', '/assets/*', '/icon.ico', '/configure.txt', ], (req, res) =
   res.sendFile(path.join(__dirname, '../../frontend/out', req.path));
 });
 
-
-if (Settings.BRANDING) {
-  app.get('/branding', (req, res) => {
-    res.send(Settings.BRANDING);
-  });
-}
-
 app.get('/configure', (req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
 });
