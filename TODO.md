@@ -1,5 +1,5 @@
 - [ ] A custom formatter
-- [ ] Extract languages from torrentio, mediafusion, and comet.
+- [x] Extract languages from torrentio, mediafusion, and ~~comet~~.
 - [x] Ability to clean up debrid results when using multiple services - Essentially removes duplicate files and only keeps 1 service, priority of each service can be customised 
 - [x] Ability to clean up the same files from different addons. 
 - [x] Ability to sort by service 
