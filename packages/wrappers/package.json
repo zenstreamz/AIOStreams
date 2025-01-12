@@ -7,7 +7,7 @@
     "build": "tsc"
   },
   "description": "Library with wrappers for different addons",
-  "devDependencies": {
+  "dependencies": {
     "@aiostreams/parser": "^1.0.0",
     "@aiostreams/types": "^1.0.0",
     "@aiostreams/utils": "^1.0.0",
