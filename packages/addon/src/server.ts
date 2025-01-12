@@ -61,6 +61,11 @@ app.get('/configure', (req, res) => {
 app.get('/:config/configure', (req, res) => {
   const config = req.params.config;
   if (config.startsWith("E-")) {
+    if (!Settings.SECRET_KEY) {
+      res.status(302).redirect('/configure');
+      console.log('Secret key was not set, unable to decrypt config, redirecting to /configure')
+      return;
+    }
     const encryptedConfig = config.replace('E-', '');
     const [ivHex, encryptedHex] = encryptedConfig.split('-');
     const iv = Buffer.from(ivHex, 'hex');
@@ -70,7 +75,14 @@ app.get('/:config/configure', (req, res) => {
     if (configJson.services) {
       configJson.services.forEach((service: any) => {
         if (service.credentials) {
-          service.credentials = {};
+          // go through each key in the credentials object
+          // encrypt the value and replace the value with the encrypted value
+          Object.keys(service.credentials).forEach((key) => {
+            const value = service.credentials[key];
+            if (value) {
+              service.credentials[key] = compressAndEncrypt(value);
+            }
+          });
         }
       });
     }
@@ -124,6 +136,29 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
       res.status(400).send('Invalid config');
       return;
     }
+  }
+  // look through the credentials object in each service and decrypt the values if they are encrypted
+  if (configJson.services) {
+    configJson.services.forEach((service: any) => {
+      if (service.credentials) {
+        // go through each key in the credentials object
+        // decrypt the value and replace the value with the decrypted value
+        Object.keys(service.credentials).forEach((key) => {
+          const value = service.credentials[key];
+          if (value.startsWith('E-')) {
+            try {
+              const [ivHex, encryptedHex] = value.replace('E-', '').split('-');
+              const iv = Buffer.from(ivHex, 'hex');
+              const encrypted = Buffer.from(encryptedHex, 'hex');
+              service.credentials[key] = decryptAndDecompress(encrypted, iv);
+            } catch (error: any) {
+              console.error(`Failed to decrypt ${key} for service ${service.id}`);
+              return invalidConfig(rootUrl(req), `Failed to decrypt ${key} for service ${service.id}`);
+            }
+          }
+        });
+      }
+    });
   }
   const decodedPath = decodeURIComponent(req.path);
 

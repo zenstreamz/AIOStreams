@@ -48,6 +48,7 @@ input[type='checkbox'] {
 
 input[type='text'],
 input[type='number'],
+input[type='password'],
 select {
   padding: 5px;
   border-radius: var(--borderRadius);

@@ -77,3 +77,32 @@
 .actionButton:active {
   transform: scale(0.9);
 }
+
+.textInput {
+  flex: 1;
+  padding-right: 40px; /* Space for the reset button */
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.resetButton {
+  right: 10px;
+  top: 1%;
+  background-color: transparent;
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 30px;
+  height: 100%;
+  transition: color 0.3s ease;
+}
+
+.resetButton:hover {
+  color: #ff1a1a;
+}
