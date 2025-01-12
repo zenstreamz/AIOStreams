@@ -4,6 +4,7 @@ import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
 import { addonDetails, serviceDetails } from '@aiostreams/utils'
 import { Settings } from '@aiostreams/utils';
+import { emojiToLanguage } from '@aiostreams/formatters';
 
 export class Torrentio extends BaseWrapper {
   constructor(
@@ -44,6 +45,27 @@ export class Torrentio extends BaseWrapper {
 
     const indexerMatch = RegExp(/⚙️ (.+)/).exec(stream.title?.split('\n')[1] || '');
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
+
+    const lastLine = stream.title?.split('\n').pop();
+    if (lastLine && !(lastLine.includes('👤') && lastLine.includes('💾') && lastLine.includes('⚙️'))) {
+      // this line contains  languages separated by ' / '. 
+      const languages = lastLine.split(' / ');
+      // 'Multi Audio' can be converted to 'Multi'
+      // other ones are flag emojis and need to be converted to languages. 
+      languages.forEach((language, index) => {
+        let convertedLanguage = language.trim();
+        if (convertedLanguage === 'Multi Audio') {
+          convertedLanguage = 'Multi';
+        } else {
+          convertedLanguage = emojiToLanguage(language) || language;
+          // uppercase the first letter of each word
+          convertedLanguage = convertedLanguage.replace(/\b\w/g, (char) => char.toUpperCase());
+        }
+        if (!parsedFilename.languages.includes(convertedLanguage)) {
+          parsedFilename.languages.push(convertedLanguage);
+        }
+      });
+    }
 
     const parsedStream: ParsedStream = this.createParsedResult(
       parsedFilename,
