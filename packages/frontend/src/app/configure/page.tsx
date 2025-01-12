@@ -77,6 +77,8 @@ const defaultAudioTags: AudioTag[] = [
 const defaultEncodes: Encode[] = [
   { HEVC: true },
   { AVC: true },
+  { 'H-OU': true },
+  { 'H-SBS': true },
   { Unknown: true },
 ];
 
