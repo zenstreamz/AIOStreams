@@ -591,6 +591,11 @@ export default function Configure() {
         decodedConfig.minEpisodeSize || decodedConfig.minSize || null
       );
       setAddons(loadValidAddons(decodedConfig.addons));
+      setCleanResults(decodedConfig.cleanResults || false);
+      setMaxResultsPerResolution(decodedConfig.maxResultsPerResolution || null);
+      setMediaFlowEnabled(decodedConfig.mediaFlowConfig?.mediaFlowEnabled || false);
+      setmediaFlowProxyUrl(decodedConfig.mediaFlowConfig?.proxyUrl || '');
+      setmediaFlowApiPassword(decodedConfig.mediaFlowConfig?.apiPassword || '');
     }
 
     const path = window.location.pathname;
