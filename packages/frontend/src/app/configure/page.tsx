@@ -652,6 +652,106 @@ export default function Configure() {
             </a>
           </p>
         </div>
+        
+        <div className={styles.section}>
+          <h2 style={{ padding: '5px' }}>Services</h2>
+          <p style={{ padding: '5px' }}>
+            Enable the services you have accounts with and enter your
+            credentials.
+          </p>
+          {services.map((service, index) => (
+            <ServiceInput
+              key={service.id}
+              serviceName={service.name}
+              enabled={service.enabled}
+              setEnabled={(enabled) => {
+                const newServices = [...services];
+                const serviceIndex = newServices.findIndex(
+                  (s) => s.id === service.id
+                );
+                newServices[serviceIndex] = { ...service, enabled };
+                setServices(newServices);
+              }}
+              fields={
+                serviceDetails
+                  .find((detail: ServiceDetail) => detail.id === service.id)
+                  ?.credentials.map((credential: ServiceCredential) => ({
+                    label: credential.label,
+                    link: credential.link,
+                    value: service.credentials[credential.id] || '',
+                    setValue: (value) => {
+                      const newServices = [...services];
+                      const serviceIndex = newServices.findIndex(
+                        (s) => s.id === service.id
+                      );
+                      newServices[serviceIndex] = {
+                        ...service,
+                        credentials: {
+                          ...service.credentials,
+                          [credential.id]: value,
+                        },
+                      };
+                      setServices(newServices);
+                    },
+                  })) || []
+              }
+              moveService={(direction) => {
+                const newServices = [...services];
+                const serviceIndex = newServices.findIndex(
+                  (s) => s.id === service.id
+                );
+                const [movedService] = newServices.splice(serviceIndex, 1);
+                if (direction === 'up' && serviceIndex > 0) {
+                  newServices.splice(serviceIndex - 1, 0, movedService);
+                } else if (direction === 'down' && serviceIndex < newServices.length) {
+                  newServices.splice(serviceIndex + 1, 0, movedService);
+                }
+                setServices(newServices);
+              }}
+              canMoveUp={index > 0}
+              canMoveDown={index < services.length - 1}
+            />
+          ))}
+
+          <div
+            className={styles.section}
+            style={{ marginTop: '20px', marginBottom: '0px' }}
+          >
+            <div className={styles.setting}>
+              <div className={styles.settingDescription}>
+                <h2 style={{ padding: '5px' }}>Only Show Cached Streams</h2>
+                <p style={{ padding: '5px' }}>
+                  Only show streams that are cached by the enabled services.
+                </p>
+              </div>
+              <div className={styles.settingInput}>
+                <input
+                  type="checkbox"
+                  checked={onlyShowCachedStreams}
+                  onChange={(e) => setOnlyShowCachedStreams(e.target.checked)}
+                  // move to the right
+                  style={{
+                    marginLeft: 'auto',
+                    marginRight: '20px',
+                    width: '25px',
+                    height: '25px',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h2 style={{ padding: '5px' }}>Addons</h2>
+          <AddonsList
+            choosableAddons={getChoosableAddons()}
+            addonDetails={addonDetails}
+            addons={addons}
+            setAddons={setAddons}
+          />
+        </div>
+
         <div className={styles.section}>
           <h2 style={{ padding: '5px' }}>Resolutions</h2>
           <p style={{ padding: '5px' }}>
@@ -777,29 +877,6 @@ export default function Configure() {
         </div>
 
         <div className={styles.section}>
-          <div className={styles.setting}>
-            <div className={styles.settingDescription}>
-              <h2 style={{ padding: '5px' }}>Formatter</h2>
-              <p style={{ padding: '5px' }}>
-                Change how your stream results are formatted.
-              </p>
-            </div>
-            <div className={styles.settingInput}>
-              <select
-                value={formatter}
-                onChange={(e) => setFormatter(e.target.value)}
-              >
-                {allowedFormatters.map((formatter) => (
-                  <option key={formatter} value={formatter}>
-                    {formatter}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.section}>
           <div className={styles.slidersSetting}>
             <div>
               <h2 style={{ padding: '5px' }}>Size Filter</h2>
@@ -859,90 +936,49 @@ export default function Configure() {
         </div>
 
         <div className={styles.section}>
-          <h2 style={{ padding: '5px' }}>Services</h2>
-          <p style={{ padding: '5px' }}>
-            Enable the services you have accounts with and enter your
-            credentials.
-          </p>
-          {services.map((service, index) => (
-            <ServiceInput
-              key={service.id}
-              serviceName={service.name}
-              enabled={service.enabled}
-              setEnabled={(enabled) => {
-                const newServices = [...services];
-                const serviceIndex = newServices.findIndex(
-                  (s) => s.id === service.id
-                );
-                newServices[serviceIndex] = { ...service, enabled };
-                setServices(newServices);
-              }}
-              fields={
-                serviceDetails
-                  .find((detail: ServiceDetail) => detail.id === service.id)
-                  ?.credentials.map((credential: ServiceCredential) => ({
-                    label: credential.label,
-                    link: credential.link,
-                    value: service.credentials[credential.id] || '',
-                    setValue: (value) => {
-                      const newServices = [...services];
-                      const serviceIndex = newServices.findIndex(
-                        (s) => s.id === service.id
-                      );
-                      newServices[serviceIndex] = {
-                        ...service,
-                        credentials: {
-                          ...service.credentials,
-                          [credential.id]: value,
-                        },
-                      };
-                      setServices(newServices);
-                    },
-                  })) || []
-              }
-              moveService={(direction) => {
-                const newServices = [...services];
-                const serviceIndex = newServices.findIndex(
-                  (s) => s.id === service.id
-                );
-                const [movedService] = newServices.splice(serviceIndex, 1);
-                if (direction === 'up' && serviceIndex > 0) {
-                  newServices.splice(serviceIndex - 1, 0, movedService);
-                } else if (direction === 'down' && serviceIndex < newServices.length) {
-                  newServices.splice(serviceIndex + 1, 0, movedService);
-                }
-                setServices(newServices);
-              }}
-              canMoveUp={index > 0}
-              canMoveDown={index < services.length - 1}
-            />
-          ))}
+          <div className={styles.setting}>
+            <div className={styles.settingDescription}>
+              <h2 style={{ padding: '5px' }}>Limit results per resolution</h2>
+              <p style={{ padding: '5px' }}>
+                Limit the number of results per resolution. Leave empty to show all results.
+              </p>
+                
+            </div>
+            <div className={styles.settingInput}>
+              <input
+                type="number"
+                value={maxResultsPerResolution || ''}
+                onChange={(e) => setMaxResultsPerResolution(e.target.value ? parseInt(e.target.value) : null)}
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: '20px',
+                  width: '100px',
+                  height: '30px',
+                }}
+              />
+            </div>
+          </div>
+        </div>
 
-          <div
-            className={styles.section}
-            style={{ marginTop: '20px', marginBottom: '0px' }}
-          >
-            <div className={styles.setting}>
-              <div className={styles.settingDescription}>
-                <h2 style={{ padding: '5px' }}>Only Show Cached Streams</h2>
-                <p style={{ padding: '5px' }}>
-                  Only show streams that are cached by the enabled services.
-                </p>
-              </div>
-              <div className={styles.settingInput}>
-                <input
-                  type="checkbox"
-                  checked={onlyShowCachedStreams}
-                  onChange={(e) => setOnlyShowCachedStreams(e.target.checked)}
-                  // move to the right
-                  style={{
-                    marginLeft: 'auto',
-                    marginRight: '20px',
-                    width: '25px',
-                    height: '25px',
-                  }}
-                />
-              </div>
+        <div className={styles.section}>
+          <div className={styles.setting}>
+            <div className={styles.settingDescription}>
+              <h2 style={{ padding: '5px' }}>Formatter</h2>
+              <p style={{ padding: '5px' }}>
+                Change how your stream results are formatted.
+              </p>
+            </div>
+            <div className={styles.settingInput}>
+              <select
+                value={formatter}
+                onChange={(e) => setFormatter(e.target.value)}
+              >
+                {allowedFormatters.map((formatter) => (
+                  <option key={formatter} value={formatter}>
+                    {formatter}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -971,42 +1007,7 @@ export default function Configure() {
             </div>
           </div>
         </div>
-        
-        <div className={styles.section}>
-          <div className={styles.setting}>
-            <div className={styles.settingDescription}>
-              <h2 style={{ padding: '5px' }}>Limit results per resolution</h2>
-              <p style={{ padding: '5px' }}>
-                Limit the number of results per resolution. Leave empty to show all results.
-              </p>
-                
-            </div>
-            <div className={styles.settingInput}>
-              <input
-                type="number"
-                value={maxResultsPerResolution || ''}
-                onChange={(e) => setMaxResultsPerResolution(e.target.value ? parseInt(e.target.value) : null)}
-                style={{
-                  marginLeft: 'auto',
-                  marginRight: '20px',
-                  width: '100px',
-                  height: '30px',
-                }}
-              />
-            </div>
-          </div>
-        </div>
 
-        <div className={styles.section}>
-          <h2 style={{ padding: '5px' }}>Addons</h2>
-          <AddonsList
-            choosableAddons={getChoosableAddons()}
-            addonDetails={addonDetails}
-            addons={addons}
-            setAddons={setAddons}
-          />
-        </div>
-        
         <div className={styles.section}>
           <div className={styles.setting}>
             <div className={styles.settingDescription}>
