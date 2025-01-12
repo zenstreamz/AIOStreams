@@ -502,10 +502,15 @@ export default function Configure() {
     if (!services) {
       return defaultServices;
     }
+    return services.filter((service) =>
+      serviceDetails.some((detail) => detail.id === service.id)
+    );
+    /*
     return defaultServices.map((defaultService) => {
       const service = services.find((s) => s.id === defaultService.id);
       return service || defaultService;
     });
+    */
   };
 
   const loadValidAddons = (addons: Config['addons']) => {
