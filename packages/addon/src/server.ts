@@ -80,7 +80,12 @@ app.get('/:config/configure', (req, res) => {
           Object.keys(service.credentials).forEach((key) => {
             const value = service.credentials[key];
             if (value) {
-              service.credentials[key] = compressAndEncrypt(value);
+              try {
+                service.credentials[key] = compressAndEncrypt(value);
+              } catch (error: any) {
+                console.error(`Failed to encrypt ${key} for service ${service.id}`);
+                service.credentials[key] = '';
+              }
             }
           });
         }
@@ -150,7 +155,9 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
               const [ivHex, encryptedHex] = value.replace('E-', '').split('-');
               const iv = Buffer.from(ivHex, 'hex');
               const encrypted = Buffer.from(encryptedHex, 'hex');
-              service.credentials[key] = decryptAndDecompress(encrypted, iv);
+              const decrypted = decryptAndDecompress(encrypted, iv);
+              console.log(`Decrypted ${value} for service ${service.id} and got ${decrypted}`);
+              service.credentials[key] = decrypted;
             } catch (error: any) {
               console.error(`Failed to decrypt ${key} for service ${service.id}`);
               return invalidConfig(rootUrl(req), `Failed to decrypt ${key} for service ${service.id}`);
