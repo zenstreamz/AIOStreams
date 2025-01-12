@@ -55,6 +55,7 @@ const defaultVisualTags: VisualTag[] = [
   { HDR10: true },
   { HDR: true },
   { DV: true },
+  { "3D": true },
   { IMAX: true },
   { AI: true },
 ];
