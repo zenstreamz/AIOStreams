@@ -97,7 +97,7 @@ export const PARSE_REGEX = {
     Finnish: /(?<![^ [(_\-.])(finnish|fin)(?=[ \)\]_.-]|$)/i,
     Swedish: /(?<![^ [(_\-.])(swedish|swe)(?=[ \)\]_.-]|$)/i,
     Norwegian: /(?<![^ [(_\-.])(norwegian|nor)(?=[ \)\]_.-]|$)/i,
-    Malay: /(?<![^ [(_\-.])(malay|may)(?=[ \)\]_.-]|$)/i,
+    Malay: /(?<![^ [(_\-.])(malay)(?=[ \)\]_.-]|$)/i,
     Latino: /(?<![^ [(_\-.])(latino|lat)(?=[ \)\]_.-]|$)/i,
   },
 };
