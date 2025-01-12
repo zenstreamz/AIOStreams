@@ -260,7 +260,7 @@ const getMediaFusionConfig = (service?: string, credentials: { [key: string]: st
     ],
     show_full_torrent_name: true,
     nudity_filter: ['Severe'],
-    certification_filter: ['Adults'],
+    certification_filter: ['Disable'],
     language_sorting: [
       'English',
       'Tamil',
