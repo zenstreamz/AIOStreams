@@ -10,6 +10,7 @@
   "devDependencies": {
     "@aiostreams/parser": "^1.0.0",
     "@aiostreams/types": "^1.0.0",
-    "@aiostreams/utils": "^1.0.0"
+    "@aiostreams/utils": "^1.0.0",
+    "@aiostreams/formatters": "^1.0.0"
   }
 }
