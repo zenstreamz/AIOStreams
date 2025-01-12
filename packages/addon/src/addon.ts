@@ -45,17 +45,39 @@ export class AIOStreams {
       );
       if (!qualityFilter) return false;
 
-      const visualTagFilter = parsedStream.visualTags.find(
-        (tag) => !this.config.visualTags.some((visualTag) => visualTag[tag])
-      );
-      if (visualTagFilter) return false;
-
-      if (
-        parsedStream.visualTags.some((tag) => tag.startsWith('HDR')) && // contains any HDR tag
-        parsedStream.visualTags.includes('DV') && // and contains DV
-        (this.config.visualTags.some((visualTag) => visualTag['HDR+DV'] === false)) // and HDR+DV is explicitly disabled
-      )
+      // Check for HDR and DV tags in the parsed stream
+      const hasHDR = parsedStream.visualTags.some((tag) => tag.startsWith('HDR'));
+      const hasDV = parsedStream.visualTags.includes('DV');
+      const hasHDRAndDV = hasHDR && hasDV;
+      const HDRAndDVEnabled = this.config.visualTags.some((visualTag) => visualTag['HDR+DV'] === true);
+      
+      // Helper function to check if a specific tag is enabled
+      const isTagEnabled = (tag: string) => this.config.visualTags.some((visualTag) => visualTag[tag] === true);
+      
+      if (hasHDRAndDV && !HDRAndDVEnabled) {
         return false;
+      }
+      
+      if (hasHDR) {
+        const specificHdrTag = parsedStream.visualTags.find((tag) => tag.startsWith('HDR')) || 'HDR';
+        if (!isTagEnabled(specificHdrTag)) {
+          return false;
+        }
+      }
+      
+      if (hasDV && !isTagEnabled('DV')) {
+        return false;
+      }
+      
+      // Check other visual tags for explicit disabling
+      for (const tag of parsedStream.visualTags) {
+        if (tag.startsWith('HDR') || tag === 'DV') continue;
+        if (isTagEnabled(tag) === false) {
+          return false;
+        }
+      }
+      
+
 
       // apply excludedLanguages filter
       const excludedLanguages = this.config.excludedLanguages;
