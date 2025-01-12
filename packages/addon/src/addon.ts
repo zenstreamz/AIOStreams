@@ -282,6 +282,9 @@ export class AIOStreams {
     const headers = parsedStream.stream?.behaviorHints?.proxyHeaders
     
     const mediaFlowConfig = this.config.mediaFlowConfig;
+    if (!mediaFlowConfig) {
+      throw new Error('MediaFlow configuration is missing');
+    }
     const mediaFlowUrl = mediaFlowConfig.proxyUrl?.replace(/\/$/, '');
     const mediaFlowApiPassword = mediaFlowConfig.apiPassword;
 
