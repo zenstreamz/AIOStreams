@@ -289,10 +289,8 @@ export class AIOStreams {
     console.log('Sorted streams');
 
     // Create stream objects
-    for (const parsedStream of filteredResults) {
-      const stream = await this.createStreamObject(parsedStream);
-      if (stream) streams.push(stream);
-    }
+    const streamObjects = await Promise.all(filteredResults.map(this.createStreamObject.bind(this)));
+    streams.push(...streamObjects.filter(s => s !== null));
 
     console.log('Created stream objects');
     return streams;
