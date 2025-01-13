@@ -116,6 +116,8 @@ However, other non-ElfHosted addons may rate limit the community instance.
 
 Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it.
 
+I would recommend using Hugging Face over the other options, it is fast and is still easy to set up.
+
 #### Hugging Face
 
 This addon can be deployed as a [Hugging Face](https://huggingface.co/) space.
