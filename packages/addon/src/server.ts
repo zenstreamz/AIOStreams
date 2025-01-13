@@ -112,7 +112,8 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
   let configJson: Config;
   if (config.startsWith('E-')) {
     if (!Settings.SECRET_KEY) {
-      res.status(500).send('Secret key not set');
+      console.error('Secret key not set, unable to decrypt config');
+      res.status(200).json(invalidConfig(rootUrl(req), 'Secret key not set'));
       return;
     }
     try {
@@ -123,16 +124,18 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
       const decryptedData = decryptAndDecompress(encrypted, iv);
       configJson = JSON.parse(decryptedData);
     } catch (error: any) {
-      res.status(400).send('Failed to decrypt config');
+      console.error(`Failed to decrypt config: ${error.message}`);
+      res.status(200).json(invalidConfig(rootUrl(req), 'Unable to decrypt config'));
       return;
     }
   } else {
     // Decode Base64 encoded JSON config
     const decodedConfig = Buffer.from(config, 'base64').toString('utf-8');
     try {
-      configJson = JSON.parse(decodedConfig);
+      configJson = JSON.parse(decodeURIComponent(decodedConfig));
     } catch (error: any) {
-      res.status(400).send('Invalid config');
+      console.error(`Failed to parse config: ${error.message}`);
+      res.status(200).json(invalidConfig(rootUrl(req), 'Unable to parse config'));
       return;
     }
   }

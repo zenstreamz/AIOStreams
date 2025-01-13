@@ -333,7 +333,7 @@ export default function Configure() {
     } catch (error: any) {
         console.error('Error during encryption:', error.message, '\nFalling back to base64 encoding');
         try {
-            const utf8ToBase64 = (str: string) => btoa(encodeURIComponent(str));
+            const utf8ToBase64 = (str: string) => btoa(str);
             const base64Config = utf8ToBase64(JSON.stringify(config));
             return { success: true, manifest: `${protocol}//${root}/${encodeURIComponent(base64Config)}/manifest.json` };
         } catch (base64Error: any) {
