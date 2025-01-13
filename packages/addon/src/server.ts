@@ -72,7 +72,8 @@ app.get('/:config/configure', (req, res) => {
           // encrypt the value and replace the value with the encrypted value
           Object.keys(service.credentials).forEach((key) => {
             const value = service.credentials[key];
-            if (value) {
+            if (value && value.match(/^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/) === null) {
+              // if the value is not already encrypted, encrypt it
               try {
                 service.credentials[key] = compressAndEncrypt(value);
               } catch (error: any) {
