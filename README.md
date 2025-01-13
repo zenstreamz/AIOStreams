@@ -30,9 +30,12 @@ Combines streams from other addons into one and provides much greater customisat
 
 - Change the format of the resutls
 - Filter all results by resolution, quality, visual tags, audio tags, encodes.
-- Sort all results by quality, resolution, size, cached, visual tags, audio tags, encodes, seeders.
-- Prioritise specific languages
+- Remove duplicate results, and prioritise specific services for a given file.
+- Sort all results by quality, resolution, size, cached, visual tags, audio tags, encodes, seeders, service, language
+- Prioritise or exclude specific languages
 - Specify a minimum and/or maximum size
+- Limiting to a specific number of results per resolution
+- Proxy your streams with MediaFlow
 
 You simply configure your options, add any API keys for any services you use, then enable whichever addons you want, and install.
 
@@ -73,6 +76,8 @@ It currently supports:
 - MediaFusion
 - Comet
 - Torbox Addon
+- Easynews
+- Easynews+
 - [Stremio GDrive](https://github.com/Viren070/stremio-gdrive-addon)
 - Custom: You can input an addon URL and name and it will parse as much information as it can.
 
@@ -347,6 +352,16 @@ To modify the behaviour of the addon, you can provide the following environment 
    - Default: `'https://stremio.torbox.app/'`
    - Description: The URL for the Torbox Stremio addon.
 
+- **EASYNEWS_URL**
+   - Type: string
+   - Default: `'https://ea627ddf0ee7-easynews.baby-beamup.club/'`
+   - Description: The url for the easynews addon
+
+- **EASYNEWS_URL**
+   - Type: string
+   - Default: `'https://b89262c192b0-stremio-easynews-addon.baby-beamup.club/'`
+   - Description: The url for the easynews+ addon
+
 - **MAX_ADDONS**
    - Type: number
    - Default: 15
@@ -394,7 +409,17 @@ To modify the behaviour of the addon, you can provide the following environment 
 - **DEFAULT_MEDIAFUSION_TIMEOUT**
    - Type: number
    - Default: 15000
-   - Description: The default timeout value for MediaFusion in milliseconds. 
+   - Description: The default timeout value for MediaFusion in milliseconds.
+
+- **DEFAULT_EASYNEWS_TIMEOUT**
+   - Type: number
+   - Default: 15000
+   - Description: The default timeout value for the easynews addon in milliseconds
+
+- **DEFAULT_EASYNEWS_PLUS_TIMEOUT**
+   - Type: number
+   - Default: 15000
+   - Description: The default timeout value for the easynews+ addon in milliseconds
 
 - **SHOW_DIE**
    - Type: boolean
