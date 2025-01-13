@@ -54,18 +54,17 @@ export class AIOStreams {
       // Helper function to check if a specific tag is enabled
       const isTagEnabled = (tag: string) => this.config.visualTags.some((visualTag) => visualTag[tag] === true);
       
-      if (hasHDRAndDV && !HDRAndDVEnabled) {
-        return false;
-      }
-      
-      if (hasHDR) {
-        const specificHdrTag = parsedStream.visualTags.find((tag) => tag.startsWith('HDR')) || 'HDR';
-        if (!isTagEnabled(specificHdrTag)) {
+      if (hasHDRAndDV) {
+        if (!HDRAndDVEnabled) {
           return false;
         }
-      }
-      
-      if (hasDV && !isTagEnabled('DV')) {
+      } else if (hasHDR) {
+        const specificHdrTags = parsedStream.visualTags.filter((tag) => tag.startsWith('HDR'));
+        const disabledTags = specificHdrTags.filter((tag) => !isTagEnabled(tag));
+        if (disabledTags.length > 0) {
+          return false;
+        }
+      } else if (hasDV && !isTagEnabled('DV')) {
         return false;
       }
       
