@@ -38,7 +38,9 @@ export const addonDetails: AddonDetail[] = [
         required: false,
         label: 'Use Multiple Instances',
         description:
-          'Use multiple instances of the torrentio addon to fetch streams when using multiple services. With this option enabled, when you use multiple services, a separate request is made for each service. I recommend leaving this disabled, unless you want duplicate streams but with different services.',
+          'Torrentio supports multiple services. By default, AIOStreams will pass all services to Torrentio. However, Torrentio has its\
+          own service priority system which can\'t be overriden. If you want to use a custom priority system for your services, you can enable this option.\
+          to create a separate request for each service.',
         type: 'checkbox',
       },
       {
