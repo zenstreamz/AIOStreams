@@ -88,4 +88,5 @@ const languageEmojiMap: Record<string, string> = {
   norwegian: '🇳🇴',
   malay: '🇲🇾',
   latino: '💃🏻',
+  Latino: '🇲🇽'
 };
