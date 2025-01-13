@@ -289,75 +289,57 @@ export default function Configure() {
     };
   };
 
-  const getManifestUrl = async () => {
-    const config = createConfig();
-    console.log('Config', config)
-    const protocol = window.location.protocol;
-    const root = window.location.host;
-
-    setDisableButtons(true);
-    // make a POST request to /encrypt-user-data with the config as the body
-    // the response will be the encrypted config
+  const fetchWithTimeout = async (url: string, options: RequestInit | undefined, timeoutMs = 5000) => {
     const controller = new AbortController();
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, 5000);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const encryptPath = `${protocol}//${root}/encrypt-user-data`;
-      const response = await fetch(encryptPath, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: JSON.stringify(config) }),
-        signal: controller.signal,
-      });
+      console.log('Fetching', url, `with data: ${options?.body}`);
+      const res = await fetch(url, { ...options, signal: controller.signal });
       clearTimeout(timeout);
-      if (!response.ok) {
-        throw new Error('encrypt-user-data failed with status ' + response.status);
-      }
-      const data = await response.json();
-      if (!data.success) {
-        // fallback to base64 encoding if encryption fails
-        try {
-          const base64Config = btoa(JSON.stringify(config));
-          return {
-            success: true,
-            manifest: `${protocol}//${root}/${base64Config}/manifest.json`,
-          };
-        } catch {
-          return {
-            success: false,
-            manifest: null,
-            message: 'Failed to encrypt config',
-          };
-        }
-      }
-
-      const encryptedConfig = data.data;
-
-      return {
-        success: true,
-        manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json`,
-      };
-    } catch (error) {
-      console.error('Failed to encrypt manifest URL', error, '\nFalling back to base64 encoding');
-      clearTimeout(timeout);
-      try {
-        const base64Config = btoa(JSON.stringify(config));
-        return {
-          success: true,
-          manifest: `${protocol}//${root}/${base64Config}/manifest.json`,
-        };
-      } catch {
-        return {
-          success: false,
-          manifest: null,
-          message: 'Failed to encrypt config',
-        };
-      }
+      return res;
+    } catch {
+      console.log('Clearing timeout');
+      return clearTimeout(timeout);
     }
   };
+
+  const getManifestUrl = async (protocol = window.location.protocol, root = window.location.host) => {
+    const config = createConfig();
+    console.log('Config', config);
+    setDisableButtons(true);
+    
+  
+    try {
+        const encryptPath = `/encrypt-user-data`;
+        const response = await fetchWithTimeout(encryptPath, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: JSON.stringify(config) }),
+        });
+        if (!response) {
+            throw new Error('encrypt-user-data failed: no response within timeout');
+        }
+        if (!response.ok) {
+            throw new Error(`encrypt-user-data failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!data.success) throw new Error(`Encryption service failed, ${data.message}`);
+
+        const encryptedConfig = encodeURIComponent(data.data);
+        return { success: true, manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json` };
+    } catch (error: any) {
+        console.error('Error during encryption:', error.message, '\nFalling back to base64 encoding');
+        try {
+            const utf8ToBase64 = (str: string) => btoa(encodeURIComponent(str));
+            const base64Config = utf8ToBase64(JSON.stringify(config));
+            return { success: true, manifest: `${protocol}//${root}/${encodeURIComponent(base64Config)}/manifest.json` };
+        } catch (base64Error: any) {
+            console.error('Error during base64 encoding:', base64Error.message);
+            return { success: false, manifest: null, message: 'Failed to encode config' };
+        }
+    }
+};
 
   const createAndValidateConfig = () => {
     const config = createConfig();
@@ -459,6 +441,18 @@ export default function Configure() {
           toastId: 'copiedManifestUrl',
           isLoading: false,
         });
+      }).catch(() => {
+          toast.update(id, {
+            render: 'Failed to copy manifest URL to clipboard, please copy it manually in the prompt',
+            type: 'error',
+            autoClose: 3000,
+            isLoading: false,
+          });
+          setTimeout(() => {
+            toast.dismiss(id);
+            window.prompt('Copy the manifest URL:', manifestUrl.manifest);
+
+          }, 3000);
       });
       setDisableButtons(false);
     }
