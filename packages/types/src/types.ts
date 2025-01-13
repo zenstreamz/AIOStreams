@@ -144,6 +144,7 @@ export interface Config {
   minMovieSize: number | null;
   maxEpisodeSize: number | null;
   minEpisodeSize: number | null;
+  addonNameInDescription?: boolean;
   cleanResults: boolean;
   maxResultsPerResolution: number | null;
   mediaFlowConfig?: {

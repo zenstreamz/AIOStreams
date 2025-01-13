@@ -340,8 +340,12 @@ export class AIOStreams {
     }
     return {
       url: responseData.encoded_url,
-      name: `🚀 ${name}`,
-      description: description,
+      name: this.config.addonNameInDescription 
+        ? Settings.ADDON_NAME
+        : `🚀 ${name}`,
+      description: this.config.addonNameInDescription 
+        ? `🚀 ${name}\n${description}`
+        : description,
       subtitles: parsedStream.stream?.subtitles,
       behaviorHints: {
         notWebReady: parsedStream.stream?.behaviorHints?.notWebReady,
@@ -410,8 +414,12 @@ export class AIOStreams {
       externalUrl: parsedStream.externalUrl,
       infoHash: parsedStream.torrent?.infoHash,
       fileIdx: parsedStream.torrent?.fileIdx,
-      name: Settings.SHOW_DIE ? `🎲 ${name}` : name,
-      description: description,
+      name: this.config.addonNameInDescription
+        ? Settings.ADDON_NAME
+        : Settings.SHOW_DIE ? `🎲 ${name}` : name,
+      description: this.config.addonNameInDescription
+        ? `🎲 ${name}\n${description}`
+        : description,
       subtitles: parsedStream.stream?.subtitles,
       sources: parsedStream.torrent?.sources,
       behaviorHints: {
