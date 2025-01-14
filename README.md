@@ -12,6 +12,7 @@
         - [Hugging Face](#hugging-face)
         - [Cloudflare Workers](#cloudflare-workers)
         - [Render](#render)
+        - [ElfHosted](#elfhosted-paid)
     - [Self Hosting](#self-hosting)
         - [Docker](#docker)
         - [From Source](#from-source)
@@ -248,6 +249,10 @@ https://render.com/
 When you deploy with Render, it automatically builds the addon every time a commit is pushed to this repository. You can also manually trigger a build by clicking the `Deploy` button. 
 
 It is recommend to disable the `Auto Deploy` feature as the latest changes may not be stable. You can do this by going to the `Settings` tab and scrolling down to the `Auto Deploy` setting near the bottom of the `Build & Deploy` section.
+
+#### ElfHosted (paid)
+
+AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle setup where everything is done for you. 
 
 ### Self-Hosting
 
