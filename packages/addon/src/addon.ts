@@ -336,6 +336,15 @@ export class AIOStreams {
     if (!responseData.encoded_url) {
       throw new Error('Failed to create MediaFlow stream URL');
     }
+    const combinedTags = [
+      parsedStream.resolution,
+      parsedStream.quality,
+      parsedStream.encode,
+      ...parsedStream.visualTags,
+      ...parsedStream.audioTags,
+      ...parsedStream.languages,
+    ];
+
     return {
       url: responseData.encoded_url,
       name: this.config.addonNameInDescription 
@@ -350,6 +359,7 @@ export class AIOStreams {
         filename: parsedStream.filename,
         videoSize: Math.floor(parsedStream.size || 0) || undefined,
         videoHash: parsedStream.stream?.behaviorHints?.videoHash,
+        bingeGroup: `${Settings.ADDON_ID}|${parsedStream.addon.name}|${combinedTags.join('|')}`,
       }
     }
 
