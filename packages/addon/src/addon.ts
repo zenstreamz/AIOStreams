@@ -423,7 +423,7 @@ export class AIOStreams {
       behaviorHints: {
         videoSize: Math.floor(parsedStream.size || 0) || undefined,
         filename: parsedStream.filename,
-        bingeGroup: `${parsedStream.addon.name}|${combinedTags.join('|')}`,
+        bingeGroup: `${Settings.ADDON_ID}|${parsedStream.addon.name}|${combinedTags.join('|')}`,
         proxyHeaders: parsedStream.stream?.behaviorHints?.proxyHeaders,
         notWebReady: parsedStream.stream?.behaviorHints?.notWebReady,
       },
