@@ -238,6 +238,7 @@ export default function Configure() {
   const [mediaFlowProxyUrl, setmediaFlowProxyUrl] = useState<string>('');
   const [mediaFlowApiPassword, setmediaFlowApiPassword] = useState<string>('');
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
+  const [manualManifestUrl, setManualManifestUrl] = useState<string | null>(null);
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
@@ -390,6 +391,7 @@ export default function Configure() {
           autoClose: 5000,
           isLoading: false,
         });
+        setManualManifestUrl(null);
       } catch (error) {
         console.error('Failed to open Stremio', error);
         toast.update(id, {
@@ -398,6 +400,7 @@ export default function Configure() {
           autoClose: 5000,
           isLoading: false,
         });
+        setManualManifestUrl(stremioUrl);
       }
       setDisableButtons(false);
     }
@@ -435,6 +438,7 @@ export default function Configure() {
           autoClose: 5000,
           isLoading: false,
         });
+        setManualManifestUrl(null);
       } catch (error) {
         console.error('Failed to open Stremio web', error);
         toast.update(id, {
@@ -443,6 +447,7 @@ export default function Configure() {
           autoClose: 5000,
           isLoading: false,
         });
+        setManualManifestUrl(`https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`);
       }
       setDisableButtons(false);
     }
@@ -471,6 +476,7 @@ export default function Configure() {
           toastId: 'copiedManifestUrl',
           isLoading: false,
         });
+        setManualManifestUrl(null);
       }).catch((err: any) => {
           console.error('Failed to copy manifest URL to clipboard', err);
           toast.update(id, {
@@ -479,6 +485,7 @@ export default function Configure() {
             autoClose: 3000,
             isLoading: false,
           });
+          setManualManifestUrl(manifestUrl.manifest);
       });
       setDisableButtons(false);
     }
@@ -1145,6 +1152,21 @@ export default function Configure() {
           >
             Copy Link
           </button>
+          {manualManifestUrl && (
+            <>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <p style={{ padding: '5px' }}>
+              If the above buttons do not work, you can use the following manifest URL to install the addon.
+            </p>
+            <input
+              type="text"
+              value={manualManifestUrl}
+              readOnly
+              style={{ width: '100%', padding: '5px', margin: '5px' }}
+            />
+            </div>
+            </>
+          )}
         </div>
       </div>
       <ToastContainer
