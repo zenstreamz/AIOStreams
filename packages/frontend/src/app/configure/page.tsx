@@ -471,7 +471,8 @@ export default function Configure() {
           toastId: 'copiedManifestUrl',
           isLoading: false,
         });
-      }).catch(() => {
+      }).catch((err: any) => {
+          console.error('Failed to copy manifest URL to clipboard', err);
           toast.update(id, {
             render: 'Failed to copy manifest URL to clipboard.',
             type: 'error',
