@@ -132,7 +132,7 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
     // Decode Base64 encoded JSON config
     const decodedConfig = Buffer.from(config, 'base64').toString('utf-8');
     try {
-      configJson = JSON.parse(decodeURIComponent(decodedConfig));
+      configJson = JSON.parse((decodedConfig));
     } catch (error: any) {
       console.error(`Failed to parse config: ${error.message}`);
       res.status(200).json(invalidConfig(rootUrl(req), 'Unable to parse config'));
