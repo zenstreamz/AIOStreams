@@ -358,7 +358,8 @@ export default function Configure() {
     return true;
   };
 
-  const handleInstall = async () => {
+  const handleInstall = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     if (createAndValidateConfig()) {
       const id = toast.loading('Generating manifest URL...', {
         ...toastOptions,
@@ -377,19 +378,32 @@ export default function Configure() {
       }
 
       const stremioUrl = manifestUrl.manifest.replace(/^https?/, 'stremio');
-      toast.update(id, {
-        render: 'Successfully generated manifest URL',
-        type: 'success',
-        autoClose: 5000,
-        isLoading: false,
-      });
 
-      window.open(stremioUrl, '_blank');
+      try {
+        const wp = window.open(stremioUrl, '_blank');
+        if (!wp) {
+          throw new Error('Failed to open window');
+        }
+        toast.update(id, {
+          render: 'Successfully generated manifest URL',
+          type: 'success',
+          autoClose: 5000,
+          isLoading: false,
+        });
+      } catch (error) {
+        console.error('Failed to open Stremio', error);
+        toast.update(id, {
+          render: 'Failed to open Stremio with manifest URL',
+          autoClose: 5000,
+          isLoading: false,
+        });
+      }
       setDisableButtons(false);
     }
   };
 
-  const handleInstallToWeb = async () => {
+  const handleInstallToWeb = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     if (createAndValidateConfig()) {
       const id = toast.loading('Generating manifest URL...', toastOptions);
       const manifestUrl = await getManifestUrl();
@@ -405,23 +419,35 @@ export default function Configure() {
       }
 
       const encodedManifestUrl = encodeURIComponent(manifestUrl.manifest);
-      toast.update(id, {
-        render: 'Successfully generated manifest URL.',
-        type: 'success',
-        autoClose: 5000,
-        toastId: 'openingStremioWeb',
-        isLoading: false,
-      });
 
-      window.open(
-        `https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`,
-        '_blank'
-      );
+      try {
+        const wp = window.open(
+          `https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`,
+          '_blank'
+        );
+        if (!wp) {
+          throw new Error('Failed to open window');
+        }
+        toast.update(id, {
+          render: 'Successfully generated manifest URL and opened Stremio web',
+          type: 'success',
+          autoClose: 5000,
+          isLoading: false,
+        });
+      } catch (error) {
+        console.error('Failed to open Stremio web', error);
+        toast.update(id, {
+          render: 'Failed to open Stremio web with manifest URL',
+          autoClose: 5000,
+          isLoading: false,
+        });
+      }
       setDisableButtons(false);
     }
   };
 
-  const handleCopyLink = async () => {
+  const handleCopyLink = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     if (createAndValidateConfig()) {
       const id = toast.loading('Generating manifest URL...', toastOptions);
       const manifestUrl = await getManifestUrl();
@@ -445,16 +471,11 @@ export default function Configure() {
         });
       }).catch(() => {
           toast.update(id, {
-            render: 'Failed to copy manifest URL to clipboard, please copy it manually in the prompt',
+            render: 'Failed to copy manifest URL to clipboard.',
             type: 'error',
             autoClose: 3000,
             isLoading: false,
           });
-          setTimeout(() => {
-            toast.dismiss(id);
-            window.prompt('Copy the manifest URL:', manifestUrl.manifest);
-
-          }, 3000);
       });
       setDisableButtons(false);
     }
