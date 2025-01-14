@@ -80,8 +80,10 @@ export class AIOStreams {
 
       // apply excludedLanguages filter
       const excludedLanguages = this.config.excludedLanguages;
-      if (excludedLanguages && parsedStream.languages.every(lang => excludedLanguages.includes(lang))) {
-        return false;
+      if (excludedLanguages && parsedStream.languages.length > 0) {
+        if (parsedStream.languages.every(lang => excludedLanguages.includes(lang))) {
+          return false;
+        }
       }
 
       const audioTagFilter = parsedStream.audioTags.find(
