@@ -394,6 +394,7 @@ export default function Configure() {
         console.error('Failed to open Stremio', error);
         toast.update(id, {
           render: 'Failed to open Stremio with manifest URL',
+          type: 'error',
           autoClose: 5000,
           isLoading: false,
         });
@@ -438,6 +439,7 @@ export default function Configure() {
         console.error('Failed to open Stremio web', error);
         toast.update(id, {
           render: 'Failed to open Stremio web with manifest URL',
+          type: 'error',
           autoClose: 5000,
           isLoading: false,
         });
