@@ -128,7 +128,8 @@ export function validateConfig(config: Config): {
 
         if (
           option.id.toLowerCase().includes('url') &&
-          addon.options[option.id]
+          addon.options[option.id] &&
+          addon.options[option.id]?.match(/^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/) === null
         ) {
           try {
             new URL(addon.options[option.id] as string);

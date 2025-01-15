@@ -109,6 +109,27 @@ app.get('/:config/configure', (req, res) => {
         configJson.mediaFlowConfig.publicIp = '';
       }
     }
+    // encrypt the urls in the addons options if they are not already encrypted
+    // this will be any option that matches the key pattern /^url\d+$/
+    if (configJson.addons) {
+      configJson.addons.forEach((addon: any) => {
+        if (addon.options) {
+          Object.keys(addon.options).forEach((key) => {
+            const value = addon.options[key];
+            console.log(`|DBG| server > ${key} = ${value}`);
+            if (value && value.match(/^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/) === null && key.match(/url/i)) {
+              console.log(`|DBG| server > Encrypting ${key} for addon ${addon.id}`);
+              try {
+                addon.options[key] = compressAndEncrypt(value);
+              } catch (error: any) {
+                console.error(`Failed to encrypt ${key} for addon ${addon.id}`);
+                addon.options[key] = '';
+              }
+            }
+          });
+        }
+      });
+    }
     const base64Config = Buffer.from(JSON.stringify(configJson)).toString('base64');
     res.redirect(`/${base64Config}/configure`);
     return;
@@ -206,6 +227,22 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
       return;
     }
     configJson.mediaFlowConfig.publicIp = decrypted;
+  }
+  // also decrypt the addon options if they are encrypted
+  if (configJson.addons) {
+    configJson.addons.forEach((addon: any) => {
+      if (addon.options) {
+        Object.keys(addon.options).forEach((key) => {
+          const value = addon.options[key];
+          const decrypted = parseAndDecryptString(value);
+          if (!decrypted) {
+            console.error(`|ERR| server > Failed to decrypt ${key} for addon ${addon.id}`);
+            res.status(200).json(invalidConfig(rootUrl(req), 'Failed to decrypt config'));
+          }
+          addon.options[key] = decrypted;
+        });
+      }
+    });
   }
   
 

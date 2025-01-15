@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './AddonsList.module.css';
 import { AddonDetail, Config } from '@aiostreams/types';
+import CredentialInput from './CredentialInput';
 
 interface AddonsListProps {
   choosableAddons: string[];
@@ -182,18 +183,27 @@ const AddonsList: React.FC<AddonsListProps> = ({
                   </label>
                   {option.description && <small>{option.description}</small>}
                   {option.type === 'text' && (
-                    <input
-                      type="text"
-                      value={(addon.options[option.id] as string) || ''}
-                      onChange={(e) =>
-                        updateOption(
-                          index,
-                          option.id,
-                          e.target.value ? e.target.value : undefined
-                        )
-                      }
-                      className={styles.textInput}
-                    />
+                    option.id.toLowerCase().includes('url') ? (
+                      <CredentialInput
+                        credential={addon.options[option.id] || ''}
+                        setCredential={(value) =>
+                          updateOption(index, option.id, value)
+                        }
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={(addon.options[option.id] as string) || ''}
+                        onChange={(e) =>
+                          updateOption(
+                            index,
+                            option.id,
+                            e.target.value ? e.target.value : undefined
+                          )
+                        }
+                        className={styles.textInput}
+                      />
+                    )
                   )}
                   {option.type === 'select' && (
                     <select
