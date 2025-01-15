@@ -30,6 +30,7 @@ import {
 import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
 
 import Slider from '@/components/Slider';
+import CredentialInput from '@/components/CredentialInput';
 
 const version = addonPackage.version;
 
@@ -237,6 +238,7 @@ export default function Configure() {
   const [mediaFlowEnabled, setMediaFlowEnabled] = useState<boolean>(false);
   const [mediaFlowProxyUrl, setmediaFlowProxyUrl] = useState<string>('');
   const [mediaFlowApiPassword, setmediaFlowApiPassword] = useState<string>('');
+  const [mediaFlowPublicIp, setMediaFlowPublicIp] = useState<string>('');
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
   const [manualManifestUrl, setManualManifestUrl] = useState<string | null>(null);
 
@@ -286,6 +288,7 @@ export default function Configure() {
         mediaFlowEnabled,
         proxyUrl: mediaFlowProxyUrl,
         apiPassword: mediaFlowApiPassword,
+        publicIp: mediaFlowPublicIp
       },
       addons,
       services,
@@ -329,14 +332,13 @@ export default function Configure() {
         const data = await response.json();
         if (!data.success) throw new Error(`Encryption service failed, ${data.message}`);
 
-        const encryptedConfig = encodeURIComponent(data.data);
+        const encryptedConfig = data.data;
         return { success: true, manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json` };
     } catch (error: any) {
         console.error('Error during encryption:', error.message, '\nFalling back to base64 encoding');
         try {
-            const utf8ToBase64 = (str: string) => btoa(str);
-            const base64Config = utf8ToBase64(JSON.stringify(config));
-            return { success: true, manifest: `${protocol}//${root}/${encodeURIComponent(base64Config)}/manifest.json` };
+            const base64Config = btoa(JSON.stringify(config));
+            return { success: true, manifest: `${protocol}//${root}/${base64Config}/manifest.json` };
         } catch (base64Error: any) {
             console.error('Error during base64 encoding:', base64Error.message);
             return { success: false, manifest: null, message: 'Failed to encode config' };
@@ -1096,12 +1098,15 @@ export default function Configure() {
                 </p>
               </div>
               <div>
-                <input
-                  type="text"
-                  placeholder='https://mediaflow-proxy.example.com'
-                  value={mediaFlowProxyUrl}
-                  onChange={(e) => setmediaFlowProxyUrl(e.target.value)}
-                  disabled={!mediaFlowEnabled}
+                <CredentialInput
+                  credential={mediaFlowProxyUrl}
+                  setCredential={setmediaFlowProxyUrl}
+                  inputProps={
+                    {
+                      'placeholder': 'Enter your MediaFlow proxy URL',
+                      'disabled': !mediaFlowEnabled
+                    }
+                  }
                 />
               </div>
             </div>
@@ -1113,16 +1118,35 @@ export default function Configure() {
                 </p>
               </div>
               <div>
-                <input
-                  type='text'
-                  placeholder='Enter your API password'
-                  value={mediaFlowApiPassword}
-                  onChange={(e) => setmediaFlowApiPassword(e.target.value)}
-                  disabled={!mediaFlowEnabled}
-                  style={{
-                    marginLeft: 'auto',
-                    marginRight: '20px',
-                  }}
+                <CredentialInput
+                  credential={mediaFlowApiPassword}
+                  setCredential={setmediaFlowApiPassword}
+                  inputProps={
+                    {
+                      'placeholder': 'Enter your MediaFlow API password',
+                      'disabled': !mediaFlowEnabled
+                    }
+                  }
+                />
+              </div>
+            </div>
+            <div>
+              <div>
+                <h3 style={{ padding: '5px' }}>Public IP (Optional)</h3>
+                <p style={{ padding: '5px' }}>
+                Configure this only when running MediaFlow locally with a proxy service. Leave empty if MediaFlow is configured locally without a proxy server or if it&apos;s hosted on a remote server.
+                </p>
+              </div>
+              <div>
+                <CredentialInput
+                  credential={mediaFlowPublicIp}
+                  setCredential={setMediaFlowPublicIp}
+                  inputProps={
+                    {
+                      'placeholder': 'Enter your MediaFlow public IP',
+                      'disabled': !mediaFlowEnabled
+                    }
+                  }
                 />
               </div>
             </div>

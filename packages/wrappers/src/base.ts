@@ -3,9 +3,10 @@ import {
   ParsedStream,
   StreamRequest,
   ParsedNameData,
+  Config,
 } from '@aiostreams/types';
 import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
-import { serviceDetails, Settings } from '@aiostreams/utils';
+import { getMediaFlowPublicIp, serviceDetails, Settings } from '@aiostreams/utils';
 
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/{id}.json';
@@ -13,16 +14,19 @@ export class BaseWrapper {
   protected addonName: string;
   private addonUrl: string;
   private addonId: string;
+  private userConfig: Config;
   constructor(
     addonName: string,
     addonUrl: string,
     indexerTimeout: number = Settings.DEFAULT_TIMEOUT,
-    addonId: string
+    addonId: string,
+    userConfig: Config
   ) {
     this.addonName = addonName;
     this.addonUrl = this.standardizeManifestUrl(addonUrl);
     this.addonId = addonId;
     this.indexerTimeout = indexerTimeout || 3000;
+    this.userConfig = userConfig;
   }
 
   protected standardizeManifestUrl(url: string): string {
@@ -59,14 +63,30 @@ export class BaseWrapper {
     }, this.indexerTimeout);
 
     const url = this.getStreamUrl(streamRequest);
-    console.log(
-      'Fetching streams from',
-      this.addonName,
-      'with timeout',
-      this.indexerTimeout,
-    );
     try {
-      const response = await fetch(url, { signal: controller.signal });
+      // add the X-Forwarded-For or X-Real-IP header if this.userConfig.requestingIp is set
+      const headers = new Headers();
+      if (this.userConfig.requestingIp) {
+        headers.set('X-Forwarded-For', this.userConfig.requestingIp);
+        headers.set('X-Real-IP', this.userConfig.requestingIp);
+      } 
+      if (this.userConfig.mediaFlowConfig?.mediaFlowEnabled) {
+        const mediaFlowIp = await getMediaFlowPublicIp(this.userConfig.mediaFlowConfig);
+        if (mediaFlowIp) {
+          console.log(`|DBG| wrappers > base > Forwarding IP from MediaFlow to ${this.addonName}`);
+          headers.set('X-Forwarded-For', mediaFlowIp);
+          headers.set('X-Real-IP', mediaFlowIp);
+        }
+      } else {
+        console.log(`|DBG| wrappers > base > Forwarding IP from request to ${this.addonName}`);
+      }
+      const urlParts = url.split('/');
+      const sanitisedUrl = `${urlParts[0]}//${urlParts[2]}/*************/${urlParts.slice(-3).join('/')}`;
+      console.log(`|INF| wrappers > base > ${this.addonName}: GET ${sanitisedUrl}`);
+      const response = await fetch(url, {
+        headers: headers,
+        signal: controller.signal,
+      });
 
       clearTimeout(timeout);
 
@@ -146,9 +166,7 @@ export class BaseWrapper {
     let description = stream.description || stream.title;
 
     if (!filename && description) {
-      console.log(
-        'No filename found in behaviorHints, attempting to determine from description'
-      );
+      console.log(`|DBG| wrappers > base > parseStream: No filename found in behaviorHints, attempting to parse from description`);
       const lines = description.split('\n');
       filename =
         lines.find(
@@ -157,11 +175,9 @@ export class BaseWrapper {
               /(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/
             ) || line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
         ) || lines[0];
-      console.log('Determined filename from description:', filename);
+      console.log(`|DBG| wrappers > base > parseStream: With description: ${description}, found filename: ${filename}`);
     } else if (!description) {
-      console.log(
-        'There was no description to parse for filename nor was it found in behaviorHints'
-      );
+      console.log(`|WRN| wrappers > base > parseStream: No description found, filename could not be determined`);
     }
 
     let parsedInfo: ParsedNameData = parseFilename(filename || '');

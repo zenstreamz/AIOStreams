@@ -95,6 +95,7 @@ export type Encode = { [key: string]: boolean };
 export type SortBy = { [key: string]: boolean | string };
 
 export interface Config {
+  requestingIp?: string;
   resolutions: Resolution[];
   qualities: Quality[];
   visualTags: VisualTag[];
@@ -151,6 +152,7 @@ export interface Config {
     mediaFlowEnabled: boolean;
     proxyUrl: string;
     apiPassword: string;
+    publicIp: string;
   };
   addons: {
     id: string;

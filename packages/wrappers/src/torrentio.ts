@@ -12,14 +12,15 @@ export class Torrentio extends BaseWrapper {
     overrideUrl: string | null,
     indexerTimeout: number = Settings.DEFAULT_TORRENTIO_TIMEOUT,
     addonName: string = 'Torrentio',
-    addonId: string
+    addonId: string,
+    userConfig: Config
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.TORRENTIO_URL +
         (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId);
+    super(addonName, url, indexerTimeout, addonId, userConfig);
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -107,7 +108,8 @@ export async function getTorrentioStreams(
       torrentioOptions.overrideUrl as string,
       indexerTimeout,
       torrentioOptions.overrideName,
-      addonId
+      addonId,
+      config
     );
     return torrentio.getParsedStreams(streamRequest);
   }
@@ -124,7 +126,8 @@ export async function getTorrentioStreams(
       null,
       indexerTimeout,
       torrentioOptions.overrideName,
-      addonId
+      addonId,
+      config
     );
     return await torrentio.getParsedStreams(streamRequest);
   }
@@ -152,7 +155,8 @@ export async function getTorrentioStreams(
         null,
         indexerTimeout,
         torrentioOptions.overrideName,
-        addonId
+        addonId,
+        config
       );
       return await torrentio.getParsedStreams(streamRequest);
     });
@@ -172,7 +176,8 @@ export async function getTorrentioStreams(
       null,
       indexerTimeout,
       torrentioOptions.overrideName,
-      addonId
+      addonId,
+      config
     );
     return await torrentio.getParsedStreams(streamRequest);
   }

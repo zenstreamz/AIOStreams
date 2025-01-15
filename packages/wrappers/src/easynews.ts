@@ -13,13 +13,14 @@ export class Easynews extends BaseWrapper {
     indexerTimeout: number = Settings.DEFAULT_EASYNEWS_TIMEMOUT,
     addonName: string = 'Easynews',
     addonId: string,
+    userConfig: Config
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.EASYNEWS_URL +
         (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId);
+    super(addonName, url, indexerTimeout, addonId, userConfig);
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -90,7 +91,8 @@ export async function getEasynewsStreams(
     easynewsOptions.overrideUrl ?? null,
     easynewsOptions.indexerTimeout ? parseInt(easynewsOptions.indexerTimeout) : undefined,
     easynewsOptions.overrideName,
-    addonId
+    addonId,
+    config
   );
 
   const streams = await easynews.getParsedStreams(streamRequest);

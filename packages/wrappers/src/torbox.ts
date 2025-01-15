@@ -32,13 +32,15 @@ export class Torbox extends BaseWrapper {
     apiKey: string,
     indexerTimeout: number = Settings.DEFAULT_TORBOX_TIMEOUT,
     addonName: string = 'Torbox',
-    addonId: string
+    addonId: string,
+    userConfig: Config
   ) {
     super(
       addonName,
       Settings.TORBOX_STREMIO_URL + apiKey + '/',
       indexerTimeout,
-      addonId
+      addonId,
+      userConfig
     );
   }
 
@@ -140,7 +142,8 @@ export async function getTorboxStreams(
       ? parseInt(torboxOptions.indexerTimeout)
       : undefined,
     torboxOptions.overrideName,
-    addonId
+    addonId,
+    config
   );
   return await torbox.getParsedStreams(streamRequest);
 }

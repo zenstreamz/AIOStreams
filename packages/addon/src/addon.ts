@@ -19,8 +19,7 @@ import {
   torrentioFormat,
   torboxFormat,
 } from '@aiostreams/formatters';
-import { Settings } from '@aiostreams/utils';
-import path from 'path';
+import { createProxiedMediaFlowUrl, Settings } from '@aiostreams/utils';
 
 export class AIOStreams {
   private config: Config;
@@ -31,9 +30,27 @@ export class AIOStreams {
 
   public async getStreams(streamRequest: StreamRequest): Promise<Stream[]> {
     const streams: Stream[] = [];
-
+    const startTime = new Date().getTime();
+    const getTimeTakenSincePoint = (point: number) => {
+      const timeNow = new Date().getTime();
+      const duration = timeNow - point;
+      // format duration and choose unit and return 
+      const nanos = duration * 1_000_000; // Convert to nanoseconds
+      const micros = duration * 1_000; // Convert to microseconds
+  
+      if (nanos < 1) {
+          return `${nanos.toFixed(2)}ns`;
+      } else if (micros < 1) {
+          return `${micros.toFixed(2)}µs`;
+      } else if (duration < 1000) {
+          return `${duration.toFixed(2)}ms`;
+      } else {
+          return `${(duration / 1000).toFixed(2)}s`;
+      }
+    }
     const parsedStreams = await this.getParsedStreams(streamRequest);
-    console.log(`Got ${parsedStreams.length} total streams`);
+    console.log(`|INF| addon > getStreams: Got ${parsedStreams.length} total parsed streams in ${getTimeTakenSincePoint(startTime)}`);
+    const filterStartTime = new Date().getTime();
 
     let filteredResults = parsedStreams.filter((parsedStream) => {
       const resolutionFilter = this.config.resolutions.find(
@@ -154,9 +171,10 @@ export class AIOStreams {
       return true;
     });
 
-    console.log(`Initial filter to ${filteredResults.length} streams`);
+    console.log(`|INF| addon > getStreams: Initial filter to ${filteredResults.length} streams in ${getTimeTakenSincePoint(filterStartTime)}`);
 
     if (this.config.cleanResults) {
+      const cleanResultsStartTime = new Date().getTime();
       const uniqueStreams: ParsedStream[] = [];
   
       // Group streams by normalized filename
@@ -249,10 +267,10 @@ export class AIOStreams {
       });
   
       filteredResults = uniqueStreams;
-      console.log(`Cleaned duplicates to ${filteredResults.length} streams`);
+      console.log(`|INF| addon > getStreams: Cleaned results to ${filteredResults.length} streams in ${getTimeTakenSincePoint(cleanResultsStartTime)}`);
     }
     // Apply sorting
-
+    const sortStartTime = new Date().getTime();
     // initially sort by filename to ensure consistent results
     filteredResults.sort((a, b) =>
       a.filename && b.filename ? a.filename.localeCompare(b.filename) : 0
@@ -273,8 +291,11 @@ export class AIOStreams {
       return 0;
     });
 
+    console.log(`|INF| addon > getStreams: Sorted results in ${getTimeTakenSincePoint(sortStartTime)}`);
+
     // apply config.maxResultsPerResolution
     if (this.config.maxResultsPerResolution) {
+      const startTime = new Date().getTime();
       const streamsByResolution = filteredResults.reduce((acc, stream) => {
         acc[stream.resolution] = acc[stream.resolution] || [];
         acc[stream.resolution].push(stream);
@@ -286,61 +307,29 @@ export class AIOStreams {
       });
 
       filteredResults = limitedStreams.flat();
-      console.log(`Limited results to ${filteredResults.length} streams after applying maxResultsPerResolution`);
+      console.log(`|INF| addon > getStreams: Limited results to ${filteredResults.length} streams after applying maxResultsPerResolution in ${getTimeTakenSincePoint(startTime)}`);
     }
 
-    console.log('Sorted streams');
 
     // Create stream objects
+    const streamsStartTime = new Date().getTime();
     const streamObjects = await Promise.all(filteredResults.map(this.createStreamObject.bind(this)));
     streams.push(...streamObjects.filter(s => s !== null));
 
-    console.log('Created stream objects');
+    console.log(`|INF| addon > getStreams: Created ${streams.length} stream objects in ${getTimeTakenSincePoint(streamsStartTime)}`);
+    console.log(`|INF| addon > getStreams: Total time taken to serve streams: ${getTimeTakenSincePoint(startTime)}`);
     return streams;
   }
 
-  private async createMediaFlowStream(parsedStream: ParsedStream, name: string, description: string): Promise<Stream> {
-    const streamUrl = parsedStream.url;
-    const mediaFlowConfig = this.config.mediaFlowConfig;
-    const mediaFlowUrl = mediaFlowConfig?.proxyUrl?.replace(/\/$/, '');
-    const mediaFlowApiPassword = mediaFlowConfig?.apiPassword;
-    if (!streamUrl) {
+  private createMediaFlowStream(parsedStream: ParsedStream, name: string, description: string): Stream {
+    if (!parsedStream.url) {
+      console.error(`|ERR| addon > createMediaFlowStream: Stream URL is missing, cannot proxy a stream without a URL`);
       throw new Error('Stream URL is missing');
     }
-    if (!mediaFlowConfig) {
-      throw new Error('MediaFlow configuration is missing');
+    const proxiedUrl = createProxiedMediaFlowUrl(parsedStream.url, this.config.mediaFlowConfig, parsedStream.stream?.behaviorHints?.proxyHeaders);
+    if (!proxiedUrl) {
+      throw new Error('Could not create MediaFlow proxied URL');
     }
-    if (!mediaFlowUrl || !mediaFlowApiPassword) {
-      throw new Error('MediaFlow URL or API password is missing');
-    }
-
-    const queryParams: Record<string, string> = {
-      api_password: mediaFlowApiPassword,
-    }
-    queryParams.d = streamUrl;
-
-    const headers = parsedStream.stream?.behaviorHints?.proxyHeaders
-    const responseHeaders = headers?.response || {
-      "Content-Disposition": `attachment; filename=${path.basename(streamUrl)}`
-    };
-    const requestHeaders = headers?.request || {};
-
-    if (requestHeaders) {
-      Object.entries(requestHeaders).forEach(([key, value]) => {
-        queryParams[`h_${key}`] = value;
-      });
-    }
-
-    if (responseHeaders) {
-      Object.entries(responseHeaders).forEach(([key, value]) => {
-        queryParams[`r_${key}`] = value;
-      });
-    }
-    
-    const encodedParams = new URLSearchParams(queryParams).toString();
-    const baseUrl = new URL('/proxy/stream', mediaFlowUrl).toString();
-    const proxiedUrl = `${baseUrl}?${encodedParams}`;
-    
     const combinedTags = [
       parsedStream.resolution,
       parsedStream.quality,
@@ -354,9 +343,9 @@ export class AIOStreams {
       url: proxiedUrl,
       name: this.config.addonNameInDescription 
         ? Settings.ADDON_NAME
-        : `🚀 ${name}`,
+        : `🕵️ ${name}`,
       description: this.config.addonNameInDescription 
-        ? `🚀 ${name}\n${description}`
+        ? `🕵️ ${name}\n${description}`
         : description,
       subtitles: parsedStream.stream?.subtitles,
       behaviorHints: {
@@ -364,7 +353,7 @@ export class AIOStreams {
         filename: parsedStream.filename,
         videoSize: Math.floor(parsedStream.size || 0) || undefined,
         videoHash: parsedStream.stream?.behaviorHints?.videoHash,
-        bingeGroup: `${Settings.ADDON_ID}|${parsedStream.addon.name}|${combinedTags.join('|')}`,
+        bingeGroup: `mfp.${Settings.ADDON_ID}|${parsedStream.addon.name}|${combinedTags.join('|')}`,
       }
     }
 
@@ -410,9 +399,10 @@ export class AIOStreams {
     ];
 
     let stream: Stream;
+
     if (this.config.mediaFlowConfig?.mediaFlowEnabled && parsedStream.url) {
       try {
-        const mediaFlowStream = await this.createMediaFlowStream(parsedStream, name, description);
+        const mediaFlowStream = this.createMediaFlowStream(parsedStream, name, description);
         if (!mediaFlowStream) {
           throw new Error('Unknown error creating MediaFlow stream');
         }
@@ -422,6 +412,7 @@ export class AIOStreams {
         return null;
       }
     }
+
     stream = {
       url: parsedStream.url,
       externalUrl: parsedStream.externalUrl,
@@ -638,6 +629,7 @@ export class AIOStreams {
   ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
     const addonPromises = this.config.addons.map(async (addon) => {
+      const addonName = addon.options.name || addon.options.overrideName || addon.id;
       try {
         const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
         const streams = await this.getStreamsFromAddon(
@@ -646,9 +638,9 @@ export class AIOStreams {
           streamRequest
         );
         parsedStreams.push(...streams);
-        console.log(`Got ${streams.length} streams from addon ${addon.options.name || addon.options.overrideName || addon.id}`);
+        console.log(`|INF| addon > getParsedStreams: Got ${streams.length} streams from addon ${addonName}`);
       } catch (error) {
-        console.error(`Failed to get streams from addon ${addon.id}: ${error}`);
+        console.error(`|ERR| addon > getParsedStreams: Failed to get streams from ${addonName}: ${error}`);
       }
     });
 
@@ -720,7 +712,8 @@ export class AIOStreams {
           addon.options.indexerTimeout
             ? parseInt(addon.options.indexerTimeout)
             : undefined,
-          addonId
+          addonId,
+          this.config,
         );
         return await wrapper.getParsedStreams(streamRequest);
       }
@@ -736,7 +729,8 @@ export class AIOStreams {
           addon.options.indexerTimeout
             ? parseInt(addon.options.indexerTimeout)
             : undefined,
-          addonId
+          addonId,
+          this.config,
         );
         return await wrapper.getParsedStreams(streamRequest);
       }

@@ -17,13 +17,14 @@ export class Comet extends BaseWrapper {
     indexerTimeout: number = Settings.DEFAULT_COMET_TIMEOUT,
     addonName: string = 'Comet',
     addonId: string,
+    userConfig: Config
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.COMET_URL +
         (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId);
+    super(addonName, url, indexerTimeout, addonId, userConfig);
   }
 
   protected parseStream(stream: CometStream): ParsedStream {
@@ -113,6 +114,7 @@ export async function getCometStreams(
       indexerTimeout,
       cometOptions.overrideName,
       addonId,
+      config,
     );
     return comet.getParsedStreams(streamRequest);
   }
@@ -165,7 +167,8 @@ export async function getCometStreams(
       null,
       indexerTimeout,
       cometOptions.overrideName,
-      addonId
+      addonId,
+      config
     );
 
     return comet.getParsedStreams(streamRequest);
@@ -187,7 +190,8 @@ export async function getCometStreams(
       null,
       indexerTimeout,
       cometOptions.overrideName,
-      addonId
+      addonId,
+      config
     );
     return comet.getParsedStreams(streamRequest);
   });

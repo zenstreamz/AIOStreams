@@ -17,6 +17,7 @@ export const compressAndEncrypt = (data: string): string => {
   const compressedData = deflateSync(Buffer.from(data, 'utf-8'), { level: 9 });
   const secretKey = Settings.SECRET_KEY;
   if (!secretKey) {
+    console.error('|ERR| crypto > compressAndEncrypt > No secret key provided');
     throw new Error('No secret key provided');
   }
 
@@ -30,7 +31,6 @@ export const compressAndEncrypt = (data: string): string => {
     cipher.update(paddedData),
     cipher.final(),
   ]);
-
   return `E-${iv.toString('hex')}-${encryptedData.toString('hex')}`;
 };
 
@@ -40,6 +40,7 @@ export const decryptAndDecompress = (
 ): string => {
   const secretKey = Settings.SECRET_KEY;
   if (!secretKey) {
+    console.error('|ERR| crypto > decryptAndDecompress > No secret key provided');
     throw new Error('No secret key provided');
   }
   const decipher = createDecipheriv('aes-256-cbc', secretKey, iv);
@@ -58,3 +59,20 @@ export const decryptAndDecompress = (
 
   return decompressedData.toString('utf-8');
 };
+
+
+
+export function parseAndDecryptString(data: string): string | null {
+  try {
+    if (data.startsWith('E-')) {
+      const [ivHex, encryptedHex] = data.replace('E-', '').split('-');
+      const iv = Buffer.from(ivHex, 'hex');
+      const encrypted = Buffer.from(encryptedHex, 'hex');
+      return decryptAndDecompress(encrypted, iv);
+    }
+    return data;
+  } catch (error: any) {
+    console.error(`|ERR| crypto > parseAndDecryptString > Failed to decrypt data: ${error.message}`);
+    return null;
+  }
+}

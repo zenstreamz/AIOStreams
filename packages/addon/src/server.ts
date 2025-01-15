@@ -1,27 +1,26 @@
 import express, { Request, Response } from 'express';
+
 import path from 'path';
 import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config';
 import manifest from './manifest';
 import { invalidConfig, missingConfig } from './responses';
-import {Settings, compressAndEncrypt, decryptAndDecompress} from '@aiostreams/utils';
+import {Settings, compressAndEncrypt, decryptAndDecompress, parseAndDecryptString} from '@aiostreams/utils';
 
 const app = express();
-
+console.log(`|INF| server > init: Starting server and loading settings...`);
 (Object.keys(Settings) as Array<keyof typeof Settings>).forEach((key) => {
   if (key === 'SECRET_KEY' || key === 'BRANDING') {
     if (Settings[key]) {
-      console.log(`${key}: Set`);
+      console.log(`|INF| server > init: Loaded ${key}`);
     }
     if (key === 'SECRET_KEY' && !Settings[key]) {
-      console.warn('SECRET_KEY: NOT SET! You have not set a SECRET_KEY, you will not be able to use encrypted configs');
-    } else if (key === 'BRANDING' && !Settings[key]) {
-      console.log('BRANDING: Not set');
+      console.warn(`|WRN| server > init: ${key} not set`);
     }
-    return
+    return;
   }
-  console.log(`${key}: ${Settings[key]}`);
+  console.log(`|INF| server > init: ${key} = ${Settings[key]}`);
 })
 
 const rootUrl = (req: Request) =>
@@ -29,13 +28,13 @@ const rootUrl = (req: Request) =>
 
 // Built-in middleware for parsing JSON
 app.use(express.json());
-
 // Built-in middleware for parsing URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   res.append('Access-Control-Allow-Origin', '*');
   res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  console.log(`|DBG| server > ${req.method} ${req.path.replace(/\/eyJ[\w\=]+/g, '/*******').replace(/\/E-[\w-]+/g, '/*******')}`);
   next();
 });
 
@@ -56,7 +55,7 @@ app.get('/:config/configure', (req, res) => {
   if (config.startsWith("E-")) {
     if (!Settings.SECRET_KEY) {
       res.status(302).redirect('/configure');
-      console.log('Secret key was not set, unable to decrypt config, redirecting to /configure')
+      console.log(`|INF| server > Received encrypted config but no secret key set, redirecting to /configure`);
       return;
     }
     const encryptedConfig = config.replace('E-', '');
@@ -85,6 +84,31 @@ app.get('/:config/configure', (req, res) => {
         }
       });
     }
+    // also encrypt the apiPassword, proxyUrl, and publicIp if they are not already encrypted
+    if (configJson.mediaFlowConfig?.apiPassword && configJson.mediaFlowConfig.apiPassword.match(/^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/) === null) {
+      try {
+        configJson.mediaFlowConfig.apiPassword = compressAndEncrypt(configJson.mediaFlowConfig.apiPassword);
+      } catch (error: any) {
+        console.error(`Failed to encrypt apiPassword for MediaFlow`);
+        configJson.mediaFlowConfig.apiPassword = '';
+      }
+    }
+    if (configJson.mediaFlowConfig?.proxyUrl && configJson.mediaFlowConfig.proxyUrl.match(/^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/) === null) {
+      try {
+        configJson.mediaFlowConfig.proxyUrl = compressAndEncrypt(configJson.mediaFlowConfig.proxyUrl);
+      } catch (error: any) {
+        console.error(`Failed to encrypt proxyUrl for MediaFlow`);
+        configJson.mediaFlowConfig.proxyUrl = '';
+      }
+    }
+    if (configJson.mediaFlowConfig?.publicIp && configJson.mediaFlowConfig.publicIp.match(/^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/) === null) {
+      try {
+        configJson.mediaFlowConfig.publicIp = compressAndEncrypt(configJson.mediaFlowConfig.publicIp);
+      } catch (error: any) {
+        console.error(`Failed to encrypt publicIp for MediaFlow`);
+        configJson.mediaFlowConfig.publicIp = '';
+      }
+    }
     const base64Config = Buffer.from(JSON.stringify(configJson)).toString('base64');
     res.redirect(`/${base64Config}/configure`);
     return;
@@ -105,26 +129,24 @@ app.get('/stream/:type/:id', (req: Request, res: Response) => {
   res.status(200).json(missingConfig(rootUrl(req)));
 });
 
-app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
+app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
   const config = req.params.config;
 
   // if config starts with E- then it is encrypted, decrypt it
   let configJson: Config;
   if (config.startsWith('E-')) {
     if (!Settings.SECRET_KEY) {
-      console.error('Secret key not set, unable to decrypt config');
+      console.error(`|ERR| server > Secret key not set, cannot decrypt encrypted config`);
       res.status(200).json(invalidConfig(rootUrl(req), 'Secret key not set'));
       return;
     }
     try {
-      const encryptedConfig = config.replace('E-', '');
-      const [ivHex, encryptedHex] = encryptedConfig.split('-');
-      const iv = Buffer.from(ivHex, 'hex');
-      const encrypted = Buffer.from(encryptedHex, 'hex');
-      const decryptedData = decryptAndDecompress(encrypted, iv);
-      configJson = JSON.parse(decryptedData);
+      const decryptedConfig = parseAndDecryptString(config);
+      if (!decryptedConfig) {
+        throw new Error('Failed to decrypt config');
+      }
+      configJson = JSON.parse(decryptedConfig);
     } catch (error: any) {
-      console.error(`Failed to decrypt config: ${error.message}`);
       res.status(200).json(invalidConfig(rootUrl(req), 'Unable to decrypt config'));
       return;
     }
@@ -134,7 +156,7 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
     try {
       configJson = JSON.parse((decodedConfig));
     } catch (error: any) {
-      console.error(`Failed to parse config: ${error.message}`);
+      console.error(`|ERR| server > Unable to parse config: ${error.message}`);
       res.status(200).json(invalidConfig(rootUrl(req), 'Unable to parse config'));
       return;
     }
@@ -147,22 +169,47 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
         // decrypt the value and replace the value with the decrypted value
         Object.keys(service.credentials).forEach((key) => {
           const value = service.credentials[key];
-          if (value.startsWith('E-')) {
-            try {
-              const [ivHex, encryptedHex] = value.replace('E-', '').split('-');
-              const iv = Buffer.from(ivHex, 'hex');
-              const encrypted = Buffer.from(encryptedHex, 'hex');
-              const decrypted = decryptAndDecompress(encrypted, iv);
-              service.credentials[key] = decrypted;
-            } catch (error: any) {
-              console.error(`Failed to decrypt ${key} for service ${service.id}`);
-              return invalidConfig(rootUrl(req), `Failed to decrypt ${key} for service ${service.id}`);
-            }
+          const decrypted = parseAndDecryptString(value);
+          if (!decrypted) {
+            console.error(`|ERR| server > Failed to decrypt ${key} for service ${service.id}`);
+            res.status(200).json(invalidConfig(rootUrl(req), 'Failed to decrypt config'));
           }
+          service.credentials[key] = decrypted;
         });
       }
-    });
+    })
+  };
+  // also decrypt the apiPassword, proxyUrl, and publicIp if they are encrypted
+  if (configJson.mediaFlowConfig?.apiPassword) {
+    const decrypted = parseAndDecryptString(configJson.mediaFlowConfig.apiPassword);
+    if (!decrypted) {
+      console.error(`|ERR| server > Failed to decrypt apiPassword for MediaFlow`);
+      res.status(200).json(invalidConfig(rootUrl(req), 'Failed to decrypt config'));
+      return;
+    }
+    configJson.mediaFlowConfig.apiPassword = decrypted;
   }
+  if (configJson.mediaFlowConfig?.proxyUrl) {
+    const decrypted = parseAndDecryptString(configJson.mediaFlowConfig.proxyUrl);
+    if (!decrypted) {
+      console.error(`|ERR| server > Failed to decrypt proxyUrl for MediaFlow`);
+      res.status(200).json(invalidConfig(rootUrl(req), 'Failed to decrypt config'));
+      return;
+    }
+    configJson.mediaFlowConfig.proxyUrl = decrypted;
+  }
+  if (configJson.mediaFlowConfig?.publicIp) {
+    const decrypted = parseAndDecryptString(configJson.mediaFlowConfig.publicIp);
+    if (!decrypted) {
+      console.error(`|ERR| server > Failed to decrypt publicIp for MediaFlow`);
+      res.status(200).json(invalidConfig(rootUrl(req), 'Failed to decrypt config'));
+      return;
+    }
+    configJson.mediaFlowConfig.publicIp = decrypted;
+  }
+  
+
+
   const decodedPath = decodeURIComponent(req.path);
 
   const streamMatch = new RegExp(`/stream/(movie|series)/([^/]+)\.json`).exec(
@@ -170,16 +217,17 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
   );
   if (!streamMatch) {
     // log after removing config if present
-    console.error(`Invalid request: ${decodedPath.replace(`/${config}`, '')}`);
+    console.error(`|ERR| server > request did not match expected format`);
     res.status(400).send('Invalid request');
     return;
   }
 
   const [type, id] = streamMatch.slice(1);
 
-  console.log(`Received /stream request with Type: ${type}, ID: ${id}`);
+  console.log(`|DBG| server > Requesting streams for ${type} ${id}`);
 
   if (type !== 'movie' && type !== 'series') {
+    console.error(`|ERR| server > Invalid type for stream request`);
     res.status(400).send('Invalid type');
     return;
   }
@@ -188,19 +236,19 @@ app.get('/:config/stream/:type/:id.json', (req: Request, res: Response) => {
   try {
     const { valid, errorCode, errorMessage } = validateConfig(configJson);
     if (!valid) {
-      console.error(`Invalid config: ${errorCode} - ${errorMessage}`);
+      console.error(`|ERR| server > Received invalid config: ${errorCode} - ${errorMessage}`);
       res
         .status(200)
         .json(invalidConfig(rootUrl(req), errorMessage ?? 'Unknown'));
       return;
     }
-
+    configJson.requestingIp = req.get('CF-Connecting-IP') || req.ip;
     const aioStreams = new AIOStreams(configJson);
     aioStreams.getStreams(streamRequest).then((streams) => {
       res.status(200).json({ streams: streams });
     });
   } catch (error: any) {
-    console.error(error);
+    console.error(`|ERR| server > Failed to serve streams: ${error.message}`);
     res.status(500).send(error.message);
   }
 });
@@ -209,20 +257,22 @@ app.post('/encrypt-user-data', (req, res) => {
   const { data } = req.body;
 
   if (!data) {
+    console.error('|ERR| server > /encrypt-user-data: No data provided');
     res.status(400).json({ success: false, message: 'No data provided' });
     return;
   }
 
   try {
     if (!Settings.SECRET_KEY) {
+      console.error('|ERR| server > /encrypt-user-data: Secret key not set');
       res.status(500).json({ success: false, message: 'Secret key not set' });
       return;
     }
     const encryptedData = compressAndEncrypt(data);
-
+    console.log(`|DBG| server > /encrypt-user-data: Encrypted data`);
     res.status(200).json({ success: true, data: encryptedData });
   } catch (error: any) {
-    console.error(error);
+    console.error(`|ERR| server > /encrypt-user-data: ${error.message}`);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -237,5 +287,5 @@ app.use((req, res) => {
 });
 
 app.listen(Settings.PORT, () => {
-  console.log(`Server is running at http://localhost:${Settings.PORT}`);
+  console.log(`|INF| server > init: Listening on port ${Settings.PORT}`);
 });

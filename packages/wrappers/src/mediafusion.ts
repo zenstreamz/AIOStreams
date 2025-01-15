@@ -12,13 +12,14 @@ export class MediaFusion extends BaseWrapper {
     indexerTimeout: number = Settings.DEFAULT_MEDIAFUSION_TIMEOUT,
     addonName: string = 'MediaFusion',
     addonId: string,
+    userConfig: Config
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.MEDIAFUSION_URL +
         (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId);
+    super(addonName, url, indexerTimeout, addonId, userConfig);
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -121,6 +122,7 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
+      config
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -142,6 +144,7 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
+      config
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -185,6 +188,7 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
+      config
     );
 
     return mediafusion.getParsedStreams(streamRequest);
@@ -209,6 +213,7 @@ export async function getMediafusionStreams(
       indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
+      config
     );
     return mediafusion.getParsedStreams(streamRequest);
   });
