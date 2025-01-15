@@ -13,15 +13,18 @@ console.log(`|INF| server > init: Starting server and loading settings...`);
 (Object.keys(Settings) as Array<keyof typeof Settings>).forEach((key) => {
   if (key === 'SECRET_KEY' || key === 'BRANDING') {
     if (Settings[key]) {
-      console.log(`|INF| server > init: Loaded ${key}`);
+      console.log(`|INF| server > init: ${key} = ${Settings[key].replace(/./g, '*').slice(0, 32)}`)
     }
     if (key === 'SECRET_KEY' && !Settings[key]) {
-      console.warn(`|WRN| server > init: ${key} not set`);
+      console.warn(`|WRN| server > init: ${key} = ${Settings[key]}`);
     }
     return;
   }
   console.log(`|INF| server > init: ${key} = ${Settings[key]}`);
 })
+if (!Settings.SECRET_KEY) {
+  console.warn(`|WRN| server > init: SECRET_KEY is not set, data encryption is disabled! `);
+}
 
 const rootUrl = (req: Request) =>
   `${req.protocol}://${req.hostname}${req.hostname === 'localhost' ? `:${Settings.PORT}` : ''}`;
