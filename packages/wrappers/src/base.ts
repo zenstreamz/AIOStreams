@@ -105,7 +105,6 @@ export class BaseWrapper {
       if (error.name === 'AbortError') {
         message = `${this.addonName} failed to respond within ${this.indexerTimeout}ms`;
       }
-      console.error(error);
       return Promise.reject(new Error(message));
     }
   }
