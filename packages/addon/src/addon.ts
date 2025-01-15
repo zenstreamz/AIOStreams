@@ -20,6 +20,7 @@ import {
   torboxFormat,
 } from '@aiostreams/formatters';
 import { Settings } from '@aiostreams/utils';
+import path from 'path';
 
 export class AIOStreams {
   private config: Config;
@@ -300,44 +301,46 @@ export class AIOStreams {
 
   private async createMediaFlowStream(parsedStream: ParsedStream, name: string, description: string): Promise<Stream> {
     const streamUrl = parsedStream.url;
-    const headers = parsedStream.stream?.behaviorHints?.proxyHeaders
-    
     const mediaFlowConfig = this.config.mediaFlowConfig;
+    const mediaFlowUrl = mediaFlowConfig?.proxyUrl?.replace(/\/$/, '');
+    const mediaFlowApiPassword = mediaFlowConfig?.apiPassword;
+    if (!streamUrl) {
+      throw new Error('Stream URL is missing');
+    }
     if (!mediaFlowConfig) {
       throw new Error('MediaFlow configuration is missing');
     }
-    const mediaFlowUrl = mediaFlowConfig.proxyUrl?.replace(/\/$/, '');
-    const mediaFlowApiPassword = mediaFlowConfig.apiPassword;
-
-    const mediaFlowHeaders = {
-      'Content-Type': 'application/json'
-    };
-
-    const data = {
-      mediaflow_proxy_url: mediaFlowUrl, 
-      endpoint: '/proxy/stream',
-      destination_url: streamUrl,
-      request_headers: headers?.request,
-      response_headers: headers?.response,
-      expiration: 3600,  // URL will expire in 1 hour
-      api_password: mediaFlowApiPassword
-    };
-
-    const response = await fetch(`${mediaFlowUrl}/generate_encrypted_or_encoded_url`,
-      {
-      method: 'POST',
-      headers: mediaFlowHeaders,
-      body: JSON.stringify(data)
-    });
-  
-    if (!response.ok) {
-      throw new Error(`Failed to create MediaFlow stream URL: ${response.statusText}`);
+    if (!mediaFlowUrl || !mediaFlowApiPassword) {
+      throw new Error('MediaFlow URL or API password is missing');
     }
-  
-    const responseData = await response.json();
-    if (!responseData.encoded_url) {
-      throw new Error('Failed to create MediaFlow stream URL');
+
+    const queryParams: Record<string, string> = {
+      api_password: mediaFlowApiPassword,
     }
+    queryParams.d = streamUrl;
+
+    const headers = parsedStream.stream?.behaviorHints?.proxyHeaders
+    const responseHeaders = headers?.response || {
+      "Content-Disposition": `attachment; filename=${path.basename(streamUrl)}`
+    };
+    const requestHeaders = headers?.request || {};
+
+    if (requestHeaders) {
+      Object.entries(requestHeaders).forEach(([key, value]) => {
+        queryParams[`h_${key}`] = value;
+      });
+    }
+
+    if (responseHeaders) {
+      Object.entries(responseHeaders).forEach(([key, value]) => {
+        queryParams[`r_${key}`] = value;
+      });
+    }
+    
+    const encodedParams = new URLSearchParams(queryParams).toString();
+    const baseUrl = new URL('/proxy/stream', mediaFlowUrl).toString();
+    const proxiedUrl = `${baseUrl}?${encodedParams}`;
+    
     const combinedTags = [
       parsedStream.resolution,
       parsedStream.quality,
@@ -348,7 +351,7 @@ export class AIOStreams {
     ];
 
     return {
-      url: responseData.encoded_url,
+      url: proxiedUrl,
       name: this.config.addonNameInDescription 
         ? Settings.ADDON_NAME
         : `🚀 ${name}`,
