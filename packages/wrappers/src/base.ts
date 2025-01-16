@@ -187,9 +187,11 @@ export class BaseWrapper {
       stream.behaviorHints?.videoSize ||
       stream.size ||
       stream.sizebytes ||
-      description
-        ? extractSizeInBytes(description, 1024)
-        : undefined;
+      description && extractSizeInBytes(description, 1024) ||
+      stream.name && extractSizeInBytes(stream.name, 1024) ||
+      undefined;
+        
+
 
     // look for seeders
     let seeders: string | undefined;
