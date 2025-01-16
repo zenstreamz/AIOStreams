@@ -116,7 +116,6 @@ export class BaseWrapper {
         `|INF| wrappers > base > ${this.addonName}: GET ${sanitisedUrl}`
       );
       let response;
-      const dispatcher = new ProxyAgent(Settings.ADDON_PROXY);
       try {
         response = await fetch(url, {
           method: 'GET',
@@ -133,6 +132,7 @@ export class BaseWrapper {
         if (!Settings.ADDON_PROXY) {
           throw error;
         }
+        const dispatcher = new ProxyAgent(Settings.ADDON_PROXY);
         console.error(
           `|ERR| wrappers > base > ${this.addonName}: Got error: ${error.message} when fetching from ${sanitisedUrl}, trying with proxy instead`
         );
