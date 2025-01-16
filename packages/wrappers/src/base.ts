@@ -75,10 +75,29 @@ export class BaseWrapper {
         headers.set('X-Forwarded-For', this.userConfig.requestingIp);
         headers.set('X-Real-IP', this.userConfig.requestingIp);
       }
-      if (this.userConfig.mediaFlowConfig?.mediaFlowEnabled) {
-        const mediaFlowIp = await getMediaFlowPublicIp(
-          this.userConfig.mediaFlowConfig
-        );
+      if (
+        this.userConfig.mediaFlowConfig?.mediaFlowEnabled ||
+        Settings.DEFAULT_MEDIAFLOW_URL
+      ) {
+        if (
+          !this.userConfig.mediaFlowConfig?.proxyUrl ||
+          !Settings.DEFAULT_MEDIAFLOW_URL
+        ) {
+          throw new Error('MediaFlow proxy URL is missing');
+        }
+        const mediaFlowConfig: Config['mediaFlowConfig'] = {
+          mediaFlowEnabled: true,
+          proxyUrl:
+            Settings.DEFAULT_MEDIAFLOW_URL ||
+            this.userConfig.mediaFlowConfig?.proxyUrl,
+          apiPassword:
+            Settings.DEFAULT_MEDIAFLOW_API_PASSWORD ||
+            this.userConfig.mediaFlowConfig?.apiPassword,
+          publicIp:
+            Settings.DEFAULT_MEDIAFLOW_PUBLIC_IP ||
+            this.userConfig.mediaFlowConfig?.publicIp,
+        };
+        const mediaFlowIp = await getMediaFlowPublicIp(mediaFlowConfig);
         if (mediaFlowIp) {
           console.log(
             `|DBG| wrappers > base > Forwarding IP from MediaFlow to ${this.addonName}`

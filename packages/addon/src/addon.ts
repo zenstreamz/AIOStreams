@@ -386,9 +386,21 @@ export class AIOStreams {
       );
       throw new Error('Stream URL is missing');
     }
+
+    let mediaFlowConfig: Config['mediaFlowConfig'] = {
+      mediaFlowEnabled: true,
+      proxyUrl:
+        this.config.mediaFlowConfig?.proxyUrl || Settings.DEFAULT_MEDIAFLOW_URL,
+      apiPassword:
+        this.config.mediaFlowConfig?.apiPassword ||
+        Settings.DEFAULT_MEDIAFLOW_API_PASSWORD,
+      publicIp:
+        this.config.mediaFlowConfig?.publicIp ||
+        Settings.DEFAULT_MEDIAFLOW_PUBLIC_IP,
+    };
     const proxiedUrl = createProxiedMediaFlowUrl(
       parsedStream.url,
-      this.config.mediaFlowConfig,
+      mediaFlowConfig,
       parsedStream.stream?.behaviorHints?.proxyHeaders
     );
     if (!proxiedUrl) {
@@ -464,8 +476,10 @@ export class AIOStreams {
     ];
 
     let stream: Stream;
-
-    if (this.config.mediaFlowConfig?.mediaFlowEnabled && parsedStream.url) {
+    const isMediaFlowEnabled =
+      this.config.mediaFlowConfig?.mediaFlowEnabled ||
+      Settings.DEFAULT_MEDIAFLOW_URL;
+    if (isMediaFlowEnabled && parsedStream?.url) {
       try {
         const mediaFlowStream = this.createMediaFlowStream(
           parsedStream,

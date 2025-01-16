@@ -30,6 +30,12 @@ export class Settings {
     process.env.EASYNEWS_PLUS_URL ??
     'https://b89262c192b0-stremio-easynews-addon.baby-beamup.club/';
   public static readonly ADDON_PROXY = process.env.ADDON_PROXY ?? '';
+  public static readonly DEFAULT_MEDIAFLOW_URL =
+    process.env.DEFAULT_MEDIAFLOW_URL ?? '';
+  public static readonly DEFAULT_MEDIAFLOW_API_PASSWORD =
+    process.env.DEFAULT_MEDIAFLOW_API_PASSWORD ?? '';
+  public static readonly DEFAULT_MEDIAFLOW_PUBLIC_IP =
+    process.env.DEFAULT_MEDIAFLOW_PUBLIC_IP ?? '';
   public static readonly MAX_ADDONS = process.env.MAX_ADDONS
     ? parseInt(process.env.MAX_ADDONS)
     : 15;
