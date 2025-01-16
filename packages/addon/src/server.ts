@@ -187,8 +187,8 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
   }
   // look through the credentials object in each service and decrypt the values if they are encrypted
   if (configJson.services) {
-    configJson.services.forEach((service: any) => {
-      if (service.credentials) {
+    configJson.services.forEach((service: Config['services'][0]) => {
+      if (service.enabled && service.credentials) {
         // go through each key in the credentials object
         // decrypt the value and replace the value with the decrypted value
         Object.keys(service.credentials).forEach((key) => {
