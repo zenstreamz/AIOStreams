@@ -2,7 +2,7 @@ import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
 import { parseFilename, extractSizeInBytes } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails, serviceDetails } from '@aiostreams/utils'
+import { addonDetails, serviceDetails } from '@aiostreams/utils';
 import { Settings } from '@aiostreams/utils';
 import { emojiToLanguage } from '@aiostreams/formatters';
 
@@ -17,17 +17,16 @@ export class Torrentio extends BaseWrapper {
   ) {
     let url = overrideUrl
       ? overrideUrl
-      : Settings.TORRENTIO_URL +
-        (configString ? configString + '/' : '');
+      : Settings.TORRENTIO_URL + (configString ? configString + '/' : '');
 
     super(addonName, url, indexerTimeout, addonId, userConfig);
   }
 
   protected parseStream(stream: Stream): ParsedStream {
-    const filename = stream.title 
-      ? stream.title.split('\n')[0] 
+    const filename = stream.title
+      ? stream.title.split('\n')[0]
       : stream.behaviorHints?.filename?.trim();
-  
+
     const parsedFilename: ParsedNameData = parseFilename(filename || '');
     const sizeInBytes = stream.title
       ? extractSizeInBytes(stream.title, 1024)
@@ -37,22 +36,34 @@ export class Torrentio extends BaseWrapper {
     );
     const debrid = debridMatch
       ? {
-          id: serviceDetails.find((service) => service.knownNames.includes(debridMatch[1]))?.id || debridMatch[1],
+          id:
+            serviceDetails.find((service) =>
+              service.knownNames.includes(debridMatch[1])
+            )?.id || debridMatch[1],
           cached: debridMatch[2] === '+',
         }
       : undefined;
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.title!);
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
-    const indexerMatch = RegExp(/⚙️ (.+)/).exec(stream.title?.split('\n')[1] || '');
+    const indexerMatch = RegExp(/⚙️ (.+)/).exec(
+      stream.title?.split('\n')[1] || ''
+    );
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
 
     const lastLine = stream.title?.split('\n').pop();
-    if (lastLine && !(lastLine.includes('👤') && lastLine.includes('💾') && lastLine.includes('⚙️'))) {
-      // this line contains  languages separated by ' / '. 
+    if (
+      lastLine &&
+      !(
+        lastLine.includes('👤') &&
+        lastLine.includes('💾') &&
+        lastLine.includes('⚙️')
+      )
+    ) {
+      // this line contains  languages separated by ' / '.
       const languages = lastLine.split(' / ');
       // 'Multi Audio' can be converted to 'Multi'
-      // other ones are flag emojis and need to be converted to languages. 
+      // other ones are flag emojis and need to be converted to languages.
       languages.forEach((language, index) => {
         let convertedLanguage = language.trim();
         if (convertedLanguage === 'Multi Audio') {
@@ -60,7 +71,9 @@ export class Torrentio extends BaseWrapper {
         } else {
           convertedLanguage = emojiToLanguage(language) || language;
           // uppercase the first letter of each word
-          convertedLanguage = convertedLanguage.replace(/\b\w/g, (char) => char.toUpperCase());
+          convertedLanguage = convertedLanguage.replace(/\b\w/g, (char) =>
+            char.toUpperCase()
+          );
         }
         if (!parsedFilename.languages.includes(convertedLanguage)) {
           parsedFilename.languages.push(convertedLanguage);
@@ -115,8 +128,8 @@ export async function getTorrentioStreams(
   }
 
   // find all usable services
-  const usableServices = config.services.filter((service) =>
-    supportedServices.includes(service.id) && service.enabled
+  const usableServices = config.services.filter(
+    (service) => supportedServices.includes(service.id) && service.enabled
   );
 
   // if no usable services found, use torrentio without any configuration

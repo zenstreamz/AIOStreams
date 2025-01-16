@@ -34,22 +34,24 @@ export class AIOStreams {
     const getTimeTakenSincePoint = (point: number) => {
       const timeNow = new Date().getTime();
       const duration = timeNow - point;
-      // format duration and choose unit and return 
+      // format duration and choose unit and return
       const nanos = duration * 1_000_000; // Convert to nanoseconds
       const micros = duration * 1_000; // Convert to microseconds
-  
+
       if (nanos < 1) {
-          return `${nanos.toFixed(2)}ns`;
+        return `${nanos.toFixed(2)}ns`;
       } else if (micros < 1) {
-          return `${micros.toFixed(2)}µs`;
+        return `${micros.toFixed(2)}µs`;
       } else if (duration < 1000) {
-          return `${duration.toFixed(2)}ms`;
+        return `${duration.toFixed(2)}ms`;
       } else {
-          return `${(duration / 1000).toFixed(2)}s`;
+        return `${(duration / 1000).toFixed(2)}s`;
       }
-    }
+    };
     const parsedStreams = await this.getParsedStreams(streamRequest);
-    console.log(`|INF| addon > getStreams: Got ${parsedStreams.length} total parsed streams in ${getTimeTakenSincePoint(startTime)}`);
+    console.log(
+      `|INF| addon > getStreams: Got ${parsedStreams.length} total parsed streams in ${getTimeTakenSincePoint(startTime)}`
+    );
     const filterStartTime = new Date().getTime();
 
     let filteredResults = parsedStreams.filter((parsedStream) => {
@@ -64,28 +66,37 @@ export class AIOStreams {
       if (!qualityFilter) return false;
 
       // Check for HDR and DV tags in the parsed stream
-      const hasHDR = parsedStream.visualTags.some((tag) => tag.startsWith('HDR'));
+      const hasHDR = parsedStream.visualTags.some((tag) =>
+        tag.startsWith('HDR')
+      );
       const hasDV = parsedStream.visualTags.includes('DV');
       const hasHDRAndDV = hasHDR && hasDV;
-      const HDRAndDVEnabled = this.config.visualTags.some((visualTag) => visualTag['HDR+DV'] === true);
-      
+      const HDRAndDVEnabled = this.config.visualTags.some(
+        (visualTag) => visualTag['HDR+DV'] === true
+      );
+
       // Helper function to check if a specific tag is enabled
-      const isTagEnabled = (tag: string) => this.config.visualTags.some((visualTag) => visualTag[tag] === true);
-      
+      const isTagEnabled = (tag: string) =>
+        this.config.visualTags.some((visualTag) => visualTag[tag] === true);
+
       if (hasHDRAndDV) {
         if (!HDRAndDVEnabled) {
           return false;
         }
       } else if (hasHDR) {
-        const specificHdrTags = parsedStream.visualTags.filter((tag) => tag.startsWith('HDR'));
-        const disabledTags = specificHdrTags.filter((tag) => !isTagEnabled(tag));
+        const specificHdrTags = parsedStream.visualTags.filter((tag) =>
+          tag.startsWith('HDR')
+        );
+        const disabledTags = specificHdrTags.filter(
+          (tag) => !isTagEnabled(tag)
+        );
         if (disabledTags.length > 0) {
           return false;
         }
       } else if (hasDV && !isTagEnabled('DV')) {
         return false;
       }
-      
+
       // Check other visual tags for explicit disabling
       for (const tag of parsedStream.visualTags) {
         if (tag.startsWith('HDR') || tag === 'DV') continue;
@@ -93,13 +104,15 @@ export class AIOStreams {
           return false;
         }
       }
-      
-
 
       // apply excludedLanguages filter
       const excludedLanguages = this.config.excludedLanguages;
       if (excludedLanguages && parsedStream.languages.length > 0) {
-        if (parsedStream.languages.every(lang => excludedLanguages.includes(lang))) {
+        if (
+          parsedStream.languages.every((lang) =>
+            excludedLanguages.includes(lang)
+          )
+        ) {
           return false;
         }
       }
@@ -171,103 +184,130 @@ export class AIOStreams {
       return true;
     });
 
-    console.log(`|INF| addon > getStreams: Initial filter to ${filteredResults.length} streams in ${getTimeTakenSincePoint(filterStartTime)}`);
+    console.log(
+      `|INF| addon > getStreams: Initial filter to ${filteredResults.length} streams in ${getTimeTakenSincePoint(filterStartTime)}`
+    );
 
     if (this.config.cleanResults) {
       const cleanResultsStartTime = new Date().getTime();
       const uniqueStreams: ParsedStream[] = [];
-  
+
       // Group streams by normalized filename
-      const streamsByHashOrName = filteredResults.reduce((acc, stream) => {
+      const streamsByHashOrName = filteredResults.reduce(
+        (acc, stream) => {
           const normalizedFilename = stream.filename
-              ? stream.filename.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()
-              : undefined;
+            ? stream.filename.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()
+            : undefined;
           const key = stream._infoHash || normalizedFilename;
 
           if (!key) {
-              uniqueStreams.push(stream);
-              return acc;
+            uniqueStreams.push(stream);
+            return acc;
           }
-         
+
           acc[key] = acc[key] || [];
           acc[key].push(stream);
           return acc;
-      }, {} as Record<string, ParsedStream[]>);
-  
+        },
+        {} as Record<string, ParsedStream[]>
+      );
+
       Object.values(streamsByHashOrName).forEach((groupedStreams) => {
-          if (groupedStreams.length === 1) {
-              uniqueStreams.push(groupedStreams[0]);
-              return;
-          }
-          //console.log(`==================\nDetermining unique streams for ${groupedStreams[0].filename} from ${groupedStreams.length} total duplicates`);
-          //console.log(groupedStreams.map(stream => `Addon ID: ${stream.addon.id}, Provider ID: ${stream.provider?.id}, Provider Cached: ${stream.provider?.cached}`));
-          // Separate streams into categories
-          const cachedStreams = groupedStreams.filter(stream => stream.provider?.cached);
-          const uncachedStreams = groupedStreams.filter(stream => stream.provider && !stream.provider.cached);
-          const noProviderStreams = groupedStreams.filter(stream => !stream.provider);
-  
-          // Select uncached streams by addon priority (one per provider)
-          const selectedUncachedStreams = Object.values(uncachedStreams.reduce((acc, stream) => {
+        if (groupedStreams.length === 1) {
+          uniqueStreams.push(groupedStreams[0]);
+          return;
+        }
+        //console.log(`==================\nDetermining unique streams for ${groupedStreams[0].filename} from ${groupedStreams.length} total duplicates`);
+        //console.log(groupedStreams.map(stream => `Addon ID: ${stream.addon.id}, Provider ID: ${stream.provider?.id}, Provider Cached: ${stream.provider?.cached}`));
+        // Separate streams into categories
+        const cachedStreams = groupedStreams.filter(
+          (stream) => stream.provider?.cached
+        );
+        const uncachedStreams = groupedStreams.filter(
+          (stream) => stream.provider && !stream.provider.cached
+        );
+        const noProviderStreams = groupedStreams.filter(
+          (stream) => !stream.provider
+        );
+
+        // Select uncached streams by addon priority (one per provider)
+        const selectedUncachedStreams = Object.values(
+          uncachedStreams.reduce(
+            (acc, stream) => {
               acc[stream.provider!.id] = acc[stream.provider!.id] || [];
               acc[stream.provider!.id].push(stream);
               return acc;
-          }, {} as Record<string, ParsedStream[]>)).map(providerGroup => {
-              return providerGroup.sort((a, b) => {
-                  const aIndex = this.config.addons.findIndex(
-                      addon => `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
-                  );
-                  const bIndex = this.config.addons.findIndex(
-                      addon => `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
-                  );
-                  return aIndex - bIndex;
-              })[0];
-          });
-          //selectedUncachedStreams.forEach(stream => console.log(`Selected uncached stream for provider ${stream.provider!.id}: Addon ID: ${stream.addon.id}`));
-  
-          // Select cached streams by provider and addon priority
-          const selectedCachedStream = cachedStreams.sort((a, b) => {
-              const aProviderIndex = this.config.services.findIndex(service => service.id === a.provider!.id);
-              const bProviderIndex = this.config.services.findIndex(service => service.id === b.provider!.id);
-  
-              if (aProviderIndex !== bProviderIndex) {
-                  return aProviderIndex - bProviderIndex;
-              }
-  
-              const aAddonIndex = this.config.addons.findIndex(
-                  addon => `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
-              );
-              const bAddonIndex = this.config.addons.findIndex(
-                  addon => `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
-              );
-  
-              return aAddonIndex - bAddonIndex;
+            },
+            {} as Record<string, ParsedStream[]>
+          )
+        ).map((providerGroup) => {
+          return providerGroup.sort((a, b) => {
+            const aIndex = this.config.addons.findIndex(
+              (addon) =>
+                `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
+            );
+            const bIndex = this.config.addons.findIndex(
+              (addon) =>
+                `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
+            );
+            return aIndex - bIndex;
           })[0];
-          // Select one non-provider stream (highest addon priority)
-          const selectedNoProviderStream = noProviderStreams.sort((a, b) => {
-              const aIndex = this.config.addons.findIndex(
-                  addon => `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
-              );
-              const bIndex = this.config.addons.findIndex(
-                  addon => `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
-              );
-              return aIndex - bIndex;
-          })[0];
-         
-  
-          // Combine selected streams for this group
-          if (selectedNoProviderStream) {
-              //console.log(`Selected no provider stream: Addon ID: ${selectedNoProviderStream.addon.id}`);
-              uniqueStreams.push(selectedNoProviderStream);
+        });
+        //selectedUncachedStreams.forEach(stream => console.log(`Selected uncached stream for provider ${stream.provider!.id}: Addon ID: ${stream.addon.id}`));
+
+        // Select cached streams by provider and addon priority
+        const selectedCachedStream = cachedStreams.sort((a, b) => {
+          const aProviderIndex = this.config.services.findIndex(
+            (service) => service.id === a.provider!.id
+          );
+          const bProviderIndex = this.config.services.findIndex(
+            (service) => service.id === b.provider!.id
+          );
+
+          if (aProviderIndex !== bProviderIndex) {
+            return aProviderIndex - bProviderIndex;
           }
-          if (selectedCachedStream) {
-              //console.log(`Selected cached stream for provider ${selectedCachedStream.provider!.id} from Addon ID: ${selectedCachedStream.addon.id}`);
-              uniqueStreams.push(selectedCachedStream);
-          }
-          uniqueStreams.push(...selectedUncachedStreams);
+
+          const aAddonIndex = this.config.addons.findIndex(
+            (addon) =>
+              `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
+          );
+          const bAddonIndex = this.config.addons.findIndex(
+            (addon) =>
+              `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
+          );
+
+          return aAddonIndex - bAddonIndex;
+        })[0];
+        // Select one non-provider stream (highest addon priority)
+        const selectedNoProviderStream = noProviderStreams.sort((a, b) => {
+          const aIndex = this.config.addons.findIndex(
+            (addon) =>
+              `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
+          );
+          const bIndex = this.config.addons.findIndex(
+            (addon) =>
+              `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
+          );
+          return aIndex - bIndex;
+        })[0];
+
+        // Combine selected streams for this group
+        if (selectedNoProviderStream) {
+          //console.log(`Selected no provider stream: Addon ID: ${selectedNoProviderStream.addon.id}`);
+          uniqueStreams.push(selectedNoProviderStream);
+        }
+        if (selectedCachedStream) {
+          //console.log(`Selected cached stream for provider ${selectedCachedStream.provider!.id} from Addon ID: ${selectedCachedStream.addon.id}`);
+          uniqueStreams.push(selectedCachedStream);
+        }
+        uniqueStreams.push(...selectedUncachedStreams);
       });
-  
+
       filteredResults = uniqueStreams;
-      console.log(`|INF| addon > getStreams: Cleaned results to ${filteredResults.length} streams in ${getTimeTakenSincePoint(cleanResultsStartTime)}`);
+      console.log(
+        `|INF| addon > getStreams: Cleaned results to ${filteredResults.length} streams in ${getTimeTakenSincePoint(cleanResultsStartTime)}`
+      );
     }
     // Apply sorting
     const sortStartTime = new Date().getTime();
@@ -291,42 +331,66 @@ export class AIOStreams {
       return 0;
     });
 
-    console.log(`|INF| addon > getStreams: Sorted results in ${getTimeTakenSincePoint(sortStartTime)}`);
+    console.log(
+      `|INF| addon > getStreams: Sorted results in ${getTimeTakenSincePoint(sortStartTime)}`
+    );
 
     // apply config.maxResultsPerResolution
     if (this.config.maxResultsPerResolution) {
       const startTime = new Date().getTime();
-      const streamsByResolution = filteredResults.reduce((acc, stream) => {
-        acc[stream.resolution] = acc[stream.resolution] || [];
-        acc[stream.resolution].push(stream);
-        return acc;
-      }, {} as Record<string, ParsedStream[]>);
+      const streamsByResolution = filteredResults.reduce(
+        (acc, stream) => {
+          acc[stream.resolution] = acc[stream.resolution] || [];
+          acc[stream.resolution].push(stream);
+          return acc;
+        },
+        {} as Record<string, ParsedStream[]>
+      );
 
-      const limitedStreams = Object.values(streamsByResolution).map((streams) => {
-        return streams.slice(0, this.config.maxResultsPerResolution!);
-      });
+      const limitedStreams = Object.values(streamsByResolution).map(
+        (streams) => {
+          return streams.slice(0, this.config.maxResultsPerResolution!);
+        }
+      );
 
       filteredResults = limitedStreams.flat();
-      console.log(`|INF| addon > getStreams: Limited results to ${filteredResults.length} streams after applying maxResultsPerResolution in ${getTimeTakenSincePoint(startTime)}`);
+      console.log(
+        `|INF| addon > getStreams: Limited results to ${filteredResults.length} streams after applying maxResultsPerResolution in ${getTimeTakenSincePoint(startTime)}`
+      );
     }
-
 
     // Create stream objects
     const streamsStartTime = new Date().getTime();
-    const streamObjects = await Promise.all(filteredResults.map(this.createStreamObject.bind(this)));
-    streams.push(...streamObjects.filter(s => s !== null));
+    const streamObjects = await Promise.all(
+      filteredResults.map(this.createStreamObject.bind(this))
+    );
+    streams.push(...streamObjects.filter((s) => s !== null));
 
-    console.log(`|INF| addon > getStreams: Created ${streams.length} stream objects in ${getTimeTakenSincePoint(streamsStartTime)}`);
-    console.log(`|INF| addon > getStreams: Total time taken to serve streams: ${getTimeTakenSincePoint(startTime)}`);
+    console.log(
+      `|INF| addon > getStreams: Created ${streams.length} stream objects in ${getTimeTakenSincePoint(streamsStartTime)}`
+    );
+    console.log(
+      `|INF| addon > getStreams: Total time taken to serve streams: ${getTimeTakenSincePoint(startTime)}`
+    );
     return streams;
   }
 
-  private createMediaFlowStream(parsedStream: ParsedStream, name: string, description: string): Stream {
+  private createMediaFlowStream(
+    parsedStream: ParsedStream,
+    name: string,
+    description: string
+  ): Stream {
     if (!parsedStream.url) {
-      console.error(`|ERR| addon > createMediaFlowStream: Stream URL is missing, cannot proxy a stream without a URL`);
+      console.error(
+        `|ERR| addon > createMediaFlowStream: Stream URL is missing, cannot proxy a stream without a URL`
+      );
       throw new Error('Stream URL is missing');
     }
-    const proxiedUrl = createProxiedMediaFlowUrl(parsedStream.url, this.config.mediaFlowConfig, parsedStream.stream?.behaviorHints?.proxyHeaders);
+    const proxiedUrl = createProxiedMediaFlowUrl(
+      parsedStream.url,
+      this.config.mediaFlowConfig,
+      parsedStream.stream?.behaviorHints?.proxyHeaders
+    );
     if (!proxiedUrl) {
       throw new Error('Could not create MediaFlow proxied URL');
     }
@@ -341,10 +405,10 @@ export class AIOStreams {
 
     return {
       url: proxiedUrl,
-      name: this.config.addonNameInDescription 
+      name: this.config.addonNameInDescription
         ? Settings.ADDON_NAME
         : `🕵️ ${name}`,
-      description: this.config.addonNameInDescription 
+      description: this.config.addonNameInDescription
         ? `🕵️ ${name}\n${description}`
         : description,
       subtitles: parsedStream.stream?.subtitles,
@@ -354,12 +418,13 @@ export class AIOStreams {
         videoSize: Math.floor(parsedStream.size || 0) || undefined,
         videoHash: parsedStream.stream?.behaviorHints?.videoHash,
         bingeGroup: `mfp.${Settings.ADDON_ID}|${parsedStream.addon.name}|${combinedTags.join('|')}`,
-      }
-    }
-
+      },
+    };
   }
 
-  private async createStreamObject(parsedStream: ParsedStream): Promise<Stream | null> {
+  private async createStreamObject(
+    parsedStream: ParsedStream
+  ): Promise<Stream | null> {
     let name: string = '';
     let description: string = '';
     switch (this.config.formatter) {
@@ -402,7 +467,11 @@ export class AIOStreams {
 
     if (this.config.mediaFlowConfig?.mediaFlowEnabled && parsedStream.url) {
       try {
-        const mediaFlowStream = this.createMediaFlowStream(parsedStream, name, description);
+        const mediaFlowStream = this.createMediaFlowStream(
+          parsedStream,
+          name,
+          description
+        );
         if (!mediaFlowStream) {
           throw new Error('Unknown error creating MediaFlow stream');
         }
@@ -420,7 +489,9 @@ export class AIOStreams {
       fileIdx: parsedStream.torrent?.fileIdx,
       name: this.config.addonNameInDescription
         ? Settings.ADDON_NAME
-        : Settings.SHOW_DIE ? `🎲 ${name}` : name,
+        : Settings.SHOW_DIE
+          ? `🎲 ${name}`
+          : name,
       description: this.config.addonNameInDescription
         ? `🎲 ${name}\n${description}`
         : description,
@@ -449,7 +520,6 @@ export class AIOStreams {
 
       if (aHasPrioritisedLanguage && !bHasPrioritisedLanguage) return -1;
       if (!aHasPrioritisedLanguage && bHasPrioritisedLanguage) return 1;
-
     }
     return 0;
   }
@@ -478,9 +548,15 @@ export class AIOStreams {
         // prioritise a false value over undefined
         if (aCached === false && bCached === undefined) return -1;
         if (aCached === undefined && bCached === false) return 1;
-        return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'cached')?.direction === 'asc'
-          ? aCached ? 1 : -1 // uncached > cached
-          : aCached ? -1 : 1; // cached > uncached
+        return this.config.sortBy.find(
+          (sort) => Object.keys(sort)[0] === 'cached'
+        )?.direction === 'asc'
+          ? aCached
+            ? 1
+            : -1 // uncached > cached
+          : aCached
+            ? -1
+            : 1; // cached > uncached
       }
     } else if (field === 'hasProvider') {
       // files from a provider should be prioritised and then
@@ -503,17 +579,29 @@ export class AIOStreams {
         return aIndex - bIndex;
       }
     } else if (field === 'size') {
-      return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'size')?.direction === 'asc'
+      return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'size')
+        ?.direction === 'asc'
         ? (a.size || 0) - (b.size || 0)
-        : (b.size || 0) - (a.size || 0)
+        : (b.size || 0) - (a.size || 0);
     } else if (field === 'seeders') {
-      if (a.torrent?.seeders !== undefined && b.torrent?.seeders !== undefined) {
-        return this.config.sortBy.find((sort) => Object.keys(sort)[0] === 'seeders')?.direction === 'asc'
+      if (
+        a.torrent?.seeders !== undefined &&
+        b.torrent?.seeders !== undefined
+      ) {
+        return this.config.sortBy.find(
+          (sort) => Object.keys(sort)[0] === 'seeders'
+        )?.direction === 'asc'
           ? a.torrent.seeders - b.torrent.seeders
           : b.torrent.seeders - a.torrent.seeders;
-      } else if (a.torrent?.seeders !== undefined && b.torrent?.seeders === undefined) {
+      } else if (
+        a.torrent?.seeders !== undefined &&
+        b.torrent?.seeders === undefined
+      ) {
         return -1;
-      } else if (a.torrent?.seeders === undefined && b.torrent?.seeders !== undefined) {
+      } else if (
+        a.torrent?.seeders === undefined &&
+        b.torrent?.seeders !== undefined
+      ) {
         return 1;
       }
     } else if (field === 'quality') {
@@ -523,21 +611,24 @@ export class AIOStreams {
       );
     } else if (field === 'visualTag') {
       // Find the highest priority visual tag in each file
-      const getIndexOfTag = (tag: string) => this.config.visualTags.findIndex((t) => t[tag]);
-    
+      const getIndexOfTag = (tag: string) =>
+        this.config.visualTags.findIndex((t) => t[tag]);
+
       const getHighestPriorityTagIndex = (tags: string[]) => {
         // Check if the file contains both any HDR tag and DV
         const hasHDR = tags.some((tag) => tag.startsWith('HDR'));
         const hasDV = tags.includes('DV');
-    
+
         if (hasHDR && hasDV) {
           // Sort according to the position of the HDR+DV tag
-          const hdrDvIndex = this.config.visualTags.findIndex((t) => t['HDR+DV']);
+          const hdrDvIndex = this.config.visualTags.findIndex(
+            (t) => t['HDR+DV']
+          );
           if (hdrDvIndex !== -1) {
             return hdrDvIndex;
           }
         }
-    
+
         // If the file contains multiple HDR tags, look at the HDR tag that has the highest priority
         const hdrTagIndices = tags
           .filter((tag) => tag.startsWith('HDR'))
@@ -545,17 +636,17 @@ export class AIOStreams {
         if (hdrTagIndices.length > 0) {
           return Math.min(...hdrTagIndices);
         }
-    
+
         // Always consider the highest priority visual tag when a file has multiple visual tags
         return tags.reduce(
           (minIndex, tag) => Math.min(minIndex, getIndexOfTag(tag)),
           this.config.visualTags.length
         );
       };
-    
+
       const aVisualTagIndex = getHighestPriorityTagIndex(a.visualTags);
       const bVisualTagIndex = getHighestPriorityTagIndex(b.visualTags);
-    
+
       // Sort by the visual tag index
       return aVisualTagIndex - bVisualTagIndex;
     } else if (field === 'audioTag') {
@@ -593,7 +684,7 @@ export class AIOStreams {
       if (!this.config.prioritisedLanguages) {
         return 0;
       }
-      // else, we look at the array of prioritisedLanguages. 
+      // else, we look at the array of prioritisedLanguages.
       // any file with a language in the prioritisedLanguages array should be prioritised
       // if both files contain a prioritisedLanguage, we compare the index of the highest priority language
 
@@ -610,14 +701,20 @@ export class AIOStreams {
       if (aHasPrioritisedLanguage && bHasPrioritisedLanguage) {
         const getHighestPriorityLanguageIndex = (languages: string[]) => {
           return languages.reduce((minIndex, lang) => {
-            const index = this.config.prioritisedLanguages?.indexOf(lang) ?? this.config.prioritisedLanguages!.length;
+            const index =
+              this.config.prioritisedLanguages?.indexOf(lang) ??
+              this.config.prioritisedLanguages!.length;
             return index !== -1 ? Math.min(minIndex, index) : minIndex;
           }, this.config.prioritisedLanguages!.length);
         };
-  
-        const aHighestPriorityLanguageIndex = getHighestPriorityLanguageIndex(a.languages);
-        const bHighestPriorityLanguageIndex = getHighestPriorityLanguageIndex(b.languages);
-  
+
+        const aHighestPriorityLanguageIndex = getHighestPriorityLanguageIndex(
+          a.languages
+        );
+        const bHighestPriorityLanguageIndex = getHighestPriorityLanguageIndex(
+          b.languages
+        );
+
         return aHighestPriorityLanguageIndex - bHighestPriorityLanguageIndex;
       }
     }
@@ -629,7 +726,8 @@ export class AIOStreams {
   ): Promise<ParsedStream[]> {
     const parsedStreams: ParsedStream[] = [];
     const addonPromises = this.config.addons.map(async (addon) => {
-      const addonName = addon.options.name || addon.options.overrideName || addon.id;
+      const addonName =
+        addon.options.name || addon.options.overrideName || addon.id;
       try {
         const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
         const streams = await this.getStreamsFromAddon(
@@ -638,9 +736,13 @@ export class AIOStreams {
           streamRequest
         );
         parsedStreams.push(...streams);
-        console.log(`|INF| addon > getParsedStreams: Got ${streams.length} streams from addon ${addonName}`);
+        console.log(
+          `|INF| addon > getParsedStreams: Got ${streams.length} streams from addon ${addonName}`
+        );
       } catch (error) {
-        console.error(`|ERR| addon > getParsedStreams: Failed to get streams from ${addonName}: ${error}`);
+        console.error(
+          `|ERR| addon > getParsedStreams: Failed to get streams from ${addonName}: ${error}`
+        );
       }
     });
 
@@ -675,7 +777,7 @@ export class AIOStreams {
           this.config,
           addon.options,
           streamRequest,
-          addonId,
+          addonId
         );
       }
       case 'mediafusion': {
@@ -683,7 +785,7 @@ export class AIOStreams {
           this.config,
           addon.options,
           streamRequest,
-          addonId,
+          addonId
         );
       }
       case 'easynews': {
@@ -692,7 +794,7 @@ export class AIOStreams {
           addon.options,
           streamRequest,
           addonId
-        )
+        );
       }
       case 'easynews-plus': {
         return await getEasynewsPlusStreams(
@@ -713,7 +815,7 @@ export class AIOStreams {
             ? parseInt(addon.options.indexerTimeout)
             : undefined,
           addonId,
-          this.config,
+          this.config
         );
         return await wrapper.getParsedStreams(streamRequest);
       }
@@ -730,7 +832,7 @@ export class AIOStreams {
             ? parseInt(addon.options.indexerTimeout)
             : undefined,
           addonId,
-          this.config,
+          this.config
         );
         return await wrapper.getParsedStreams(streamRequest);
       }

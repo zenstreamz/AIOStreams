@@ -46,26 +46,28 @@ export class Torbox extends BaseWrapper {
 
   protected parseStream(stream: TorboxStream): ParsedStream | undefined {
     let type = stream.type;
-    const [dQuality, dFilename, dSize, dLanguage, dAgeOrSeeders] = stream.description
-      .split('\n')
-      .map((field: string) => {
+    const [dQuality, dFilename, dSize, dLanguage, dAgeOrSeeders] =
+      stream.description.split('\n').map((field: string) => {
         if (field.startsWith('Type')) {
           // the last line can either contain only the type or the type and the seeders/age
           // we will always return the age or seeders and assign the type to the variable declared outside the map
           const parts = field.split('|');
-          type = ['torrent', 'usenet', 'web'].includes(type || '') ? type : parts[0].split(':')[1].trim().toLowerCase();
+          type = ['torrent', 'usenet', 'web'].includes(type || '')
+            ? type
+            : parts[0].split(':')[1].trim().toLowerCase();
           if (parts.length > 1) {
             return parts[1].split(':')[1].trim();
-          } 
+          }
           // since the last line only contains the type, we will return undefined
           return undefined;
-
         }
         const [_, value] = field.split(':');
         return value.trim();
       });
-    const filename = stream.behaviorHints?.filename || dFilename
-    const parsedFilename: ParsedNameData = parseFilename(filename || stream.description);
+    const filename = stream.behaviorHints?.filename || dFilename;
+    const parsedFilename: ParsedNameData = parseFilename(
+      filename || stream.description
+    );
 
     /* If the quality from Torbox is not one of the qualities in the Config, they get filtered out
     So, for now, we will not update the quality from Torbox
@@ -74,31 +76,47 @@ export class Torbox extends BaseWrapper {
       parsedFilename.quality = quality;
     }
     */
-  
+
     const language = stream.language || dLanguage;
     const normaliseLanguage = (lang: string) => {
       if (lang.toLowerCase() === 'multi audio') {
-      return 'Multi';
+        return 'Multi';
       }
-      return lang.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+      return lang
+        .split(' ')
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(' ');
     };
     if (language) {
       const normalisedLanguage = normaliseLanguage(language);
-      if (normalisedLanguage !== 'Unknown' && !parsedFilename.languages.includes(normalisedLanguage)) {
+      if (
+        normalisedLanguage !== 'Unknown' &&
+        !parsedFilename.languages.includes(normalisedLanguage)
+      ) {
         parsedFilename.languages.push(normalisedLanguage);
       }
     }
 
     // usenet results provide size as a string, we need to convert it to a number
-    const validateBehaviorHintSize = (size: string | number | undefined) => typeof size === 'string' ? parseInt(size) : size;
-    const sizeInBytes = stream.size || validateBehaviorHintSize(stream.behaviorHints?.videoSize) || (dSize ? extractSizeInBytes(dSize, 1000) : undefined)
-    
+    const validateBehaviorHintSize = (size: string | number | undefined) =>
+      typeof size === 'string' ? parseInt(size) : size;
+    const sizeInBytes =
+      stream.size ||
+      validateBehaviorHintSize(stream.behaviorHints?.videoSize) ||
+      (dSize ? extractSizeInBytes(dSize, 1000) : undefined);
+
     const provider = {
       id: 'torbox',
       cached: stream.is_cached,
     };
 
-    const seeders = type === 'torrent' ? (stream.seeders || (dAgeOrSeeders ? parseInt(dAgeOrSeeders) : undefined)) : undefined;
+    const seeders =
+      type === 'torrent'
+        ? stream.seeders ||
+          (dAgeOrSeeders ? parseInt(dAgeOrSeeders) : undefined)
+        : undefined;
     const age = type === 'usenet' ? dAgeOrSeeders || undefined : undefined;
 
     const parsedStream: ParsedStream = this.createParsedResult(

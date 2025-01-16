@@ -67,7 +67,12 @@
   background-color: rgb(26, 26, 26);
   border-radius: 0 0 var(--borderRadius) var(--borderRadius);
   padding: 0;
-  transition: margin-top 0.4s ease, background-color 0.4s ease, opacity 0.4s ease, transform 1s ease, opacity 0.4s ease;
+  transition:
+    margin-top 0.4s ease,
+    background-color 0.4s ease,
+    opacity 0.4s ease,
+    transform 1s ease,
+    opacity 0.4s ease;
   margin-top: -10px;
   z-index: 0;
 }
@@ -80,7 +85,11 @@
   margin: 0;
   border-radius: 0 0 var(--borderRadius) var(--borderRadius);
   width: 100%;
-  transition: color 0.4s, background-color 0.4s, transform 1s, opacity 0.4s;
+  transition:
+    color 0.4s,
+    background-color 0.4s,
+    transform 1s,
+    opacity 0.4s;
 }
 
 .directionButton:hover {
@@ -91,7 +100,7 @@
   background-color: transparent;
   color: transparent;
   opacity: 0.4;
-  transform: scale(0.1)
+  transform: scale(0.1);
 }
 
 .directionBar.disabled {

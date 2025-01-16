@@ -1,21 +1,21 @@
 <p align="center"><img src="https://raw.githubusercontent.com/Viren070/AIOStreams/refs/heads/main/packages/frontend/public/assets/logo.png" /></p>
 <h1 align="center" id="title">AIOStreams</h1>
 
-## Table of Contents 
+## Table of Contents
 
 - [Description](#description)
 - [FAQ](#faq)
-    - [How does it work?](#how-does-it-work)
+  - [How does it work?](#how-does-it-work)
 - [Usage](#usage)
-    - [Public Instance](#public-instance)
-    - [Personal Instance](#deploying-your-own-instance)
-        - [Hugging Face](#hugging-face)
-        - [Cloudflare Workers](#cloudflare-workers)
-        - [Render](#render)
-        - [ElfHosted](#elfhosted-paid)
-    - [Self Hosting](#self-hosting)
-        - [Docker](#docker)
-        - [From Source](#from-source)
+  - [Public Instance](#public-instance)
+  - [Personal Instance](#deploying-your-own-instance)
+    - [Hugging Face](#hugging-face)
+    - [Cloudflare Workers](#cloudflare-workers)
+    - [Render](#render)
+    - [ElfHosted](#elfhosted-paid)
+  - [Self Hosting](#self-hosting)
+    - [Docker](#docker)
+    - [From Source](#from-source)
 - [Configuring](#configuring)
   - [Environment Variables](#environment-variables)
   - [Cloudflare Workers](#cloudflare-workers-1)
@@ -24,7 +24,7 @@
   - [Local](#local)
 - [Development](#development)
 - [Credits](#credits)
-  
+
 ## Description
 
 Combines streams from other addons into one and provides much greater customisation:
@@ -106,12 +106,13 @@ The addon can display your results in different formats. The formats available a
   ![image](https://github.com/user-attachments/assets/21f90ee2-e81d-4a56-9e64-8937fb7ab2bc)
 
 ## Usage
-### Public Instance 
 
-[ElfHosted](https://elfhosted.com/) have been kind enough to host a [community instance of AIOStreams](https://aiostreams.elfhosted.com/configure). 
+### Public Instance
 
-This community instance does have a ratelimit in place, but it is unlikely you will reach it. It also avoids the ratelimits of ElfHosted addons like Comet and MediaFusion as AIOStreams' requests to these addons are routed internally. 
-However, other non-ElfHosted addons may rate limit the community instance. 
+[ElfHosted](https://elfhosted.com/) have been kind enough to host a [community instance of AIOStreams](https://aiostreams.elfhosted.com/configure).
+
+This community instance does have a ratelimit in place, but it is unlikely you will reach it. It also avoids the ratelimits of ElfHosted addons like Comet and MediaFusion as AIOStreams' requests to these addons are routed internally.
+However, other non-ElfHosted addons may rate limit the community instance.
 
 ### Deploying your own instance
 
@@ -172,7 +173,7 @@ COPY --from=builder /build/packages/formatters/package.*json ./packages/formatte
 COPY --from=builder /build/packages/parser/package.*json ./packages/parser/
 COPY --from=builder /build/packages/types/package.*json ./packages/types/
 COPY --from=builder /build/packages/wrappers/package.*json ./packages/wrappers/
-COPY --from=builder /build/packages/utils/package.*json ./packages/utils/
+COPY --from=builder /build/packages/utils/package.\*json ./packages/utils/
 
 COPY --from=builder /build/packages/addon/dist ./packages/addon/dist
 COPY --from=builder /build/packages/frontend/out ./packages/frontend/out
@@ -197,10 +198,9 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 
 6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy
 
+##### Updating
 
-##### Updating 
-
-To update the addon, you can simply go to the `Settings` tab and click `Factory rebuild`. This will rebuild the addon with the latest changes. 
+To update the addon, you can simply go to the `Settings` tab and click `Factory rebuild`. This will rebuild the addon with the latest changes.
 
 #### Cloudflare Workers
 
@@ -212,7 +212,8 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 1. Sign up for a [Cloudflare Account](https://dash.cloudflare.com/sign-up/workers-and-pages)
 2. Install Node.js (I would recommend using package managers e.g. fnm on Windows)
 3. Install Git
-4. Run the following commands: 
+4. Run the following commands:
+
 ```
 git clone https://github.com/Viren070/AIOStreams.git
 cd AIOStreams
@@ -244,15 +245,15 @@ https://render.com/
 3. Enter `https://github.com/Viren070/AIOStreams`
 4. Deploy
 
-##### Updating 
+##### Updating
 
-When you deploy with Render, it automatically builds the addon every time a commit is pushed to this repository. You can also manually trigger a build by clicking the `Deploy` button. 
+When you deploy with Render, it automatically builds the addon every time a commit is pushed to this repository. You can also manually trigger a build by clicking the `Deploy` button.
 
 It is recommend to disable the `Auto Deploy` feature as the latest changes may not be stable. You can do this by going to the `Settings` tab and scrolling down to the `Auto Deploy` setting near the bottom of the `Build & Deploy` section.
 
 #### ElfHosted (paid)
 
-AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle setup where everything is done for you. 
+AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle setup where everything is done for you.
 
 ### Self-Hosting
 
@@ -312,126 +313,146 @@ With encryption, someone who has your manifest URL can't directly see your API k
 To modify the behaviour of the addon, you can provide the following environment variables:
 
 - **ADDON_NAME**
-   - Type: string
-   - Default: 'AIOStreams'
-   - Description: The name of the addon.
+
+  - Type: string
+  - Default: 'AIOStreams'
+  - Description: The name of the addon.
 
 - **ADDON_ID**
-   - Type: string
-   - Default: 'aiostreams.viren070.com'
-   - Description: The unique identifier for the addon.
 
+  - Type: string
+  - Default: 'aiostreams.viren070.com'
+  - Description: The unique identifier for the addon.
 
 - **PORT**
-   - Type: number
-   - Default: 3000
-   - Description: The port on which the server will run. 
+
+  - Type: number
+  - Default: 3000
+  - Description: The port on which the server will run.
 
 - **BRANDING**
-   - Type: string
-   - Default: undefined
-   - Description: Custom branding HTML content. This can be customized by setting the BRANDING environment variable. This HTML content will be displayed at the top of the addon configuration page.
->[!NOTE]
->`BRANDING` is a **build-time** environment variable. It must be present during the build process. 
+
+  - Type: string
+  - Default: undefined
+  - Description: Custom branding HTML content. This can be customized by setting the BRANDING environment variable. This HTML content will be displayed at the top of the addon configuration page.
+    > [!NOTE] >`BRANDING` is a **build-time** environment variable. It must be present during the build process.
 
 - **SECRET_KEY**
-   - Type: string
-   - Default: ''
-   - Description: The secret key used for encryption. This should be set using the SECRET_KEY environment variable. ```openssl rand -hex 16``` or ```[System.Guid]::NewGuid().ToString("N").Substring(0, 32)``` can be used to generate a new secret key for Linux/MacoS and Windows respectively.
+
+  - Type: string
+  - Default: ''
+  - Description: The secret key used for encryption. This should be set using the SECRET_KEY environment variable. `openssl rand -hex 16` or `[System.Guid]::NewGuid().ToString("N").Substring(0, 32)` can be used to generate a new secret key for Linux/MacoS and Windows respectively.
 
 - **COMET_URL**
-   - Type: string
-   - Default: `'https://comet.elfhosted.com/'`
-   - Description: The URL for the Comet addon. This URL is used internally by the addon to fetch results from the Comet addon. This environment variable allows you to modify the base URL being used without having to configure the addon yourself and then providing an `Override URL` in the addon configuration.
+
+  - Type: string
+  - Default: `'https://comet.elfhosted.com/'`
+  - Description: The URL for the Comet addon. This URL is used internally by the addon to fetch results from the Comet addon. This environment variable allows you to modify the base URL being used without having to configure the addon yourself and then providing an `Override URL` in the addon configuration.
 
 - **MEDIAFUSION_URL**
-   - Type: string
-   - Default: `'https://mediafusion.elfhosted.com/'`
-   - Description: The URL for the MediaFusion addon.
+
+  - Type: string
+  - Default: `'https://mediafusion.elfhosted.com/'`
+  - Description: The URL for the MediaFusion addon.
 
 - **TORRENTIO_URL**
-   - Type: string
-   - Default: `'https://torrentio.strem.fun/'`
-   - Description: The URL for the Torrentio addon.
+
+  - Type: string
+  - Default: `'https://torrentio.strem.fun/'`
+  - Description: The URL for the Torrentio addon.
 
 - **TORBOX_STREMIO_URL**
-   - Type: string
-   - Default: `'https://stremio.torbox.app/'`
-   - Description: The URL for the Torbox Stremio addon.
+
+  - Type: string
+  - Default: `'https://stremio.torbox.app/'`
+  - Description: The URL for the Torbox Stremio addon.
 
 - **EASYNEWS_URL**
-   - Type: string
-   - Default: `'https://ea627ddf0ee7-easynews.baby-beamup.club/'`
-   - Description: The url for the easynews addon
+
+  - Type: string
+  - Default: `'https://ea627ddf0ee7-easynews.baby-beamup.club/'`
+  - Description: The url for the easynews addon
 
 - **EASYNEWS_URL**
-   - Type: string
-   - Default: `'https://b89262c192b0-stremio-easynews-addon.baby-beamup.club/'`
-   - Description: The url for the easynews+ addon
+
+  - Type: string
+  - Default: `'https://b89262c192b0-stremio-easynews-addon.baby-beamup.club/'`
+  - Description: The url for the easynews+ addon
 
 - **MAX_ADDONS**
-   - Type: number
-   - Default: 15
-   - Description: The maximum number of addons that is allowed. This is checked when the addon is configured and when you make a request to the addon. 
+
+  - Type: number
+  - Default: 15
+  - Description: The maximum number of addons that is allowed. This is checked when the addon is configured and when you make a request to the addon.
 
 - **MAX_MOVIE_SIZE**
-   - Type: number
-   - Default: 150000000000 (150GB)
-   - Description: The maximum size for movie files in bytes. This URL controls the maximum size you can set for the movie size filters. This affects the maximum value for the sliders in the configure page.
+  - Type: number
+  - Default: 150000000000 (150GB)
+  - Description: The maximum size for movie files in bytes. This URL controls the maximum size you can set for the movie size filters. This affects the maximum value for the sliders in the configure page.
 - **MAX_EPISODE_SIZE**
-   - Type: number
-   - Default: 15000000000 (15GB)
-   - Description: The maximum size for episode files in bytes. This URL controls the maximum size you can set for the episode size filters. This affects the maximum value for the sliders in the configure page.
+
+  - Type: number
+  - Default: 15000000000 (15GB)
+  - Description: The maximum size for episode files in bytes. This URL controls the maximum size you can set for the episode size filters. This affects the maximum value for the sliders in the configure page.
 
 - **MAX_TIMEOUT**
-   - Type: number
-   - Default: 50000
-   - Description: The maximum timeout value in milliseconds. The timeout value controls how long the addon will wait for a response from an addon before moving on to the next addon. This controls the max value the user can set for the timeout slider in the configure page.
+
+  - Type: number
+  - Default: 50000
+  - Description: The maximum timeout value in milliseconds. The timeout value controls how long the addon will wait for a response from an addon before moving on to the next addon. This controls the max value the user can set for the timeout slider in the configure page.
 
 - **MIN_TIMEOUT**
-   - Type: number
-   - Default: 1000
-   - Description: The minimum timeout value in milliseconds.
+
+  - Type: number
+  - Default: 1000
+  - Description: The minimum timeout value in milliseconds.
 
 - **DEFAULT_TIMEOUT**
-   - Type: number
-   - Default: 15000
-   - Description: The default timeout value in milliseconds.
+
+  - Type: number
+  - Default: 15000
+  - Description: The default timeout value in milliseconds.
 
 - **DEFAULT_TORRENTIO_TIMEOUT**
-   - Type: number
-   - Default: 5000
-   - Description: The default timeout value for Torrentio in milliseconds. 
+
+  - Type: number
+  - Default: 5000
+  - Description: The default timeout value for Torrentio in milliseconds.
 
 - **DEFAULT_TORBOX_TIMEOUT**
-   - Type: number
-   - Default: 15000
-   - Description: The default timeout value for Torbox in milliseconds.
+
+  - Type: number
+  - Default: 15000
+  - Description: The default timeout value for Torbox in milliseconds.
 
 - **DEFAULT_COMET_TIMEOUT**
-   - Type: number
-   - Default: 15000
-   - Description: The default timeout value for Comet in milliseconds.
+
+  - Type: number
+  - Default: 15000
+  - Description: The default timeout value for Comet in milliseconds.
 
 - **DEFAULT_MEDIAFUSION_TIMEOUT**
-   - Type: number
-   - Default: 15000
-   - Description: The default timeout value for MediaFusion in milliseconds.
+
+  - Type: number
+  - Default: 15000
+  - Description: The default timeout value for MediaFusion in milliseconds.
 
 - **DEFAULT_EASYNEWS_TIMEOUT**
-   - Type: number
-   - Default: 15000
-   - Description: The default timeout value for the easynews addon in milliseconds
+
+  - Type: number
+  - Default: 15000
+  - Description: The default timeout value for the easynews addon in milliseconds
 
 - **DEFAULT_EASYNEWS_PLUS_TIMEOUT**
-   - Type: number
-   - Default: 15000
-   - Description: The default timeout value for the easynews+ addon in milliseconds
+
+  - Type: number
+  - Default: 15000
+  - Description: The default timeout value for the easynews+ addon in milliseconds
 
 - **SHOW_DIE**
-   - Type: boolean
-   - Default: true
-   - Description: A flag to indicate whether to show a die (singular dice) emoji in the stream result names. This is available to distinguish results from the AIOStreams addon from other addons.
+  - Type: boolean
+  - Default: true
+  - Description: A flag to indicate whether to show a die (singular dice) emoji in the stream result names. This is available to distinguish results from the AIOStreams addon from other addons.
 
 Below, you can find how to set environment variables for the different methods of deployment.
 
@@ -439,7 +460,7 @@ Below, you can find how to set environment variables for the different methods o
 
 Unfortunately, it is not currently possible to set environment variables for this addon on a Cloudflare Worker. You will have to modify the code directly. You can look in `packages/utils/src/settings.ts` to change the default values.
 
-### Render 
+### Render
 
 You can set environment variables in the Render dashboard.
 
@@ -449,19 +470,17 @@ You can set environment variables in the Render dashboard.
 4. Click `Add Environment Variable` and enter the name and value of the environment variable you want to set.
 5. Once you have added all the environment variables you want to set, click `Save, build, and deploy`.
 
-
 ### Hugging Face
 
 1. Go to your Hugging Face space and click on the `Settings` tab.
-2. Scroll down to `Variables and Secrets` and click on `New secret`. 
-> [!WARNING]
-> Ensure you are using `Secrets`, especially for  `SECRET_KEY`. Variables are public and can be seen by anyone.
-3. Enter the name and value of the environment variable you want to set. The description is optional and can be left empty. 
+2. Scroll down to `Variables and Secrets` and click on `New secret`.
+   > [!WARNING]
+   > Ensure you are using `Secrets`, especially for `SECRET_KEY`. Variables are public and can be seen by anyone.
+3. Enter the name and value of the environment variable you want to set. The description is optional and can be left empty.
 
+### Local
 
-### Local 
-
-You can set environment variables using a .env file in the root of the project. 
+You can set environment variables using a .env file in the root of the project.
 
 ```
 ADDON_NAME=AIOStreams
@@ -472,9 +491,7 @@ COMET_URL=https://comet.elfhosted.com/
 ...
 ```
 
-## Development 
-
-
+## Development
 
 1. Clone the project and set it as the current directory
    ```
@@ -488,21 +505,19 @@ COMET_URL=https://comet.elfhosted.com/
    npm i
    ```
 
-
 Now, you can run various aspects of the project in development.
 
 > [!NOTE]
 > Most of these commands require that you build the project beforehand. Changes in other packages do not reflect immediately as it needs to be compiled into JavaScript first.
 > Run `npm run build` to build the project.
 
-
-To start the addon in development mode, run the following command: 
+To start the addon in development mode, run the following command:
 
 ```
 npm run start:addon:dev
 ```
 
-To run the cloudflare worker in development mode, run the following command 
+To run the cloudflare worker in development mode, run the following command
 
 ```
 npm run start:cloudflare-worker:dev
@@ -514,14 +529,13 @@ To run the frontend of the project, run the following command
 npm run start:frontend:dev
 ```
 
-### Deploying 
+### Deploying
 
-To deploy your cloudflare worker, run the following command: 
+To deploy your cloudflare worker, run the following command:
 
 ```
 npm run deploy:cloudflare-worker
 ```
-
 
 ## Credits
 

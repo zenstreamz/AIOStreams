@@ -1,6 +1,6 @@
 import { randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 import { deflateSync, inflateSync } from 'zlib';
-import {Settings} from './settings';
+import { Settings } from './settings';
 
 const pad = (data: Buffer, blockSize: number): Buffer => {
   const padding = blockSize - (data.length % blockSize);
@@ -40,7 +40,9 @@ export const decryptAndDecompress = (
 ): string => {
   const secretKey = Settings.SECRET_KEY;
   if (!secretKey) {
-    console.error('|ERR| crypto > decryptAndDecompress > No secret key provided');
+    console.error(
+      '|ERR| crypto > decryptAndDecompress > No secret key provided'
+    );
     throw new Error('No secret key provided');
   }
   const decipher = createDecipheriv('aes-256-cbc', secretKey, iv);
@@ -60,8 +62,6 @@ export const decryptAndDecompress = (
   return decompressedData.toString('utf-8');
 };
 
-
-
 export function parseAndDecryptString(data: string): string | null {
   try {
     if (data.startsWith('E-')) {
@@ -72,7 +72,9 @@ export function parseAndDecryptString(data: string): string | null {
     }
     return data;
   } catch (error: any) {
-    console.error(`|ERR| crypto > parseAndDecryptString > Failed to decrypt data: ${error.message}`);
+    console.error(
+      `|ERR| crypto > parseAndDecryptString > Failed to decrypt data: ${error.message}`
+    );
     return null;
   }
 }

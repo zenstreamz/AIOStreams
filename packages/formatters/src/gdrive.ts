@@ -8,13 +8,15 @@ export function gdriveFormat(stream: ParsedStream): {
 } {
   let name: string = '';
 
-  if (stream.provider) {  
+  if (stream.provider) {
     const cacheStatus = stream.provider.cached
       ? '⚡'
       : stream.provider.cached === undefined
         ? '❓'
         : '⏳';
-    const serviceShortName = serviceDetails.find((service) => service.id === stream.provider!.id)?.shortName || stream.provider.id;
+    const serviceShortName =
+      serviceDetails.find((service) => service.id === stream.provider!.id)
+        ?.shortName || stream.provider.id;
     name += `[${serviceShortName}${cacheStatus}] `;
   }
 
@@ -36,14 +38,22 @@ export function gdriveFormat(stream: ParsedStream): {
     description +=
       stream.audioTags.length > 0 ? `🎧 ${stream.audioTags.join(' | ')}` : '';
   }
-  if (stream.size || stream.torrent?.seeders || stream.usenet?.age || stream.duration) {
+  if (
+    stream.size ||
+    stream.torrent?.seeders ||
+    stream.usenet?.age ||
+    stream.duration
+  ) {
     description += '\n';
 
     description += `📦 ${formatSize(stream.size || 0)} `;
-    description += stream.duration ? `⏱️ ${formatDuration(stream.duration)} ` : '';
-    description += stream.torrent?.seeders !== undefined
-      ? `👥 ${stream.torrent.seeders}`
+    description += stream.duration
+      ? `⏱️ ${formatDuration(stream.duration)} `
       : '';
+    description +=
+      stream.torrent?.seeders !== undefined
+        ? `👥 ${stream.torrent.seeders}`
+        : '';
 
     description += stream.usenet?.age ? `📅 ${stream.usenet.age}` : '';
   }

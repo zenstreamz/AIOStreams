@@ -14,7 +14,9 @@ export function torrentioFormat(stream: ParsedStream): {
       : stream.provider.cached === undefined
         ? ' Unknown'
         : ' download';
-    const serviceShortName = serviceDetails.find((service) => service.id === stream.provider!.id)?.shortName || stream.provider.id;
+    const serviceShortName =
+      serviceDetails.find((service) => service.id === stream.provider!.id)
+        ?.shortName || stream.provider.id;
     name += `[${serviceShortName}${cacheStatus}] `;
   }
 
@@ -37,9 +39,10 @@ export function torrentioFormat(stream: ParsedStream): {
   ) {
     description += '\n';
 
-    description += stream.torrent?.seeders !== undefined
-      ? `👤 ${stream.torrent.seeders} `
-      : '';
+    description +=
+      stream.torrent?.seeders !== undefined
+        ? `👤 ${stream.torrent.seeders} `
+        : '';
 
     description += stream.usenet?.age ? `📅 ${stream.usenet.age} ` : '';
 

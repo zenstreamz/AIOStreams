@@ -16,8 +16,7 @@ export class MediaFusion extends BaseWrapper {
   ) {
     let url = overrideUrl
       ? overrideUrl
-      : Settings.MEDIAFUSION_URL +
-        (configString ? configString + '/' : '');
+      : Settings.MEDIAFUSION_URL + (configString ? configString + '/' : '');
 
     super(addonName, url, indexerTimeout, addonId, userConfig);
   }
@@ -27,7 +26,11 @@ export class MediaFusion extends BaseWrapper {
       stream.behaviorHints?.filename?.trim() ||
       stream.description?.split('\n')[0].replace('📂 ', '');
 
-    if (filename && stream.description && filename.includes('Content Warning')) {
+    if (
+      filename &&
+      stream.description &&
+      filename.includes('Content Warning')
+    ) {
       filename = stream.description.split('\n').join(' ');
     }
 
@@ -55,9 +58,9 @@ export class MediaFusion extends BaseWrapper {
           }
         : undefined;
 
-    const indexerMatch = RegExp(/🔗 ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u).exec(
-      stream.description || ''
-    );
+    const indexerMatch = RegExp(
+      /🔗 ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u
+    ).exec(stream.description || '');
     const indexer = indexerMatch ? indexerMatch[1] : undefined;
 
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.description || '');
@@ -65,12 +68,14 @@ export class MediaFusion extends BaseWrapper {
 
     stream.description?.split('\n').forEach((line) => {
       if (line.startsWith('🌐')) {
-        // the line contains the languages separated by ' + '. 
+        // the line contains the languages separated by ' + '.
         // the languages can either be flag emojis or the language name.
         const normaliseLanguage = (lang: string) => {
           // convert emojis to language names, and uppercase the first letter of each word
-          return (emojiToLanguage(lang) || lang).replace(/\b\w/g, (char) => char.toUpperCase());
-        }
+          return (emojiToLanguage(lang) || lang).replace(/\b\w/g, (char) =>
+            char.toUpperCase()
+          );
+        };
         const languages = line.replace('🌐 ', '').split(' + ');
         languages.forEach((lang) => {
           const normalisedLanguage = normaliseLanguage(lang);
@@ -104,7 +109,7 @@ export async function getMediafusionStreams(
     overrideName?: string;
   },
   streamRequest: StreamRequest,
-  addonId: string,
+  addonId: string
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] =
     addonDetails.find((addon: AddonDetail) => addon.id === 'mediafusion')
@@ -129,15 +134,12 @@ export async function getMediafusionStreams(
 
   // find all usable and enabled services
   const usableServices = config.services.filter(
-    (service) =>
-      supportedServices.includes(service.id) && service.enabled
+    (service) => supportedServices.includes(service.id) && service.enabled
   );
 
   // if no usable services found, use mediafusion without debrid
   if (usableServices.length < 1) {
-    const configString = await getConfigString(
-      getMediaFusionConfig()
-    );
+    const configString = await getConfigString(getMediaFusionConfig());
     const mediafusion = new MediaFusion(
       configString,
       null,
@@ -179,9 +181,7 @@ export async function getMediafusionStreams(
       debridService.id,
       debridService.credentials
     );
-    const encryptedStr = await getConfigString(
-      mediafusionConfig
-    );
+    const encryptedStr = await getConfigString(mediafusionConfig);
     const mediafusion = new MediaFusion(
       encryptedStr,
       null,
@@ -204,9 +204,7 @@ export async function getMediafusionStreams(
       service.id,
       service.credentials
     );
-    const encryptedStr = await getConfigString(
-      mediafusionConfig
-    );
+    const encryptedStr = await getConfigString(mediafusionConfig);
     const mediafusion = new MediaFusion(
       encryptedStr,
       null,
@@ -224,11 +222,14 @@ export async function getMediafusionStreams(
   return parsedStreams;
 }
 
-const getMediaFusionConfig = (service?: string, credentials: { [key: string]: string } = {}): any => {
+const getMediaFusionConfig = (
+  service?: string,
+  credentials: { [key: string]: string } = {}
+): any => {
   return {
     streaming_provider: service
       ? {
-          token: !["pikpak"].includes(service) ? credentials.apiKey : undefined,
+          token: !['pikpak'].includes(service) ? credentials.apiKey : undefined,
           email: credentials.email,
           password: credentials.password,
           service: service,
@@ -313,9 +314,7 @@ const getMediaFusionConfig = (service?: string, credentials: { [key: string]: st
   };
 };
 
-async function getConfigString(
-  data: any
-): Promise<string> {
+async function getConfigString(data: any): Promise<string> {
   const encryptUrl = `${Settings.MEDIAFUSION_URL}encrypt-user-data`;
   const response = await fetch(encryptUrl, {
     method: 'POST',

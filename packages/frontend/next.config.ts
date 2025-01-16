@@ -1,6 +1,6 @@
 import type { NextConfig } from 'next';
 import dotenv from 'dotenv';
-import path from 'path'
+import path from 'path';
 
 try {
   dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -8,7 +8,8 @@ try {
   console.error('Error loading .env file:', error);
 }
 
-const branding = process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING ?? process.env.BRANDING;
+const branding =
+  process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING ?? process.env.BRANDING;
 
 if (branding) {
   console.log(`Branding set`);
@@ -23,7 +24,7 @@ const nextConfig: NextConfig = {
   },
   env: {
     NEXT_PUBLIC_BRANDING: branding,
-  }
+  },
 };
 
 export default nextConfig;

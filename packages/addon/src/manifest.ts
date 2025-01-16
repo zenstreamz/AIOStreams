@@ -15,8 +15,8 @@ const manifest = (configured: boolean) => {
     types: ['movie', 'series'],
     behaviorHints: {
       configurable: true,
-      configurationRequired: configured ? false : true 
-    }
+      configurationRequired: configured ? false : true,
+    },
   };
 };
 

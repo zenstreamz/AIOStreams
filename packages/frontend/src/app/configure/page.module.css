@@ -13,7 +13,6 @@
   margin: 0 auto; /* Center the header within the content */
 }
 
-
 .content {
   background-color: #000000; /* Slightly lighter black */
   border-radius: var(--borderRadius);
@@ -143,12 +142,18 @@
   border-radius: var(--borderRadius);
   border-color: #777777;
   padding: 10px;
-  transition: margin-top 0.4s, opacity 0.3s, transform 0.6s;
+  transition:
+    margin-top 0.4s,
+    opacity 0.3s,
+    transform 0.6s;
 }
 
 .mediaFlowConfig.hidden {
   opacity: 0;
   margin-top: -340px;
   transform: scale(0);
-  transition: margin-top 0.5s, opacity 0.2s, transform 0.4s;
+  transition:
+    margin-top 0.5s,
+    opacity 0.2s,
+    transform 0.4s;
 }

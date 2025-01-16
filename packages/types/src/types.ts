@@ -103,7 +103,7 @@ export interface Config {
   encodes: Encode[];
   sortBy: SortBy[];
   onlyShowCachedStreams: boolean;
-  prioritiseLanguage?: string // from older configurations
+  prioritiseLanguage?: string; // from older configurations
   prioritisedLanguages: string[] | null;
   excludedLanguages: string[] | null;
   formatter: string;

@@ -6,7 +6,11 @@ import {
   Config,
 } from '@aiostreams/types';
 import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
-import { getMediaFlowPublicIp, serviceDetails, Settings } from '@aiostreams/utils';
+import {
+  getMediaFlowPublicIp,
+  serviceDetails,
+  Settings,
+} from '@aiostreams/utils';
 
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/{id}.json';
@@ -69,20 +73,28 @@ export class BaseWrapper {
       if (this.userConfig.requestingIp) {
         headers.set('X-Forwarded-For', this.userConfig.requestingIp);
         headers.set('X-Real-IP', this.userConfig.requestingIp);
-      } 
+      }
       if (this.userConfig.mediaFlowConfig?.mediaFlowEnabled) {
-        const mediaFlowIp = await getMediaFlowPublicIp(this.userConfig.mediaFlowConfig);
+        const mediaFlowIp = await getMediaFlowPublicIp(
+          this.userConfig.mediaFlowConfig
+        );
         if (mediaFlowIp) {
-          console.log(`|DBG| wrappers > base > Forwarding IP from MediaFlow to ${this.addonName}`);
+          console.log(
+            `|DBG| wrappers > base > Forwarding IP from MediaFlow to ${this.addonName}`
+          );
           headers.set('X-Forwarded-For', mediaFlowIp);
           headers.set('X-Real-IP', mediaFlowIp);
         }
       } else {
-        console.log(`|DBG| wrappers > base > Forwarding IP from request to ${this.addonName}`);
+        console.log(
+          `|DBG| wrappers > base > Forwarding IP from request to ${this.addonName}`
+        );
       }
       const urlParts = url.split('/');
       const sanitisedUrl = `${urlParts[0]}//${urlParts[2]}/*************/${urlParts.slice(-3).join('/')}`;
-      console.log(`|INF| wrappers > base > ${this.addonName}: GET ${sanitisedUrl}`);
+      console.log(
+        `|INF| wrappers > base > ${this.addonName}: GET ${sanitisedUrl}`
+      );
       const response = await fetch(url, {
         headers: headers,
         signal: controller.signal,
@@ -127,7 +139,9 @@ export class BaseWrapper {
       size: size,
       url: stream.url,
       externalUrl: stream.externalUrl,
-      _infoHash: stream.infoHash || (stream.url ? (stream.url.match(/[a-fA-F0-9]{40}/)?.[0]) : undefined),
+      _infoHash:
+        stream.infoHash ||
+        (stream.url ? stream.url.match(/[a-fA-F0-9]{40}/)?.[0] : undefined),
       torrent: {
         infoHash: stream.infoHash,
         fileIdx: stream.fileIdx,
@@ -145,12 +159,14 @@ export class BaseWrapper {
         behaviorHints: {
           countryWhitelist: stream.behaviorHints?.countryWhitelist,
           notWebReady: stream.behaviorHints?.notWebReady,
-          proxyHeaders: stream.behaviorHints?.proxyHeaders?.request || stream.behaviorHints?.proxyHeaders?.response
-          ? {
-            request: stream.behaviorHints?.proxyHeaders?.request,
-            response: stream.behaviorHints?.proxyHeaders?.response,
-            }
-          : undefined,
+          proxyHeaders:
+            stream.behaviorHints?.proxyHeaders?.request ||
+            stream.behaviorHints?.proxyHeaders?.response
+              ? {
+                  request: stream.behaviorHints?.proxyHeaders?.request,
+                  response: stream.behaviorHints?.proxyHeaders?.response,
+                }
+              : undefined,
           videoHash: stream.behaviorHints?.videoHash,
         },
       },
@@ -165,7 +181,9 @@ export class BaseWrapper {
     let description = stream.description || stream.title;
 
     if (!filename && description) {
-      console.log(`|DBG| wrappers > base > parseStream: No filename found in behaviorHints, attempting to parse from description`);
+      console.log(
+        `|DBG| wrappers > base > parseStream: No filename found in behaviorHints, attempting to parse from description`
+      );
       const lines = description.split('\n');
       filename =
         lines.find(
@@ -174,9 +192,13 @@ export class BaseWrapper {
               /(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/
             ) || line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
         ) || lines[0];
-      console.log(`|DBG| wrappers > base > parseStream: With description: ${description}, found filename: ${filename}`);
+      console.log(
+        `|DBG| wrappers > base > parseStream: With description: ${description}, found filename: ${filename}`
+      );
     } else if (!description) {
-      console.log(`|WRN| wrappers > base > parseStream: No description found, filename could not be determined`);
+      console.log(
+        `|WRN| wrappers > base > parseStream: No description found, filename could not be determined`
+      );
     }
 
     let parsedInfo: ParsedNameData = parseFilename(filename || '');
@@ -187,11 +209,9 @@ export class BaseWrapper {
       stream.behaviorHints?.videoSize ||
       stream.size ||
       stream.sizebytes ||
-      description && extractSizeInBytes(description, 1024) ||
-      stream.name && extractSizeInBytes(stream.name, 1024) ||
+      (description && extractSizeInBytes(description, 1024)) ||
+      (stream.name && extractSizeInBytes(stream.name, 1024)) ||
       undefined;
-        
-
 
     // look for seeders
     let seeders: string | undefined;
@@ -202,10 +222,10 @@ export class BaseWrapper {
     // look for indexer
     let indexer: string | undefined;
     if (description) {
-      const indexerMatch = RegExp(/[🌐⚙️🔗] ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u).exec(
-        description || ''
-      );
-      indexer = indexerMatch ? indexerMatch[1] : undefined
+      const indexerMatch = RegExp(
+        /[🌐⚙️🔗] ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u
+      ).exec(description || '');
+      indexer = indexerMatch ? indexerMatch[1] : undefined;
     }
 
     // look for providers

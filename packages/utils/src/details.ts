@@ -1,6 +1,5 @@
 import { AddonDetail } from '@aiostreams/types';
-import {Settings} from './settings';
-
+import { Settings } from './settings';
 
 export const addonDetails: AddonDetail[] = [
   {
@@ -38,9 +37,9 @@ export const addonDetails: AddonDetail[] = [
         required: false,
         label: 'Use Multiple Instances',
         description:
-          'Torrentio supports multiple services. By default, AIOStreams will pass all services to Torrentio. However, Torrentio has its\
-          own service priority system which can\'t be overriden. If you want to use a custom priority system for your services, you can enable this option.\
-          to create a separate request for each service.',
+          "Torrentio supports multiple services. By default, AIOStreams will pass all services to Torrentio. However, Torrentio has its\
+          own service priority system which can't be overriden. If you want to use a custom priority system for your services, you can enable this option.\
+          to create a separate request for each service.",
         type: 'checkbox',
       },
       {
@@ -238,8 +237,8 @@ export const addonDetails: AddonDetail[] = [
           min: Settings.MIN_TIMEOUT,
           max: Settings.MAX_TIMEOUT,
         },
-      }
-    ]
+      },
+    ],
   },
   {
     name: 'Easynews+',
@@ -274,8 +273,8 @@ export const addonDetails: AddonDetail[] = [
           min: Settings.MIN_TIMEOUT,
           max: Settings.MAX_TIMEOUT,
         },
-      }
-    ]
+      },
+    ],
   },
   {
     name: 'Stremio GDrive',
@@ -502,7 +501,8 @@ export const serviceDetails = [
     knownNames: ['SR', 'Seedr', 'SDR'],
     credentials: [
       {
-        label: 'Encoded Token. Please authorise at MediaFusion and copy the token into here.',
+        label:
+          'Encoded Token. Please authorise at MediaFusion and copy the token into here.',
         id: 'apiKey',
       },
     ],

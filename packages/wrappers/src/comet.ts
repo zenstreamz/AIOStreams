@@ -21,8 +21,7 @@ export class Comet extends BaseWrapper {
   ) {
     let url = overrideUrl
       ? overrideUrl
-      : Settings.COMET_URL +
-        (configString ? configString + '/' : '');
+      : Settings.COMET_URL + (configString ? configString + '/' : '');
 
     super(addonName, url, indexerTimeout, addonId, userConfig);
   }
@@ -45,7 +44,10 @@ export class Comet extends BaseWrapper {
     const debridMatch = RegExp(/^\[([a-zA-Z]{2})(\⚡)\]/).exec(stream.name!);
     const debrid = debridMatch
       ? {
-          id: serviceDetails.find((service) => service.knownNames.includes(debridMatch[1]))?.id || debridMatch[1],
+          id:
+            serviceDetails.find((service) =>
+              service.knownNames.includes(debridMatch[1])
+            )?.id || debridMatch[1],
           cached: debridMatch[2] === '⚡',
         }
       : undefined;
@@ -96,7 +98,7 @@ export async function getCometStreams(
     overrideName?: string;
   },
   streamRequest: StreamRequest,
-  addonId: string,
+  addonId: string
 ): Promise<ParsedStream[]> {
   const supportedServices: string[] =
     addonDetails.find((addon: AddonDetail) => addon.id === 'comet')
@@ -114,15 +116,14 @@ export async function getCometStreams(
       indexerTimeout,
       cometOptions.overrideName,
       addonId,
-      config,
+      config
     );
     return comet.getParsedStreams(streamRequest);
   }
 
   // find all usable and enabled services
   const usableServices = config.services.filter(
-    (service) =>
-      supportedServices.includes(service.id) && service.enabled
+    (service) => supportedServices.includes(service.id) && service.enabled
   );
 
   // if no usable services found, throw an error

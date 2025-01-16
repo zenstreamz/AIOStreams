@@ -118,25 +118,26 @@ const ServiceInput: React.FC<ServiceInputProps> = ({
           {fields.map((field, index) => (
             <div key={index} className={styles.field}>
               <label>
-              {field.label}
-              {field.link && (
-                <>
-                {'. Get it '}
-                <a
-                  href={field.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.link}
-                >
-                  here
-                </a>
-                </>
-              )}
-              {field.value && isEncrypted(field.value) && (
-                <span className={styles.encrypted}>
-                {'. '}Encrypted. To modify this, please reset the API key using the button to the right
-                </span>
-              )}
+                {field.label}
+                {field.link && (
+                  <>
+                    {'. Get it '}
+                    <a
+                      href={field.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.link}
+                    >
+                      here
+                    </a>
+                  </>
+                )}
+                {field.value && isEncrypted(field.value) && (
+                  <span className={styles.encrypted}>
+                    {'. '}Encrypted. To modify this, please reset the API key
+                    using the button to the right
+                  </span>
+                )}
               </label>
               <CredentialInput
                 credential={field.value}

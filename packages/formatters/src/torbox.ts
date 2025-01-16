@@ -10,7 +10,9 @@ export function torboxFormat(stream: ParsedStream): {
 
   name += `${stream.addon.name}`;
   if (stream.provider) {
-    const serviceShortName = serviceDetails.find((service) => service.id === stream.provider!.id)?.shortName || stream.provider.id;
+    const serviceShortName =
+      serviceDetails.find((service) => service.id === stream.provider!.id)
+        ?.shortName || stream.provider.id;
     name += ` (${serviceShortName}${stream.provider.cached === undefined ? ' Unknown' : stream.provider.cached ? ' Instant' : ''})`;
   }
 

@@ -1,4 +1,4 @@
-import { Settings } from "@aiostreams/utils";
+import { Settings } from '@aiostreams/utils';
 
 export const missingConfig = (origin: string) => {
   return {

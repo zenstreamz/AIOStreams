@@ -182,8 +182,8 @@ const AddonsList: React.FC<AddonsListProps> = ({
                     )}
                   </label>
                   {option.description && <small>{option.description}</small>}
-                  {option.type === 'text' && (
-                    option.id.toLowerCase().includes('url') ? (
+                  {option.type === 'text' &&
+                    (option.id.toLowerCase().includes('url') ? (
                       <CredentialInput
                         credential={addon.options[option.id] || ''}
                         setCredential={(value) =>
@@ -203,8 +203,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
                         }
                         className={styles.textInput}
                       />
-                    )
-                  )}
+                    ))}
                   {option.type === 'select' && (
                     <select
                       value={addon.options[option.id] || ''}

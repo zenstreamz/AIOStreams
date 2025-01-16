@@ -51,12 +51,12 @@ const defaultQualities: Quality[] = [
 ];
 
 const defaultVisualTags: VisualTag[] = [
-  { "HDR+DV": true },
+  { 'HDR+DV': true },
   { 'HDR10+': true },
   { HDR10: true },
   { HDR: true },
   { DV: true },
-  { "3D": true },
+  { '3D': true },
   { IMAX: true },
   { AI: true },
 ];
@@ -86,10 +86,10 @@ const defaultEncodes: Encode[] = [
 const defaultSortCriteria: SortBy[] = [
   { cached: true, direction: 'desc' },
   { resolution: true },
-  { language: true},
+  { language: true },
   { size: true, direction: 'desc' },
   { visualTag: false },
-  { service: false, },
+  { service: false },
   { audioTag: false },
   { encode: false },
   { quality: false },
@@ -129,7 +129,6 @@ const defaultResolutions: Resolution[] = [
   { Unknown: true },
 ];
 
-
 const defaultServices = serviceDetails.map((service) => ({
   name: service.name,
   id: service.id,
@@ -138,7 +137,7 @@ const defaultServices = serviceDetails.map((service) => ({
 }));
 
 const selectStyles: StylesConfig = {
-  control: (baseStyles: any, state: { isFocused: boolean; }) => ({
+  control: (baseStyles: any, state: { isFocused: boolean }) => ({
     ...baseStyles,
     borderWidth: '0px',
     backgroundColor: 'white',
@@ -149,10 +148,12 @@ const selectStyles: StylesConfig = {
     margin: '10px 0 0 -0px',
     transition: 'border-color 0.2s, box-shadow 0.2s',
     boxShadow: state.isFocused ? '0 0 0 3px rgb(112, 112, 112)' : 'none',
-    "&:hover": {
+    '&:hover': {
       borderColor: '#5c5c5c',
-      boxShadow: state.isFocused ? '0 0 0 3px rgb(128, 128, 128)' : '0 0 0 2px rgb(161, 161, 161)',
-    }
+      boxShadow: state.isFocused
+        ? '0 0 0 3px rgb(128, 128, 128)'
+        : '0 0 0 2px rgb(161, 161, 161)',
+    },
   }),
   input: (baseStyles: any) => ({
     ...baseStyles,
@@ -176,7 +177,7 @@ const selectStyles: StylesConfig = {
     ...baseStyles,
     color: 'white',
     transition: 'color 0.2s',
-    "&:hover": {
+    '&:hover': {
       backgroundColor: 'transparent',
       color: 'rgb(141, 141, 141)',
       cursor: 'pointer',
@@ -192,17 +193,17 @@ const selectStyles: StylesConfig = {
   valueContainer: (baseStyles: any) => ({
     ...baseStyles,
   }),
-  option: (baseStyles: any, state: { isFocused: any; }) => ({
+  option: (baseStyles: any, state: { isFocused: any }) => ({
     ...baseStyles,
     color: state.isFocused ? 'white' : 'black',
     backgroundColor: state.isFocused ? 'rgb(68, 68, 68)' : 'white',
-    "&:hover": {
+    '&:hover': {
       backgroundColor: 'rgb(68, 68, 68)', //'#9c9c9c',
     },
-    "&:active": {
-        transition: 'background-color 0.4s, color 0.1s',
-        backgroundColor: 'rgb(26, 26, 26)',
-        color: 'white',
+    '&:active': {
+      transition: 'background-color 0.4s, color 0.1s',
+      backgroundColor: 'rgb(26, 26, 26)',
+      color: 'white',
     },
   }),
 };
@@ -221,8 +222,12 @@ export default function Configure() {
   const [services, setServices] = useState<Config['services']>(defaultServices);
   const [onlyShowCachedStreams, setOnlyShowCachedStreams] =
     useState<boolean>(false);
-  const [prioritisedLanguages, setPrioritisedLanguages] = useState<string[] | null>(null);
-  const [excludedLanguages, setExcludedLanguages] = useState<string[] | null>(null);
+  const [prioritisedLanguages, setPrioritisedLanguages] = useState<
+    string[] | null
+  >(null);
+  const [excludedLanguages, setExcludedLanguages] = useState<string[] | null>(
+    null
+  );
   const [addons, setAddons] = useState<Config['addons']>([]);
   /*
   const [maxSize, setMaxSize] = useState<number | null>(null);
@@ -232,15 +237,20 @@ export default function Configure() {
   const [minMovieSize, setMinMovieSize] = useState<number | null>(null);
   const [maxEpisodeSize, setMaxEpisodeSize] = useState<number | null>(null);
   const [minEpisodeSize, setMinEpisodeSize] = useState<number | null>(null);
-  const [addonNameInDescription, setAddonNameInDescription] = useState<boolean>(false);
+  const [addonNameInDescription, setAddonNameInDescription] =
+    useState<boolean>(false);
   const [cleanResults, setCleanResults] = useState<boolean>(false);
-  const [maxResultsPerResolution, setMaxResultsPerResolution] = useState<number | null>(null);
+  const [maxResultsPerResolution, setMaxResultsPerResolution] = useState<
+    number | null
+  >(null);
   const [mediaFlowEnabled, setMediaFlowEnabled] = useState<boolean>(false);
   const [mediaFlowProxyUrl, setmediaFlowProxyUrl] = useState<string>('');
   const [mediaFlowApiPassword, setmediaFlowApiPassword] = useState<string>('');
   const [mediaFlowPublicIp, setMediaFlowPublicIp] = useState<string>('');
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
-  const [manualManifestUrl, setManualManifestUrl] = useState<string | null>(null);
+  const [manualManifestUrl, setManualManifestUrl] = useState<string | null>(
+    null
+  );
 
   const getChoosableAddons = () => {
     // only if torbox service is enabled we can use torbox addon
@@ -288,14 +298,18 @@ export default function Configure() {
         mediaFlowEnabled,
         proxyUrl: mediaFlowProxyUrl,
         apiPassword: mediaFlowApiPassword,
-        publicIp: mediaFlowPublicIp
+        publicIp: mediaFlowPublicIp,
       },
       addons,
       services,
     };
   };
 
-  const fetchWithTimeout = async (url: string, options: RequestInit | undefined, timeoutMs = 5000) => {
+  const fetchWithTimeout = async (
+    url: string,
+    options: RequestInit | undefined,
+    timeoutMs = 5000
+  ) => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -309,42 +323,61 @@ export default function Configure() {
     }
   };
 
-  const getManifestUrl = async (protocol = window.location.protocol, root = window.location.host) => {
+  const getManifestUrl = async (
+    protocol = window.location.protocol,
+    root = window.location.host
+  ) => {
     const config = createConfig();
     console.log('Config', config);
     setDisableButtons(true);
-    
-  
+
     try {
-        const encryptPath = `/encrypt-user-data`;
-        const response = await fetchWithTimeout(encryptPath, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: JSON.stringify(config) }),
-        });
-        if (!response) {
-            throw new Error('encrypt-user-data failed: no response within timeout');
-        }
-        if (!response.ok) {
-            throw new Error(`encrypt-user-data failed with status ${response.status}`);
-        }
+      const encryptPath = `/encrypt-user-data`;
+      const response = await fetchWithTimeout(encryptPath, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: JSON.stringify(config) }),
+      });
+      if (!response) {
+        throw new Error('encrypt-user-data failed: no response within timeout');
+      }
+      if (!response.ok) {
+        throw new Error(
+          `encrypt-user-data failed with status ${response.status}`
+        );
+      }
 
-        const data = await response.json();
-        if (!data.success) throw new Error(`Encryption service failed, ${data.message}`);
+      const data = await response.json();
+      if (!data.success)
+        throw new Error(`Encryption service failed, ${data.message}`);
 
-        const encryptedConfig = data.data;
-        return { success: true, manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json` };
+      const encryptedConfig = data.data;
+      return {
+        success: true,
+        manifest: `${protocol}//${root}/${encryptedConfig}/manifest.json`,
+      };
     } catch (error: any) {
-        console.error('Error during encryption:', error.message, '\nFalling back to base64 encoding');
-        try {
-            const base64Config = btoa(JSON.stringify(config));
-            return { success: true, manifest: `${protocol}//${root}/${base64Config}/manifest.json` };
-        } catch (base64Error: any) {
-            console.error('Error during base64 encoding:', base64Error.message);
-            return { success: false, manifest: null, message: 'Failed to encode config' };
-        }
+      console.error(
+        'Error during encryption:',
+        error.message,
+        '\nFalling back to base64 encoding'
+      );
+      try {
+        const base64Config = btoa(JSON.stringify(config));
+        return {
+          success: true,
+          manifest: `${protocol}//${root}/${base64Config}/manifest.json`,
+        };
+      } catch (base64Error: any) {
+        console.error('Error during base64 encoding:', base64Error.message);
+        return {
+          success: false,
+          manifest: null,
+          message: 'Failed to encode config',
+        };
+      }
     }
-};
+  };
 
   const createAndValidateConfig = () => {
     const config = createConfig();
@@ -408,7 +441,9 @@ export default function Configure() {
     }
   };
 
-  const handleInstallToWeb = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleInstallToWeb = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
     if (createAndValidateConfig()) {
       const id = toast.loading('Generating manifest URL...', toastOptions);
@@ -449,7 +484,9 @@ export default function Configure() {
           autoClose: 5000,
           isLoading: false,
         });
-        setManualManifestUrl(`https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`);
+        setManualManifestUrl(
+          `https://web.stremio.com/#/addons?addon=${encodedManifestUrl}`
+        );
       }
       setDisableButtons(false);
     }
@@ -470,16 +507,19 @@ export default function Configure() {
         setDisableButtons(false);
         return;
       }
-      navigator.clipboard.writeText(manifestUrl.manifest).then(() => {
-        toast.update(id, {
-          render: 'Manifest URL copied to clipboard',
-          type: 'success',
-          autoClose: 5000,
-          toastId: 'copiedManifestUrl',
-          isLoading: false,
-        });
-        setManualManifestUrl(null);
-      }).catch((err: any) => {
+      navigator.clipboard
+        .writeText(manifestUrl.manifest)
+        .then(() => {
+          toast.update(id, {
+            render: 'Manifest URL copied to clipboard',
+            type: 'success',
+            autoClose: 5000,
+            toastId: 'copiedManifestUrl',
+            isLoading: false,
+          });
+          setManualManifestUrl(null);
+        })
+        .catch((err: any) => {
           console.error('Failed to copy manifest URL to clipboard', err);
           toast.update(id, {
             render: 'Failed to copy manifest URL to clipboard.',
@@ -488,7 +528,7 @@ export default function Configure() {
             isLoading: false,
           });
           setManualManifestUrl(manifestUrl.manifest);
-      });
+        });
       setDisableButtons(false);
     }
   };
@@ -513,9 +553,11 @@ export default function Configure() {
       return defaultSortCriteria;
     }
     return defaultSortCriteria.map((defaultSort) => {
-      // we find the one with the same key in the first index. 
+      // we find the one with the same key in the first index.
       // and we only load direction if it exists in the defaultSort
-      const sort = sortCriteria.find((s) => Object.keys(s)[0] === Object.keys(defaultSort)[0]);
+      const sort = sortCriteria.find(
+        (s) => Object.keys(s)[0] === Object.keys(defaultSort)[0]
+      );
       if (sort && defaultSort.direction) {
         return { ...sort, direction: sort.direction || defaultSort.direction };
       }
@@ -555,7 +597,7 @@ export default function Configure() {
   };
 
   // Load config from the window path if it exists
-   useEffect(()  => {
+  useEffect(() => {
     setIsClient(true);
     async function decodeConfig(config: string) {
       let decodedConfig: Config;
@@ -570,10 +612,7 @@ export default function Configure() {
     function loadFromConfig(decodedConfig: Config) {
       console.log('Loaded config', decodedConfig);
       setResolutions(
-        loadValidValuesFromObject(
-          decodedConfig.resolutions,
-          defaultResolutions
-        )
+        loadValidValuesFromObject(decodedConfig.resolutions, defaultResolutions)
       );
       setQualities(
         loadValidValuesFromObject(decodedConfig.qualities, defaultQualities)
@@ -587,12 +626,11 @@ export default function Configure() {
       setEncodes(
         loadValidValuesFromObject(decodedConfig.encodes, defaultEncodes)
       );
-      setSortCriteria(
-        loadValidSortCriteria(decodedConfig.sortBy)
-      );
+      setSortCriteria(loadValidSortCriteria(decodedConfig.sortBy));
       setOnlyShowCachedStreams(decodedConfig.onlyShowCachedStreams || false);
       // create an array for prioritised languages. if the old prioritiseLanguage is set, add it to the array
-      const finalPrioritisedLanguages = decodedConfig.prioritisedLanguages || [];
+      const finalPrioritisedLanguages =
+        decodedConfig.prioritisedLanguages || [];
       if (decodedConfig.prioritiseLanguage) {
         finalPrioritisedLanguages.push(decodedConfig.prioritiseLanguage);
       }
@@ -626,7 +664,9 @@ export default function Configure() {
       setAddonNameInDescription(decodedConfig.addonNameInDescription || false);
       setCleanResults(decodedConfig.cleanResults || false);
       setMaxResultsPerResolution(decodedConfig.maxResultsPerResolution || null);
-      setMediaFlowEnabled(decodedConfig.mediaFlowConfig?.mediaFlowEnabled || false);
+      setMediaFlowEnabled(
+        decodedConfig.mediaFlowConfig?.mediaFlowEnabled || false
+      );
       setmediaFlowProxyUrl(decodedConfig.mediaFlowConfig?.proxyUrl || '');
       setmediaFlowApiPassword(decodedConfig.mediaFlowConfig?.apiPassword || '');
     }
@@ -659,16 +699,28 @@ export default function Configure() {
             <h1 style={{ textAlign: 'center' }}>AIOStreams</h1>
             <span className={styles.version}>v{version}</span>
           </div>
-          {process.env.NEXT_PUBLIC_BRANDING && <div className={styles.branding} dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_BRANDING || '' }} />}
+          {process.env.NEXT_PUBLIC_BRANDING && (
+            <div
+              className={styles.branding}
+              dangerouslySetInnerHTML={{
+                __html: process.env.NEXT_PUBLIC_BRANDING || '',
+              }}
+            />
+          )}
           <p style={{ textAlign: 'center', padding: '15px' }}>
             AIOStreams, the all-in-one streaming addon for Stremio. Combine your
             streams from all your addons into one and filter them by resolution,
             quality, visual tags and more.
-            <br /><br/>
-            This addon will return any result from the addons you enable. These can be P2P results, direct links, or anything else.
-            Results that are P2P are marked as P2P, however. 
-            <br /><br/>
-            This addon also has no persistence. Nothing you enter here is stored. They are encrypted within the manifest URL and are only used to retrieve streams from any addons you enable.
+            <br />
+            <br />
+            This addon will return any result from the addons you enable. These
+            can be P2P results, direct links, or anything else. Results that are
+            P2P are marked as P2P, however.
+            <br />
+            <br />
+            This addon also has no persistence. Nothing you enter here is
+            stored. They are encrypted within the manifest URL and are only used
+            to retrieve streams from any addons you enable.
           </p>
           <p style={{ textAlign: 'center', padding: '15px' }}>
             Made by Viren070. Source code on{' '}
@@ -682,7 +734,7 @@ export default function Configure() {
             </a>
           </p>
         </div>
-        
+
         <div className={styles.section}>
           <h2 style={{ padding: '5px' }}>Services</h2>
           <p style={{ padding: '5px' }}>
@@ -733,7 +785,10 @@ export default function Configure() {
                 const [movedService] = newServices.splice(serviceIndex, 1);
                 if (direction === 'up' && serviceIndex > 0) {
                   newServices.splice(serviceIndex - 1, 0, movedService);
-                } else if (direction === 'down' && serviceIndex < newServices.length) {
+                } else if (
+                  direction === 'down' &&
+                  serviceIndex < newServices.length
+                ) {
                   newServices.splice(serviceIndex + 1, 0, movedService);
                 }
                 setServices(newServices);
@@ -836,72 +891,110 @@ export default function Configure() {
         </div>
 
         <div className={styles.section}>
-          <h2
-          style={{ padding: '5px', margin: '0px '}}
-          >Languages
-          </h2>
-          <p style={{margin: '5px 0 12px 5px' }}>
-            Choose which languages you want to prioritise and exclude from the results
+          <h2 style={{ padding: '5px', margin: '0px ' }}>Languages</h2>
+          <p style={{ margin: '5px 0 12px 5px' }}>
+            Choose which languages you want to prioritise and exclude from the
+            results
           </p>
           <div className={styles.section}>
             <div>
-              <h3 style={{ margin: '2px 0 2px 0'}}>Prioritise Languages</h3>
-              <p style={{ margin: '10px 0 10px 0'}}>
-                Any results that are detected to have one of the prioritised languages will be sorted according to your sort criteria. 
-                You must have the <code>Langage</code> sort criteria enabled for this to work.
-                If there are multiple results with a different prioritised language, the order is determined by the order of the prioritised languages.
+              <h3 style={{ margin: '2px 0 2px 0' }}>Prioritise Languages</h3>
+              <p style={{ margin: '10px 0 10px 0' }}>
+                Any results that are detected to have one of the prioritised
+                languages will be sorted according to your sort criteria. You
+                must have the <code>Langage</code> sort criteria enabled for
+                this to work. If there are multiple results with a different
+                prioritised language, the order is determined by the order of
+                the prioritised languages.
               </p>
             </div>
             <div>
               {isClient ? ( // https://github.com/JedWatson/react-select/issues/5859
-              <Select 
-                isMulti
-                closeMenuOnSelect={false}
-                options={allowedLanguages.sort((a,b) => a.localeCompare(b)).map((language) => ({ value: language, label: language }))}
-                value={prioritisedLanguages?.map((language) => ({ value: language, label: language })) || []}
-                onChange={(selectedOptions: any) => {
-                  const selectedLanguages = selectedOptions.map((option: any) => option.value);
-                  setPrioritisedLanguages(selectedLanguages || null);
-                }}
-                styles={selectStyles}
-              />
-              ) :
-              // render a fake select box until the actual one is rendered
-              <div style={{ height: '42px', margin: '0', backgroundColor: 'white', borderRadius: 'var(--borderRadius)', display: 'flex', alignItems: 'center'}}><p style={{margin: '10px', color: '#808090'}}>Select...</p></div>
-            }
-              
-             
+                <Select
+                  isMulti
+                  closeMenuOnSelect={false}
+                  options={allowedLanguages
+                    .sort((a, b) => a.localeCompare(b))
+                    .map((language) => ({ value: language, label: language }))}
+                  value={
+                    prioritisedLanguages?.map((language) => ({
+                      value: language,
+                      label: language,
+                    })) || []
+                  }
+                  onChange={(selectedOptions: any) => {
+                    const selectedLanguages = selectedOptions.map(
+                      (option: any) => option.value
+                    );
+                    setPrioritisedLanguages(selectedLanguages || null);
+                  }}
+                  styles={selectStyles}
+                />
+              ) : (
+                // render a fake select box until the actual one is rendered
+                <div
+                  style={{
+                    height: '42px',
+                    margin: '0',
+                    backgroundColor: 'white',
+                    borderRadius: 'var(--borderRadius)',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <p style={{ margin: '10px', color: '#808090' }}>Select...</p>
+                </div>
+              )}
             </div>
           </div>
-          <div style={{marginBottom: '0px'}} className={styles.section} >
+          <div style={{ marginBottom: '0px' }} className={styles.section}>
             <div>
-              <h3
-                style={{ margin: '2px 0 2px 0'}}
-              >Exclude Languages</h3>
-              <p style={{ margin: '10px 0 10px 0'}}>
+              <h3 style={{ margin: '2px 0 2px 0' }}>Exclude Languages</h3>
+              <p style={{ margin: '10px 0 10px 0' }}>
                 Any results that are detected to have an excluded language will
-                be removed from the results. A result will only be excluded if 
-                it only has one of or more of the excluded languages. If it contains a 
-                language that is not excluded, it will still be included.
+                be removed from the results. A result will only be excluded if
+                it only has one of or more of the excluded languages. If it
+                contains a language that is not excluded, it will still be
+                included.
               </p>
             </div>
             <div>
               {isClient ? (
-              <Select 
-                isMulti
-                closeMenuOnSelect={false}
-                options={allowedLanguages.sort((a,b) => a.localeCompare(b)).map((language) => ({ value: language, label: language }))}
-                value={excludedLanguages?.map((language) => ({ value: language, label: language })) || []}
-                onChange={(selectedOptions: any) => {
-                  const selectedLanguages = selectedOptions.map((option: any) => option.value);
-                  setExcludedLanguages(selectedLanguages || null);
-                }}
-                styles={selectStyles}
-              />
-              ) :
-              // render a fake select box until the actual one is rendered
-              <div style={{ height: '42px', margin: '0', backgroundColor: 'white', borderRadius: 'var(--borderRadius)', display: 'flex', alignItems: 'center'}}><p style={{margin: '10px', color: '#808090'}}>Select...</p></div>
-              }
+                <Select
+                  isMulti
+                  closeMenuOnSelect={false}
+                  options={allowedLanguages
+                    .sort((a, b) => a.localeCompare(b))
+                    .map((language) => ({ value: language, label: language }))}
+                  value={
+                    excludedLanguages?.map((language) => ({
+                      value: language,
+                      label: language,
+                    })) || []
+                  }
+                  onChange={(selectedOptions: any) => {
+                    const selectedLanguages = selectedOptions.map(
+                      (option: any) => option.value
+                    );
+                    setExcludedLanguages(selectedLanguages || null);
+                  }}
+                  styles={selectStyles}
+                />
+              ) : (
+                // render a fake select box until the actual one is rendered
+                <div
+                  style={{
+                    height: '42px',
+                    margin: '0',
+                    backgroundColor: 'white',
+                    borderRadius: 'var(--borderRadius)',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <p style={{ margin: '10px', color: '#808090' }}>Select...</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -911,7 +1004,8 @@ export default function Configure() {
             <div>
               <h2 style={{ padding: '5px' }}>Size Filter</h2>
               <p style={{ padding: '5px' }}>
-                Filter streams by size. Leave the maximum and minimum size sliders at opposite ends to disable the filter.
+                Filter streams by size. Leave the maximum and minimum size
+                sliders at opposite ends to disable the filter.
               </p>
             </div>
             <div className={styles.slidersContainer}>
@@ -927,7 +1021,9 @@ export default function Configure() {
               </div>
               <Slider
                 maxValue={Settings.MAX_MOVIE_SIZE}
-                value={maxMovieSize === null ? Settings.MAX_MOVIE_SIZE : maxMovieSize}
+                value={
+                  maxMovieSize === null ? Settings.MAX_MOVIE_SIZE : maxMovieSize
+                }
                 setValue={setMaxMovieSize}
                 defaultValue="max"
                 id="maxMovieSizeSlider"
@@ -949,7 +1045,9 @@ export default function Configure() {
               <Slider
                 maxValue={Settings.MAX_EPISODE_SIZE}
                 value={
-                  maxEpisodeSize === null ? Settings.MAX_EPISODE_SIZE : maxEpisodeSize
+                  maxEpisodeSize === null
+                    ? Settings.MAX_EPISODE_SIZE
+                    : maxEpisodeSize
                 }
                 setValue={setMaxEpisodeSize}
                 defaultValue="max"
@@ -970,15 +1068,19 @@ export default function Configure() {
             <div className={styles.settingDescription}>
               <h2 style={{ padding: '5px' }}>Limit results per resolution</h2>
               <p style={{ padding: '5px' }}>
-                Limit the number of results per resolution. Leave empty to show all results.
+                Limit the number of results per resolution. Leave empty to show
+                all results.
               </p>
-                
             </div>
             <div className={styles.settingInput}>
               <input
                 type="number"
                 value={maxResultsPerResolution || ''}
-                onChange={(e) => setMaxResultsPerResolution(e.target.value ? parseInt(e.target.value) : null)}
+                onChange={(e) =>
+                  setMaxResultsPerResolution(
+                    e.target.value ? parseInt(e.target.value) : null
+                  )
+                }
                 style={{
                   marginLeft: 'auto',
                   marginRight: '20px',
@@ -1018,8 +1120,10 @@ export default function Configure() {
             <div className={styles.settingDescription}>
               <h2 style={{ padding: '5px' }}>Move Addon Name to Description</h2>
               <p style={{ padding: '5px' }}>
-                Move the addon name to the description of the stream. This will show <code>AIOStreams</code> as the stream title,
-                but move the name of the addon that the stream is from to the description. This is useful for Vidi users. 
+                Move the addon name to the description of the stream. This will
+                show <code>AIOStreams</code> as the stream title, but move the
+                name of the addon that the stream is from to the description.
+                This is useful for Vidi users.
               </p>
             </div>
             <div className={styles.settingInput}>
@@ -1037,14 +1141,18 @@ export default function Configure() {
               />
             </div>
           </div>
-        </div> 
+        </div>
 
         <div className={styles.section}>
           <div className={styles.setting}>
             <div className={styles.settingDescription}>
               <h2 style={{ padding: '5px' }}>Clean Results</h2>
               <p style={{ padding: '5px' }}>
-                Attempt to remove duplicate results. For a given file with duplicate streams: one uncached stream from all uncached streams is selected per provider. One cached stream from only one provider is selected. For duplicates without a provider, one stream is selected at random.
+                Attempt to remove duplicate results. For a given file with
+                duplicate streams: one uncached stream from all uncached streams
+                is selected per provider. One cached stream from only one
+                provider is selected. For duplicates without a provider, one
+                stream is selected at random.
               </p>
             </div>
             <div className={styles.settingInput}>
@@ -1088,70 +1196,69 @@ export default function Configure() {
               />
             </div>
           </div>
-          {(
-            <div className={`${styles.mediaFlowConfig} ${mediaFlowEnabled ? '' : styles.hidden}`}>
-            <div>
+          {
+            <div
+              className={`${styles.mediaFlowConfig} ${mediaFlowEnabled ? '' : styles.hidden}`}
+            >
               <div>
-                <h3 style={{ padding: '5px' }}>Proxy URL</h3>
-                <p style={{ padding: '5px' }}>
-                  The URL of the MediaFlow proxy server
-                </p>
+                <div>
+                  <h3 style={{ padding: '5px' }}>Proxy URL</h3>
+                  <p style={{ padding: '5px' }}>
+                    The URL of the MediaFlow proxy server
+                  </p>
+                </div>
+                <div>
+                  <CredentialInput
+                    credential={mediaFlowProxyUrl}
+                    setCredential={setmediaFlowProxyUrl}
+                    inputProps={{
+                      placeholder: 'Enter your MediaFlow proxy URL',
+                      disabled: !mediaFlowEnabled,
+                    }}
+                  />
+                </div>
               </div>
               <div>
-                <CredentialInput
-                  credential={mediaFlowProxyUrl}
-                  setCredential={setmediaFlowProxyUrl}
-                  inputProps={
-                    {
-                      'placeholder': 'Enter your MediaFlow proxy URL',
-                      'disabled': !mediaFlowEnabled
-                    }
-                  }
-                />
+                <div>
+                  <h3 style={{ padding: '5px' }}>API Password</h3>
+                  <p style={{ padding: '5px' }}>
+                    Your MediaFlow&apos;s API password
+                  </p>
+                </div>
+                <div>
+                  <CredentialInput
+                    credential={mediaFlowApiPassword}
+                    setCredential={setmediaFlowApiPassword}
+                    inputProps={{
+                      placeholder: 'Enter your MediaFlow API password',
+                      disabled: !mediaFlowEnabled,
+                    }}
+                  />
+                </div>
+              </div>
+              <div>
+                <div>
+                  <h3 style={{ padding: '5px' }}>Public IP (Optional)</h3>
+                  <p style={{ padding: '5px' }}>
+                    Configure this only when running MediaFlow locally with a
+                    proxy service. Leave empty if MediaFlow is configured
+                    locally without a proxy server or if it&apos;s hosted on a
+                    remote server.
+                  </p>
+                </div>
+                <div>
+                  <CredentialInput
+                    credential={mediaFlowPublicIp}
+                    setCredential={setMediaFlowPublicIp}
+                    inputProps={{
+                      placeholder: 'Enter your MediaFlow public IP',
+                      disabled: !mediaFlowEnabled,
+                    }}
+                  />
+                </div>
               </div>
             </div>
-            <div>
-              <div>
-                <h3 style={{ padding: '5px' }}>API Password</h3>
-                <p style={{ padding: '5px' }}>
-                  Your MediaFlow&apos;s API password
-                </p>
-              </div>
-              <div>
-                <CredentialInput
-                  credential={mediaFlowApiPassword}
-                  setCredential={setmediaFlowApiPassword}
-                  inputProps={
-                    {
-                      'placeholder': 'Enter your MediaFlow API password',
-                      'disabled': !mediaFlowEnabled
-                    }
-                  }
-                />
-              </div>
-            </div>
-            <div>
-              <div>
-                <h3 style={{ padding: '5px' }}>Public IP (Optional)</h3>
-                <p style={{ padding: '5px' }}>
-                Configure this only when running MediaFlow locally with a proxy service. Leave empty if MediaFlow is configured locally without a proxy server or if it&apos;s hosted on a remote server.
-                </p>
-              </div>
-              <div>
-                <CredentialInput
-                  credential={mediaFlowPublicIp}
-                  setCredential={setMediaFlowPublicIp}
-                  inputProps={
-                    {
-                      'placeholder': 'Enter your MediaFlow public IP',
-                      'disabled': !mediaFlowEnabled
-                    }
-                  }
-                />
-              </div>
-            </div>
-          </div>
-          )}
+          }
         </div>
 
         <div className={styles.installButtons}>
@@ -1178,17 +1285,24 @@ export default function Configure() {
           </button>
           {manualManifestUrl && (
             <>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <p style={{ padding: '5px' }}>
-              If the above buttons do not work, you can use the following manifest URL to install the addon.
-            </p>
-            <input
-              type="text"
-              value={manualManifestUrl}
-              readOnly
-              style={{ width: '100%', padding: '5px', margin: '5px' }}
-            />
-            </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <p style={{ padding: '5px' }}>
+                  If the above buttons do not work, you can use the following
+                  manifest URL to install the addon.
+                </p>
+                <input
+                  type="text"
+                  value={manualManifestUrl}
+                  readOnly
+                  style={{ width: '100%', padding: '5px', margin: '5px' }}
+                />
+              </div>
             </>
           )}
         </div>
