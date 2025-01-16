@@ -74,7 +74,7 @@ export async function getMediaFlowPublicIp(mediaFlowConfig: Config["mediaFlowCon
 
   try {
     console.debug('|DBG| mediaflow > getMediaFlowPublicIp > GET /proxy/ip?api_password=***');
-    const response = await fetch(new URL(`/proxy/ip?api_password=${mediaFlowConfig.apiPassword}`, mediaFlowUrl).toString(), {
+    const response = await fetch(new URL(`/proxy/ip?api_password=${encodeURIComponent(mediaFlowConfig.apiPassword)}`, mediaFlowUrl).toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
