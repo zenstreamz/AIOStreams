@@ -20,7 +20,7 @@ export function torboxFormat(stream: ParsedStream): {
     name += ` (P2P)`;
   }
 
-  name += ` (${stream.resolution})`;
+  name += `${stream.personal ? '(Your Media) ' : ''}(${stream.resolution})`;
 
   let description: string = '';
 

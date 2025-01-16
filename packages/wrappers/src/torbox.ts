@@ -46,6 +46,13 @@ export class Torbox extends BaseWrapper {
 
   protected parseStream(stream: TorboxStream): ParsedStream | undefined {
     let type = stream.type;
+    let personal = false;
+    if (stream.name.includes('Your Media')) {
+      console.log(
+        `|INF| wrappers > torbox > detected personal stream in ${stream.name}`
+      );
+      personal = true;
+    }
     const [dQuality, dFilename, dSize, dLanguage, dAgeOrSeeders] =
       stream.description.split('\n').map((field: string) => {
         if (field.startsWith('Type')) {
@@ -126,7 +133,10 @@ export class Torbox extends BaseWrapper {
       sizeInBytes,
       provider,
       seeders,
-      age
+      age,
+      undefined,
+      undefined,
+      personal
     );
 
     return parsedStream;

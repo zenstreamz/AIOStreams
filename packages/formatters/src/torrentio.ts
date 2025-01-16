@@ -24,7 +24,7 @@ export function torrentioFormat(stream: ParsedStream): {
     name += '[P2P] ';
   }
 
-  name += `${stream.addon.name} ${stream.resolution} `;
+  name += `${stream.addon.name} ${stream.personal ? '(Your Media) ' : ''}${stream.resolution} `;
 
   if (stream.visualTags.length > 0) {
     name += stream.visualTags.join(' | ');
