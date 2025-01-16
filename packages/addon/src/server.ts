@@ -197,6 +197,7 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
           if (!decrypted) {
             console.error(`|ERR| server > Failed to decrypt ${key} for service ${service.id}`);
             res.status(200).json(invalidConfig(rootUrl(req), 'Failed to decrypt config'));
+            return;
           }
           service.credentials[key] = decrypted;
         });
@@ -241,6 +242,7 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
           if (!decrypted) {
             console.error(`|ERR| server > Failed to decrypt ${key} for addon ${addon.id}`);
             res.status(200).json(invalidConfig(rootUrl(req), 'Failed to decrypt config'));
+            return;
           }
           addon.options[key] = decrypted;
         });
