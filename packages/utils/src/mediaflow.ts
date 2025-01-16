@@ -79,6 +79,7 @@ export async function getMediaFlowPublicIp(mediaFlowConfig: Config["mediaFlowCon
       headers: {
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(5000),
 
     });
 
