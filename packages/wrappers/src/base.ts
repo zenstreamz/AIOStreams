@@ -11,6 +11,7 @@ import {
   serviceDetails,
   Settings,
 } from '@aiostreams/utils';
+import { fetch as uFetch, ProxyAgent } from 'undici';
 
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/{id}.json';
@@ -95,21 +96,48 @@ export class BaseWrapper {
       console.log(
         `|INF| wrappers > base > ${this.addonName}: GET ${sanitisedUrl}`
       );
-      const response = await fetch(url, {
-        headers: headers,
-        signal: controller.signal,
-      });
+      let response;
+      const dispatcher = new ProxyAgent(Settings.ADDON_PROXY);
+      try {
+        response = await fetch(url, {
+          method: 'GET',
+          headers: headers,
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          let message = await response.text();
+          throw new Error(
+            `${response.status} - ${response.statusText}: ${message}`
+          );
+        }
+      } catch (error: any) {
+        if (!Settings.ADDON_PROXY) {
+          throw error;
+        }
+        console.error(
+          `|ERR| wrappers > base > ${this.addonName}: Got error: ${error.message} when fetching from ${sanitisedUrl}, trying with proxy instead`
+        );
+        response = await uFetch(url, {
+          dispatcher,
+          method: 'GET',
+          headers: headers,
+          signal: controller.signal,
+        });
+      }
 
       clearTimeout(timeout);
 
       if (!response.ok) {
         let message = await response.text();
-        return Promise.reject(
-          new Error(`${response.status} - ${response.statusText}: ${message}`)
+        throw new Error(
+          `${response.status} - ${response.statusText}: ${message}`
         );
       }
 
-      let results: { streams: Stream[] } = await response.json();
+      const results = (await response.json()) as { streams: Stream[] };
+      if (!results.streams) {
+        throw new Error('Failed to respond with streams');
+      }
       return results.streams;
     } catch (error: any) {
       clearTimeout(timeout);

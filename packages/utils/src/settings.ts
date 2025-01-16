@@ -29,6 +29,7 @@ export class Settings {
   public static readonly EASYNEWS_PLUS_URL =
     process.env.EASYNEWS_PLUS_URL ??
     'https://b89262c192b0-stremio-easynews-addon.baby-beamup.club/';
+  public static readonly ADDON_PROXY = process.env.ADDON_PROXY ?? '';
   public static readonly MAX_ADDONS = process.env.MAX_ADDONS
     ? parseInt(process.env.MAX_ADDONS)
     : 15;
