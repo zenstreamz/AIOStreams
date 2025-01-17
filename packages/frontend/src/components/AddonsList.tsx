@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './AddonsList.module.css';
 import { AddonDetail, Config } from '@aiostreams/types';
 import CredentialInput from './CredentialInput';
+import MultiSelect from './MutliSelect';
 
 interface AddonsListProps {
   choosableAddons: string[];
@@ -236,6 +237,14 @@ const AddonsList: React.FC<AddonsListProps> = ({
                         )
                       }
                       className={styles.textInput}
+                    />
+                  )}
+                  {option.type === 'multiSelect' && (
+                    <MultiSelect
+                      options={option.options}
+                      setValues={(values) =>
+                        updateOption(index, option.id, values.join(','))
+                      }
                     />
                   )}
                 </div>

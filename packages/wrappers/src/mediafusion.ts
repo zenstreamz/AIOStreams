@@ -107,6 +107,8 @@ export async function getMediafusionStreams(
     overrideUrl?: string;
     indexerTimeout?: string;
     overrideName?: string;
+    filterCertificationLevels?: string;
+    filterNudity?: string;
   },
   streamRequest: StreamRequest,
   addonId: string
@@ -139,7 +141,12 @@ export async function getMediafusionStreams(
 
   // if no usable services found, use mediafusion without debrid
   if (usableServices.length < 1) {
-    const configString = await getConfigString(getMediaFusionConfig());
+    const configString = await getConfigString(
+      getMediaFusionConfig(
+        mediafusionOptions.filterCertificationLevels,
+        mediafusionOptions.filterNudity
+      )
+    );
     const mediafusion = new MediaFusion(
       configString,
       null,
@@ -178,6 +185,8 @@ export async function getMediafusionStreams(
 
     // get the encrypted mediafusion string
     const mediafusionConfig = getMediaFusionConfig(
+      mediafusionOptions.filterCertificationLevels,
+      mediafusionOptions.filterNudity,
       debridService.id,
       debridService.credentials
     );
@@ -201,6 +210,8 @@ export async function getMediafusionStreams(
   }
   const promises = servicesToUse.map(async (service) => {
     const mediafusionConfig = getMediaFusionConfig(
+      mediafusionOptions.filterCertificationLevels,
+      mediafusionOptions.filterNudity,
       service.id,
       service.credentials
     );
@@ -223,9 +234,24 @@ export async function getMediafusionStreams(
 }
 
 const getMediaFusionConfig = (
+  filterCertificationLevels?: string,
+  filterNudity?: string,
   service?: string,
   credentials: { [key: string]: string } = {}
 ): any => {
+  let nudityFilter = ['Disable'];
+  let certificationFilter = ['Disable'];
+  if (filterCertificationLevels) {
+    const levels = filterCertificationLevels.split(',');
+    certificationFilter = levels.map((level) => level.trim());
+  }
+  if (filterNudity) {
+    const levels = filterNudity.split(',');
+    nudityFilter = levels.map((level) => level.trim());
+  }
+  console.debug(
+    `|DBG| wrappers > mediafusion: Determined nudity filter: ${nudityFilter} and certification filter: ${certificationFilter}`
+  );
   return {
     streaming_provider: service
       ? {
@@ -265,8 +291,8 @@ const getMediaFusionConfig = (
       { key: 'created_at', direction: 'desc' },
     ],
     show_full_torrent_name: true,
-    nudity_filter: ['Severe'],
-    certification_filter: ['Disable'],
+    nudity_filter: nudityFilter,
+    certification_filter: certificationFilter,
     language_sorting: [
       'English',
       'Tamil',

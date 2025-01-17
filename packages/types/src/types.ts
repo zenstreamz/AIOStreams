@@ -183,6 +183,11 @@ export interface SelectOptionDetail extends BaseOptionDetail {
   options: { value: string; label: string }[];
 }
 
+export interface MultiSelectOptionDetail extends BaseOptionDetail {
+  type: 'multiSelect';
+  options: { value: string; label: string }[];
+}
+
 export interface CheckboxOptionDetail extends BaseOptionDetail {
   type: 'checkbox';
 }
@@ -198,6 +203,7 @@ export interface NumberOptionDetail extends BaseOptionDetail {
 export type AddonOptionDetail =
   | TextOptionDetail
   | SelectOptionDetail
+  | MultiSelectOptionDetail
   | CheckboxOptionDetail
   | NumberOptionDetail;
 

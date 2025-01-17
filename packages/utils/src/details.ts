@@ -174,6 +174,37 @@ export const addonDetails: AddonDetail[] = [
           max: Settings.MAX_TIMEOUT,
         },
       },
+      {
+        id: 'filterCertificationLevels',
+        required: false,
+        label: 'Filter Certification Levels',
+        description:
+          'Choose levels of certification to filter out. By default, all filters are disabled',
+        type: 'multiSelect',
+        options: [
+          { value: 'Unknown', label: 'Unknown' },
+          { value: 'All Ages', label: 'All Ages' },
+          { value: 'Children', label: 'Children' },
+          { value: 'Parental Guidance', label: 'Parental Guidance' },
+          { value: 'Teens', label: 'Teens' },
+          { value: 'Adults', label: 'Adults' },
+        ],
+      },
+      {
+        id: 'filterNudity',
+        required: false,
+        label: 'Filter Nudity',
+        description:
+          'Choose levels of nudity to filter out. By default, all filters are disabled',
+        type: 'multiSelect',
+        options: [
+          { value: 'Unknown', label: 'Unknown' },
+          { value: 'None', label: 'None' },
+          { value: 'Mild', label: 'Mild' },
+          { value: 'Moderate', label: 'Moderate' },
+          { value: 'Severe', label: 'Severe' },
+        ],
+      },
     ],
   },
   {
