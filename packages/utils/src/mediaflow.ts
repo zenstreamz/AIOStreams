@@ -1,5 +1,6 @@
 import { Config } from '@aiostreams/types';
 import path from 'path';
+import { Settings } from './settings';
 
 const PRIVATE_CIDR = /^(10\.|127\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)/;
 
@@ -65,33 +66,35 @@ export function createProxiedMediaFlowUrl(
 export async function getMediaFlowPublicIp(
   mediaFlowConfig: Config['mediaFlowConfig']
 ) {
-  if (!mediaFlowConfig) {
-    console.error(
-      '|ERR| mediaflow > getMediaFlowPublicIp > mediaFlowConfig is missing'
-    );
-    throw new Error('MediaFlow configuration is missing');
-  }
-  const mediaFlowUrl = mediaFlowConfig?.proxyUrl?.replace(/\/$/, '');
-  if (!mediaFlowUrl) {
-    console.error(
-      '|ERR| mediaflow > getMediaFlowPublicIp > mediaFlowUrl is missing'
-    );
-    throw new Error('MediaFlow URL is missing');
-  }
-  if (mediaFlowConfig.publicIp) {
-    return mediaFlowConfig.publicIp;
-  }
-
-  const parsedUrl = new URL(mediaFlowUrl);
-  if (PRIVATE_CIDR.test(parsedUrl.hostname)) {
-    // MediaFlow proxy URL is a private IP address
-    console.debug(
-      '|DBG| mediaflow > getMediaFlowPublicIp > MediaFlow proxy URL is a private IP address so returning null'
-    );
-    return null;
-  }
-
   try {
+    if (!mediaFlowConfig) {
+      console.error(
+        '|ERR| mediaflow > getMediaFlowPublicIp > mediaFlowConfig is missing'
+      );
+      throw new Error('MediaFlow configuration is missing');
+    }
+
+    const mediaFlowUrl = mediaFlowConfig?.proxyUrl?.replace(/\/$/, '');
+    if (!mediaFlowUrl) {
+      console.error(
+        '|ERR| mediaflow > getMediaFlowPublicIp > mediaFlowUrl is missing'
+      );
+      throw new Error('MediaFlow URL is missing');
+    }
+
+    if (mediaFlowConfig.publicIp) {
+      return mediaFlowConfig.publicIp;
+    }
+
+    const parsedUrl = new URL(mediaFlowUrl);
+    if (PRIVATE_CIDR.test(parsedUrl.hostname)) {
+      // MediaFlow proxy URL is a private IP address
+      console.debug(
+        '|DBG| mediaflow > getMediaFlowPublicIp > MediaFlow proxy URL is a private IP address so returning null'
+      );
+      return null;
+    }
+
     console.debug(
       '|DBG| mediaflow > getMediaFlowPublicIp > GET /proxy/ip?api_password=***'
     );
@@ -122,4 +125,18 @@ export async function getMediaFlowPublicIp(
     );
     return null;
   }
+}
+
+export function getMediaFlowConfig(userConfig: Config) {
+  const mediaFlowConfig = userConfig.mediaFlowConfig;
+
+  return {
+    mediaFlowEnabled:
+      mediaFlowConfig?.mediaFlowEnabled ||
+      Settings.DEFAULT_MEDIAFLOW_URL !== '',
+    proxyUrl: mediaFlowConfig?.proxyUrl || Settings.DEFAULT_MEDIAFLOW_URL,
+    apiPassword:
+      mediaFlowConfig?.apiPassword || Settings.DEFAULT_MEDIAFLOW_API_PASSWORD,
+    publicIp: mediaFlowConfig?.publicIp || Settings.DEFAULT_MEDIAFLOW_PUBLIC_IP,
+  };
 }

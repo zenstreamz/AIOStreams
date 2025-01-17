@@ -7,6 +7,7 @@ import {
 } from '@aiostreams/types';
 import { extractSizeInBytes, parseFilename } from '@aiostreams/parser';
 import {
+  getMediaFlowConfig,
   getMediaFlowPublicIp,
   serviceDetails,
   Settings,
@@ -61,6 +62,18 @@ export class BaseWrapper {
     );
   }
 
+  private async getRequestingIp() {
+    let userIp = this.userConfig.requestingIp;
+    const mediaFlowConfig = getMediaFlowConfig(this.userConfig);
+    if (mediaFlowConfig.mediaFlowEnabled) {
+      const mediaFlowIp = await getMediaFlowPublicIp(mediaFlowConfig);
+      if (mediaFlowIp) {
+        userIp = mediaFlowIp;
+      }
+    }
+    return userIp;
+  }
+
   protected async getStreams(streamRequest: StreamRequest): Promise<Stream[]> {
     const controller = new AbortController();
     const timeout = setTimeout(() => {
@@ -69,46 +82,15 @@ export class BaseWrapper {
 
     const url = this.getStreamUrl(streamRequest);
     try {
-      // add the X-Forwarded-For or X-Real-IP header if this.userConfig.requestingIp is set
+      // Add requesting IP to headers
       const headers = new Headers();
-      if (this.userConfig.requestingIp) {
-        headers.set('X-Forwarded-For', this.userConfig.requestingIp);
-        headers.set('X-Real-IP', this.userConfig.requestingIp);
-      }
-      if (
-        this.userConfig.mediaFlowConfig?.mediaFlowEnabled ||
-        Settings.DEFAULT_MEDIAFLOW_URL
-      ) {
-        if (
-          !this.userConfig.mediaFlowConfig?.proxyUrl ||
-          !Settings.DEFAULT_MEDIAFLOW_URL
-        ) {
-          throw new Error('MediaFlow proxy URL is missing');
-        }
-        const mediaFlowConfig: Config['mediaFlowConfig'] = {
-          mediaFlowEnabled: true,
-          proxyUrl:
-            Settings.DEFAULT_MEDIAFLOW_URL ||
-            this.userConfig.mediaFlowConfig?.proxyUrl,
-          apiPassword:
-            Settings.DEFAULT_MEDIAFLOW_API_PASSWORD ||
-            this.userConfig.mediaFlowConfig?.apiPassword,
-          publicIp:
-            Settings.DEFAULT_MEDIAFLOW_PUBLIC_IP ||
-            this.userConfig.mediaFlowConfig?.publicIp,
-        };
-        const mediaFlowIp = await getMediaFlowPublicIp(mediaFlowConfig);
-        if (mediaFlowIp) {
-          console.log(
-            `|DBG| wrappers > base > Forwarding IP from MediaFlow to ${this.addonName}`
-          );
-          headers.set('X-Forwarded-For', mediaFlowIp);
-          headers.set('X-Real-IP', mediaFlowIp);
-        }
-      } else {
-        console.log(
-          `|DBG| wrappers > base > Forwarding IP from request to ${this.addonName}`
+      const userIp = await this.getRequestingIp();
+      if (userIp) {
+        console.debug(
+          `|DBG| wrappers > base > ${this.addonName}: Using IP: ${userIp}`
         );
+        headers.set('X-Forwarded-For', userIp);
+        headers.set('X-Real-IP', userIp);
       }
       const urlParts = url.split('/');
       const sanitisedUrl = `${urlParts[0]}//${urlParts[2]}/*************/${urlParts.slice(-3).join('/')}`;

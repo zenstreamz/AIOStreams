@@ -19,7 +19,11 @@ import {
   torrentioFormat,
   torboxFormat,
 } from '@aiostreams/formatters';
-import { createProxiedMediaFlowUrl, Settings } from '@aiostreams/utils';
+import {
+  createProxiedMediaFlowUrl,
+  getMediaFlowConfig,
+  Settings,
+} from '@aiostreams/utils';
 
 export class AIOStreams {
   private config: Config;
@@ -387,17 +391,7 @@ export class AIOStreams {
       throw new Error('Stream URL is missing');
     }
 
-    let mediaFlowConfig: Config['mediaFlowConfig'] = {
-      mediaFlowEnabled: true,
-      proxyUrl:
-        this.config.mediaFlowConfig?.proxyUrl || Settings.DEFAULT_MEDIAFLOW_URL,
-      apiPassword:
-        this.config.mediaFlowConfig?.apiPassword ||
-        Settings.DEFAULT_MEDIAFLOW_API_PASSWORD,
-      publicIp:
-        this.config.mediaFlowConfig?.publicIp ||
-        Settings.DEFAULT_MEDIAFLOW_PUBLIC_IP,
-    };
+    const mediaFlowConfig = getMediaFlowConfig(this.config);
     const proxiedUrl = createProxiedMediaFlowUrl(
       parsedStream.url,
       mediaFlowConfig,
