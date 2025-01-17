@@ -406,6 +406,11 @@ export class AIOStreams {
     if (!proxiedUrl) {
       throw new Error('Could not create MediaFlow proxied URL');
     }
+    if (Settings.LOG_SENSITIVE_INFO) {
+      console.log(
+        `|INF| addon > createMediaFlowStream: Proxied URL for ${name}: ${proxiedUrl}`
+      );
+    }
     const combinedTags = [
       parsedStream.resolution,
       parsedStream.quality,

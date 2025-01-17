@@ -83,4 +83,7 @@ export class Settings {
   public static readonly SHOW_DIE = process.env.SHOW_DIE
     ? process.env.SHOW_DIE === 'true'
     : true;
+  public static readonly LOG_SENSITIVE_INFO = process.env.LOG_SENSITIVE_INFO
+    ? process.env.LOG_SENSITIVE_INFO === 'true'
+    : false;
 }
