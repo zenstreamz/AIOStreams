@@ -76,9 +76,9 @@ body:
       description: Confirm you have included at least some of the following debugging information. If you haven't, please do so before submitting the issue.
       options:
         - label: >-
-            If applicable, I have included server logs
+            If applicable, I have included server logs 
           required: false
         - label: >-
-            If applicable, I have included browser console logs
+            If applicable, I have included MediaFlow logs
           required: false
 
