@@ -57,7 +57,7 @@ export class BaseWrapper {
       this.addonUrl.replace('manifest.json', '') +
       this.streamPath
         .replace('{type}', streamRequest.type)
-        .replace('{id}', streamRequest.id)
+        .replace('{id}', encodeURIComponent(streamRequest.id))
     );
   }
 
