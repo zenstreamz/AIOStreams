@@ -1,0 +1,80 @@
+name: Bug report
+description: Report a bug you encountered
+title: 'bug: '
+labels:
+  - bug
+body:
+  - type: checkboxes
+    id: '1'
+    attributes:
+      label: Checklist
+      description: Please follow the general troubleshooting steps first
+      options:
+        - label: >-
+            I have checked open and closed [issues](https://github.com/Viren070/AIOStreams/issues)
+          required: true
+        - label: >-
+            I have checked the [docs](https://seanime.rahim.app/docs/faq) for a fix
+          required: true
+  - type: dropdown
+    id: '3'
+    attributes:
+      label: Bug Area
+      description: Select what area of the addon this issue affects
+      options:
+        - Build Proces
+        - Configuring the addon
+        - Using the addon
+    validations:
+      required: true
+  - type: textarea
+    id: '4'
+    attributes:
+      label: Bug Description / Steps to Reproduce
+      description: Precisely describe the bug you encountered and the steps to reproduce it. Avoid vague descriptions.
+    validations:
+      required: true
+  - type: textarea
+    id: '5'
+    attributes:
+      label: Expected Behavior
+      description: Describe what you expected to happen.
+  - type: textarea
+    id: '6'
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots of the bug
+  - type: checkboxes
+    id: '8'
+    attributes:
+      label: Debugging Checklist
+      description: Confirm you have included at least some of the following debugging information. If you haven't, please do so before submitting the issue.
+      options:
+        - label: >-
+            If applicable, I have included server logs
+          required: false
+        - label: >-
+            If applicable, I have included browser console logs
+          required: false
+  - type: dropdown
+    id: '9'
+    attributes:
+      label: Deployment Method
+      description: Enter how you are using the addon
+      options:
+        - Public ElfHosted Instance
+        - Private ElfHosted Instance
+        - Render
+        - Hugging Face
+        - Cloudflare Workers
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: '10'
+    attributes:
+      label: Addon Version
+      description: What version of the addon were you using. If you were using Hugging Face, Render, or Cloudflare Workers, which commit did you build off, or around what time did you deploy
+      placeholder: v1.7.4
+    validations:
+      required: true
