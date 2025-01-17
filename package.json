@@ -8,6 +8,7 @@
     "format": "prettier --write .",
     "build": "npm -w packages/types run build && npm -w packages/utils run build && npm -w packages/parser run build && npm -w packages/formatters run build && npm -w packages/wrappers run build && npm -w packages/addon run build && npm -w packages/frontend run build",
     "build:watch": "tsc --build --watch",
+    "start": "npm -w packages/addon start",
     "start:addon": "npm -w packages/addon start",
     "start:addon:dev": "npm -w packages/addon run start:dev",
     "start:frontend:dev": "npm -w packages/frontend run dev",
