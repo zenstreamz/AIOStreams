@@ -105,6 +105,10 @@ The addon can display your results in different formats. The formats available a
 
   ![image](https://github.com/user-attachments/assets/21f90ee2-e81d-4a56-9e64-8937fb7ab2bc)
 
+### What is Stremio or How do I use this addon?
+
+Read my [Stremio guide](https://guides.viren070.me/stremio).
+
 ## Usage
 
 ### Public Instance
