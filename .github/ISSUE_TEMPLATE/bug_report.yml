@@ -46,6 +46,12 @@ body:
         - Using the addon
     validations:
       required: true
+  - type: input
+    id: '2'
+    attributes: 
+      label: Device/Browser/OS/Stremio Version
+      description: Details about the device this issue occurs on. Leave blank if not applicable (e.g. error within addon)
+      placeholder: Windows on Stremio 5 Beta
   - type: textarea
     id: '4'
     attributes:
