@@ -175,7 +175,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
                           updateOption(
                             index,
                             option.id,
-                            e.target.checked ? 'true' : 'false'
+                            e.target.checked ? 'true' : undefined
                           )
                         }
                         className={styles.checkbox}
@@ -188,7 +188,11 @@ const AddonsList: React.FC<AddonsListProps> = ({
                       <CredentialInput
                         credential={addon.options[option.id] || ''}
                         setCredential={(value) =>
-                          updateOption(index, option.id, value)
+                          updateOption(
+                            index,
+                            option.id,
+                            value ? value : undefined
+                          )
                         }
                       />
                     ) : (

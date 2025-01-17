@@ -434,6 +434,31 @@ export class AIOStreams {
     };
   }
 
+  private shouldProxyStream(stream: ParsedStream): boolean {
+    const mediaFlowConfig = getMediaFlowConfig(this.config);
+    if (!mediaFlowConfig.mediaFlowEnabled) return false;
+    if (!stream.url) return false;
+    // now check if mediaFlowConfig.proxiedAddons or mediaFlowConfig.proxiedServices is not null
+
+    if (
+      mediaFlowConfig.proxiedAddons &&
+      !mediaFlowConfig.proxiedAddons.includes(stream.addon.id)
+    )
+      return false;
+
+    if (
+      (mediaFlowConfig.proxiedServices &&
+        stream.provider &&
+        !mediaFlowConfig.proxiedServices.includes(stream.provider.id)) ||
+      (mediaFlowConfig.proxiedServices &&
+        !stream.provider &&
+        !mediaFlowConfig.proxiedServices.includes('none'))
+    )
+      return false;
+
+    return true;
+  }
+
   private async createStreamObject(
     parsedStream: ParsedStream
   ): Promise<Stream | null> {
@@ -476,10 +501,8 @@ export class AIOStreams {
     ];
 
     let stream: Stream;
-    const isMediaFlowEnabled =
-      this.config.mediaFlowConfig?.mediaFlowEnabled ||
-      Settings.DEFAULT_MEDIAFLOW_URL;
-    if (isMediaFlowEnabled && parsedStream?.url) {
+    const shouldProxy = this.shouldProxyStream(parsedStream);
+    if (shouldProxy) {
       try {
         const mediaFlowStream = this.createMediaFlowStream(
           parsedStream,

@@ -138,5 +138,7 @@ export function getMediaFlowConfig(userConfig: Config) {
     apiPassword:
       mediaFlowConfig?.apiPassword || Settings.DEFAULT_MEDIAFLOW_API_PASSWORD,
     publicIp: mediaFlowConfig?.publicIp || Settings.DEFAULT_MEDIAFLOW_PUBLIC_IP,
+    proxiedAddons: mediaFlowConfig?.proxiedAddons || null,
+    proxiedServices: mediaFlowConfig?.proxiedServices || null,
   };
 }

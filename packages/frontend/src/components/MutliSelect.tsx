@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from 'react';
 import Select, { StylesConfig } from 'react-select';
 
 const selectStyles: StylesConfig = {
@@ -79,19 +80,41 @@ interface MultiSelectProps {
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({ options, setValues }) => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   return (
-    <Select
-      isMulti
-      closeMenuOnSelect={false}
-      options={options}
-      onChange={(selectedOptions: any) => {
-        const selectedLanguages = selectedOptions.map(
-          (option: any) => option.value
-        );
-        setValues(selectedLanguages);
-      }}
-      styles={selectStyles}
-    />
+    <>
+      {isClient ? (
+        // https://github.com/JedWatson/react-select/issues/5859
+        <Select
+          isMulti
+          closeMenuOnSelect={false}
+          options={options}
+          onChange={(selectedOptions: any) => {
+            const selectedLanguages = selectedOptions.map(
+              (option: any) => option.value
+            );
+            setValues(selectedLanguages);
+          }}
+          styles={selectStyles}
+        />
+      ) : (
+        <div
+          style={{
+            height: '42px',
+            margin: '0',
+            backgroundColor: 'white',
+            borderRadius: 'var(--borderRadius)',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <p style={{ margin: '10px', color: '#808090' }}>Select...</p>
+        </div>
+      )}
+    </>
   );
 };
 

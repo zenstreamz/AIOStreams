@@ -154,6 +154,8 @@ export interface Config {
     proxyUrl: string;
     apiPassword: string;
     publicIp: string;
+    proxiedAddons: string[] | null;
+    proxiedServices: string[] | null;
   };
   addons: {
     id: string;

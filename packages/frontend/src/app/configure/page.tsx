@@ -137,7 +137,6 @@ const defaultServices = serviceDetails.map((service) => ({
 }));
 
 export default function Configure() {
-  const [isClient, setIsClient] = useState(false);
   const [resolutions, setResolutions] =
     useState<Resolution[]>(defaultResolutions);
   const [qualities, setQualities] = useState<Quality[]>(defaultQualities);
@@ -175,6 +174,12 @@ export default function Configure() {
   const [mediaFlowProxyUrl, setmediaFlowProxyUrl] = useState<string>('');
   const [mediaFlowApiPassword, setmediaFlowApiPassword] = useState<string>('');
   const [mediaFlowPublicIp, setMediaFlowPublicIp] = useState<string>('');
+  const [mediaFlowProxiedAddons, setMediaFlowProxiedAddons] = useState<
+    string[] | null
+  >(null);
+  const [mediaFlowProxiedServices, setMediaFlowProxiedServices] = useState<
+    string[] | null
+  >(null);
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
   const [manualManifestUrl, setManualManifestUrl] = useState<string | null>(
     null
@@ -227,6 +232,8 @@ export default function Configure() {
         proxyUrl: mediaFlowProxyUrl,
         apiPassword: mediaFlowApiPassword,
         publicIp: mediaFlowPublicIp,
+        proxiedAddons: mediaFlowProxiedAddons,
+        proxiedServices: mediaFlowProxiedServices,
       },
       addons,
       services,
@@ -311,6 +318,7 @@ export default function Configure() {
     const config = createConfig();
 
     const { valid, errorCode, errorMessage } = validateConfig(config);
+    console.log('Config', config, 'was valid:', valid);
     if (!valid) {
       showToast(
         errorMessage || 'Invalid config',
@@ -526,7 +534,6 @@ export default function Configure() {
 
   // Load config from the window path if it exists
   useEffect(() => {
-    setIsClient(true);
     async function decodeConfig(config: string) {
       let decodedConfig: Config;
       if (config.startsWith('E-')) {
@@ -837,28 +844,12 @@ export default function Configure() {
               </p>
             </div>
             <div>
-              {isClient ? ( // https://github.com/JedWatson/react-select/issues/5859
-                <MultiSelect
-                  options={allowedLanguages
-                    .sort((a, b) => a.localeCompare(b))
-                    .map((language) => ({ value: language, label: language }))}
-                  setValues={setPrioritisedLanguages}
-                />
-              ) : (
-                // render a fake select box until the actual one is rendered
-                <div
-                  style={{
-                    height: '42px',
-                    margin: '0',
-                    backgroundColor: 'white',
-                    borderRadius: 'var(--borderRadius)',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <p style={{ margin: '10px', color: '#808090' }}>Select...</p>
-                </div>
-              )}
+              <MultiSelect
+                options={allowedLanguages
+                  .sort((a, b) => a.localeCompare(b))
+                  .map((language) => ({ value: language, label: language }))}
+                setValues={setPrioritisedLanguages}
+              />
             </div>
           </div>
           <div style={{ marginBottom: '0px' }} className={styles.section}>
@@ -873,28 +864,12 @@ export default function Configure() {
               </p>
             </div>
             <div>
-              {isClient ? (
-                <MultiSelect
-                  options={allowedLanguages
-                    .sort((a, b) => a.localeCompare(b))
-                    .map((language) => ({ value: language, label: language }))}
-                  setValues={setExcludedLanguages}
-                />
-              ) : (
-                // render a fake select box until the actual one is rendered
-                <div
-                  style={{
-                    height: '42px',
-                    margin: '0',
-                    backgroundColor: 'white',
-                    borderRadius: 'var(--borderRadius)',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <p style={{ margin: '10px', color: '#808090' }}>Select...</p>
-                </div>
-              )}
+              <MultiSelect
+                options={allowedLanguages
+                  .sort((a, b) => a.localeCompare(b))
+                  .map((language) => ({ value: language, label: language }))}
+                setValues={setExcludedLanguages}
+              />
             </div>
           </div>
         </div>
@@ -1100,61 +1075,119 @@ export default function Configure() {
             <div
               className={`${styles.mediaFlowConfig} ${mediaFlowEnabled ? '' : styles.hidden}`}
             >
-              <div>
+              <div className={styles.mediaFlowSection}>
                 <div>
-                  <h3 style={{ padding: '5px' }}>Proxy URL</h3>
-                  <p style={{ padding: '5px' }}>
-                    The URL of the MediaFlow proxy server
-                  </p>
+                  <div>
+                    <h3 style={{ padding: '5px' }}>Proxy URL</h3>
+                    <p style={{ padding: '5px' }}>
+                      The URL of the MediaFlow proxy server
+                    </p>
+                  </div>
+                  <div>
+                    <CredentialInput
+                      credential={mediaFlowProxyUrl}
+                      setCredential={setmediaFlowProxyUrl}
+                      inputProps={{
+                        placeholder: 'Enter your MediaFlow proxy URL',
+                        disabled: !mediaFlowEnabled,
+                      }}
+                    />
+                  </div>
                 </div>
                 <div>
-                  <CredentialInput
-                    credential={mediaFlowProxyUrl}
-                    setCredential={setmediaFlowProxyUrl}
-                    inputProps={{
-                      placeholder: 'Enter your MediaFlow proxy URL',
-                      disabled: !mediaFlowEnabled,
-                    }}
-                  />
+                  <div>
+                    <h3 style={{ padding: '5px' }}>API Password</h3>
+                    <p style={{ padding: '5px' }}>
+                      Your MediaFlow&apos;s API password
+                    </p>
+                  </div>
+                  <div>
+                    <CredentialInput
+                      credential={mediaFlowApiPassword}
+                      setCredential={setmediaFlowApiPassword}
+                      inputProps={{
+                        placeholder: 'Enter your MediaFlow API password',
+                        disabled: !mediaFlowEnabled,
+                      }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <h3 style={{ padding: '5px' }}>Public IP (Optional)</h3>
+                    <p style={{ padding: '5px' }}>
+                      Configure this only when running MediaFlow locally with a
+                      proxy service. Leave empty if MediaFlow is configured
+                      locally without a proxy server or if it&apos;s hosted on a
+                      remote server.
+                    </p>
+                  </div>
+                  <div>
+                    <CredentialInput
+                      credential={mediaFlowPublicIp}
+                      setCredential={setMediaFlowPublicIp}
+                      inputProps={{
+                        placeholder: 'Enter your MediaFlow public IP',
+                        disabled: !mediaFlowEnabled,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-              <div>
+              <div className={styles.mediaFlowSection}>
                 <div>
-                  <h3 style={{ padding: '5px' }}>API Password</h3>
-                  <p style={{ padding: '5px' }}>
-                    Your MediaFlow&apos;s API password
-                  </p>
+                  <div>
+                    <h3 style={{ padding: '5px' }}>Proxy Addons (Optional)</h3>
+                    <p style={{ padding: '5px' }}>
+                      By default, all streams from every addon are proxied.
+                      Choose specific addons here to proxy only their streams.
+                    </p>
+                  </div>
+                  <div>
+                    <MultiSelect
+                      options={
+                        addons.map((addon) => ({
+                          value: `${addon.id}-${JSON.stringify(addon.options)}`,
+                          label:
+                            addon.options.addonName ||
+                            addon.options.overrideName ||
+                            addon.options.name ||
+                            addon.id.charAt(0).toUpperCase() +
+                              addon.id.slice(1),
+                        })) || []
+                      }
+                      setValues={(selectedAddons) => {
+                        setMediaFlowProxiedAddons(selectedAddons);
+                      }}
+                    />
+                  </div>
                 </div>
                 <div>
-                  <CredentialInput
-                    credential={mediaFlowApiPassword}
-                    setCredential={setmediaFlowApiPassword}
-                    inputProps={{
-                      placeholder: 'Enter your MediaFlow API password',
-                      disabled: !mediaFlowEnabled,
-                    }}
-                  />
-                </div>
-              </div>
-              <div>
-                <div>
-                  <h3 style={{ padding: '5px' }}>Public IP (Optional)</h3>
-                  <p style={{ padding: '5px' }}>
-                    Configure this only when running MediaFlow locally with a
-                    proxy service. Leave empty if MediaFlow is configured
-                    locally without a proxy server or if it&apos;s hosted on a
-                    remote server.
-                  </p>
-                </div>
-                <div>
-                  <CredentialInput
-                    credential={mediaFlowPublicIp}
-                    setCredential={setMediaFlowPublicIp}
-                    inputProps={{
-                      placeholder: 'Enter your MediaFlow public IP',
-                      disabled: !mediaFlowEnabled,
-                    }}
-                  />
+                  <div>
+                    <h3 style={{ padding: '5px' }}>
+                      Proxy Services (Optional)
+                    </h3>
+                    <p style={{ padding: '5px' }}>
+                      By default, all streams whether they are from a serivce or
+                      not are proxied. Choose which services you want to proxy
+                      through MediaFlow. Selecting None will also proxy streams
+                      that are not (detected to be) from a service.
+                    </p>
+                  </div>
+                  <div>
+                    <MultiSelect
+                      options={[
+                        { value: 'none', label: 'None' },
+                        ...serviceDetails.map((service) => ({
+                          value: service.id,
+                          label: service.name,
+                        })),
+                      ]}
+                      setValues={(selectedServices) => {
+                        setMediaFlowProxiedServices(selectedServices);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
