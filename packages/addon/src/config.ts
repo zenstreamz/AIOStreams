@@ -267,5 +267,22 @@ export function validateConfig(config: Config): {
     );
   }
 
+  if (config.mediaFlowConfig?.mediaFlowEnabled) {
+    if (!config.mediaFlowConfig.proxyUrl) {
+      return createResponse(
+        false,
+        'missingProxyUrl',
+        'Proxy URL is required if MediaFlow is enabled'
+      );
+    }
+    if (!config.mediaFlowConfig.apiPassword) {
+      return createResponse(
+        false,
+        'missingApiPassword',
+        'API Password is required if MediaFlow is enabled'
+      );
+    }
+  }
+
   return createResponse(true, null, null);
 }
