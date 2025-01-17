@@ -332,7 +332,7 @@ const getMediaFusionConfig = (
       'CAM/Screener',
       'Unknown',
     ],
-    api_password: null,
+    api_password: Settings.MEDIAFUSION_API_PASSWORD || null,
     mediaflow_config: null,
     rpdb_config: null,
     live_search_streams: false,

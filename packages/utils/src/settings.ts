@@ -19,6 +19,8 @@ export class Settings {
     process.env.COMET_URL ?? 'https://comet.elfhosted.com/';
   public static readonly MEDIAFUSION_URL =
     process.env.MEDIAFUSION_URL ?? 'https://mediafusion.elfhosted.com/';
+  public static readonly MEDIAFUSION_API_PASSWORD =
+    process.env.MEDIAFUSION_API_PASSWORD ?? '';
   public static readonly TORRENTIO_URL =
     process.env.TORRENTIO_URL ?? 'https://torrentio.strem.fun/';
   public static readonly TORBOX_STREMIO_URL =
