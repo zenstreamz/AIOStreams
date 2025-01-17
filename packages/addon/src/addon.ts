@@ -119,6 +119,12 @@ export class AIOStreams {
         ) {
           return false;
         }
+      } else if (
+        excludedLanguages &&
+        excludedLanguages.includes('Unknown') &&
+        parsedStream.languages.length === 0
+      ) {
+        return false;
       }
 
       const audioTagFilter = parsedStream.audioTags.find(
@@ -696,18 +702,31 @@ export class AIOStreams {
       // any file with a language in the prioritisedLanguages array should be prioritised
       // if both files contain a prioritisedLanguage, we compare the index of the highest priority language
 
-      const aHasPrioritisedLanguage = a.languages.some((lang) =>
-        this.config.prioritisedLanguages?.includes(lang)
-      );
-      const bHasPrioritisedLanguage = b.languages.some((lang) =>
-        this.config.prioritisedLanguages?.includes(lang)
-      );
+      const aHasPrioritisedLanguage =
+        a.languages.some((lang) =>
+          this.config.prioritisedLanguages?.includes(lang)
+        ) ||
+        (a.languages.length === 0 &&
+          this.config.prioritisedLanguages?.includes('Unknown'));
+      const bHasPrioritisedLanguage =
+        b.languages.some((lang) =>
+          this.config.prioritisedLanguages?.includes(lang)
+        ) ||
+        (b.languages.length === 0 &&
+          this.config.prioritisedLanguages?.includes('Unknown'));
 
       if (aHasPrioritisedLanguage && !bHasPrioritisedLanguage) return -1;
       if (!aHasPrioritisedLanguage && bHasPrioritisedLanguage) return 1;
 
       if (aHasPrioritisedLanguage && bHasPrioritisedLanguage) {
         const getHighestPriorityLanguageIndex = (languages: string[]) => {
+          if (languages.length === 0) {
+            const unknownIndex =
+              this.config.prioritisedLanguages!.indexOf('Unknown');
+            return unknownIndex !== -1
+              ? unknownIndex
+              : this.config.prioritisedLanguages!.length;
+          }
           return languages.reduce((minIndex, lang) => {
             const index =
               this.config.prioritisedLanguages?.indexOf(lang) ??
