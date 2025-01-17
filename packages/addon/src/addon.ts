@@ -348,24 +348,24 @@ export class AIOStreams {
     // apply config.maxResultsPerResolution
     if (this.config.maxResultsPerResolution) {
       const startTime = new Date().getTime();
-      const streamsByResolution = filteredResults.reduce(
-        (acc, stream) => {
-          acc[stream.resolution] = acc[stream.resolution] || [];
-          acc[stream.resolution].push(stream);
-          return acc;
-        },
-        {} as Record<string, ParsedStream[]>
-      );
+      const resolutionCounts = new Map();
 
-      const limitedStreams = Object.values(streamsByResolution).map(
-        (streams) => {
-          return streams.slice(0, this.config.maxResultsPerResolution!);
+      const limitedResults = filteredResults.filter((result) => {
+        const resolution = result.resolution || 'Unknown';
+        const currentCount = resolutionCounts.get(resolution) || 0;
+
+        if (currentCount < this.config.maxResultsPerResolution!) {
+          resolutionCounts.set(resolution, currentCount + 1);
+          return true;
         }
-      );
 
-      filteredResults = limitedStreams.flat();
+        return false;
+      });
+
+      filteredResults = limitedResults;
+
       console.log(
-        `|INF| addon > getStreams: Limited results to ${filteredResults.length} streams after applying maxResultsPerResolution in ${getTimeTakenSincePoint(startTime)}`
+        `|INF| addon > getStreams: Limited results to ${limitedResults.length} streams after applying maxResultsPerResolution in ${new Date().getTime() - startTime}ms`
       );
     }
 
