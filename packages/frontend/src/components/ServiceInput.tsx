@@ -19,10 +19,6 @@ interface ServiceInputProps {
   canMoveDown: boolean;
 }
 
-function isEncrypted(value: string): boolean {
-  return value.match(/^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/) !== null;
-}
-
 const ServiceInput: React.FC<ServiceInputProps> = ({
   serviceName,
   enabled,
@@ -131,12 +127,6 @@ const ServiceInput: React.FC<ServiceInputProps> = ({
                       here
                     </a>
                   </>
-                )}
-                {field.value && isEncrypted(field.value) && (
-                  <span className={styles.encrypted}>
-                    {'. '}Encrypted. To modify this, please reset the API key
-                    using the button to the right
-                  </span>
                 )}
               </label>
               <CredentialInput
