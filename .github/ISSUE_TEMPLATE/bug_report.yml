@@ -14,6 +14,28 @@ body:
             I have checked open and closed [issues](https://github.com/Viren070/AIOStreams/issues)
           required: true
   - type: dropdown
+    id: '9'
+    attributes:
+      label: Deployment Method
+      description: Enter how you are using the addon
+      options:
+        - Public ElfHosted Instance
+        - Private ElfHosted Instance
+        - Render
+        - Hugging Face
+        - Cloudflare Workers
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: '10'
+    attributes:
+      label: Addon Version
+      description: What version of the addon were you using. If you were using Hugging Face, Render, or Cloudflare Workers, which commit did you build off, or around what time did you deploy
+      placeholder: v1.7.4
+    validations:
+      required: true
+  - type: dropdown
     id: '3'
     attributes:
       label: Bug Area
@@ -53,25 +75,4 @@ body:
         - label: >-
             If applicable, I have included browser console logs
           required: false
-  - type: dropdown
-    id: '9'
-    attributes:
-      label: Deployment Method
-      description: Enter how you are using the addon
-      options:
-        - Public ElfHosted Instance
-        - Private ElfHosted Instance
-        - Render
-        - Hugging Face
-        - Cloudflare Workers
-        - Other
-    validations:
-      required: true
-  - type: input
-    id: '10'
-    attributes:
-      label: Addon Version
-      description: What version of the addon were you using. If you were using Hugging Face, Render, or Cloudflare Workers, which commit did you build off, or around what time did you deploy
-      placeholder: v1.7.4
-    validations:
-      required: true
+
