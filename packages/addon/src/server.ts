@@ -5,7 +5,7 @@ import { AIOStreams } from './addon';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config';
 import manifest from './manifest';
-import { invalidConfig, missingConfig } from './responses';
+import { errorResponse } from './responses';
 import {
   Settings,
   compressAndEncrypt,
@@ -112,39 +112,40 @@ app.get('/:config/manifest.json', (req, res) => {
 
 // Route for /stream
 app.get('/stream/:type/:id', (req: Request, res: Response) => {
-  res.status(200).json(missingConfig(rootUrl(req)));
+  res
+    .status(200)
+    .json(
+      errorResponse(
+        'You must configure this addon to use it',
+        rootUrl(req),
+        '/configure'
+      )
+    );
 });
 
 app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
-  const config = req.params.config;
+  const { config, type, id } = req.params;
   let configJson: Config;
   try {
-    configJson = decryptEncryptedInfoFromConfig(extractJsonConfig(config));
+    configJson = extractJsonConfig(config);
+    console.log(`|DBG| server > Extracted config for stream request`);
+    configJson = decryptEncryptedInfoFromConfig(configJson);
+    console.log(
+      `|DBG| server > Successfully removed or decrypted sensitive info`
+    );
   } catch (error: any) {
     console.error(`|ERR| server > Failed to extract config: ${error.message}`);
-    res.status(400).send('Invalid config');
+    res.json(errorResponse(error.message));
     return;
   }
-
-  const decodedPath = decodeURIComponent(req.path);
-
-  const streamMatch = new RegExp(`/stream/(movie|series)/([^/]+)\.json`).exec(
-    decodedPath.replace(`/${config}`, '')
-  );
-  if (!streamMatch) {
-    // log after removing config if present
-    console.error(`|ERR| server > request did not match expected format`);
-    res.status(400).send('Invalid request');
-    return;
-  }
-
-  const [type, id] = streamMatch.slice(1);
 
   console.log(`|DBG| server > Requesting streams for ${type} ${id}`);
 
   if (type !== 'movie' && type !== 'series') {
     console.error(`|ERR| server > Invalid type for stream request`);
-    res.status(400).send('Invalid type');
+    res.json(
+      errorResponse('Invalid type for stream request, must be movie or series')
+    );
     return;
   }
   let streamRequest: StreamRequest = { id, type };
@@ -155,19 +156,24 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
       console.error(
         `|ERR| server > Received invalid config: ${errorCode} - ${errorMessage}`
       );
-      res
-        .status(200)
-        .json(invalidConfig(rootUrl(req), errorMessage ?? 'Unknown'));
+      res.json(errorResponse(rootUrl(req), errorMessage ?? 'Unknown'));
       return;
     }
     configJson.requestingIp = req.get('CF-Connecting-IP') || req.ip;
     const aioStreams = new AIOStreams(configJson);
     aioStreams.getStreams(streamRequest).then((streams) => {
-      res.status(200).json({ streams: streams });
+      res.json({ streams: streams });
     });
   } catch (error: any) {
-    console.error(`|ERR| server > Failed to serve streams: ${error.message}`);
-    res.status(500).send(error.message);
+    console.error(`|ERR| server > Internal addon error: ${error.message}`);
+    res.json(
+      errorResponse(
+        'An unexpected error occurred, please check the logs or create an issue on GitHub',
+        undefined,
+        undefined,
+        'https://github.com/Viren070/AIOStreams/issues/new?template=bug_report.yml'
+      )
+    );
   }
 });
 
@@ -209,11 +215,8 @@ app.listen(Settings.PORT, () => {
 });
 
 function extractJsonConfig(config: string): Config {
-  if (config.startsWith('E-')) {
-    return extractEncryptedOrEncodedConfig(config, true, 'Config');
-  }
-  if (config.startsWith('eyJ')) {
-    return extractEncryptedOrEncodedConfig(config, false, 'Config');
+  if (config.startsWith('E-') || config.startsWith('eyJ')) {
+    return extractEncryptedOrEncodedConfig(config, 'Config');
   }
   if (CUSTOM_CONFIGS) {
     const customConfig = extractCustomConfig(config);
@@ -225,27 +228,22 @@ function extractJsonConfig(config: string): Config {
 function extractCustomConfig(config: string): Config | undefined {
   const customConfig = CUSTOM_CONFIGS?.[config];
   if (!customConfig) return undefined;
-  return customConfig.startsWith('E-')
-    ? extractEncryptedOrEncodedConfig(
-        customConfig,
-        true,
-        `CustomConfig ${config}`
-      )
-    : extractEncryptedOrEncodedConfig(
-        customConfig,
-        false,
-        `CustomConfig ${config}`
-      );
+  console.log(
+    `|DBG| server > Found custom config for alias ${config}, attempting to extract config`
+  );
+  return extractEncryptedOrEncodedConfig(
+    customConfig,
+    `CustomConfig ${config}`
+  );
 }
 
 function extractEncryptedOrEncodedConfig(
   config: string,
-  isEncrypted: boolean,
   label: string
 ): Config {
   let decodedConfig: string;
   try {
-    decodedConfig = isEncrypted
+    decodedConfig = isValueEncrypted(config)
       ? decryptValue(config, `${label} (encrypted)`)
       : Buffer.from(config, 'base64').toString('utf-8');
     return JSON.parse(decodedConfig);
@@ -264,7 +262,7 @@ function decryptEncryptedInfoFromConfig(config: Config): Config {
           service.credentials,
           `service ${service.id}`,
           true,
-          () => true
+          (key, value) => !isValueEncrypted(value)
         )
     );
   }

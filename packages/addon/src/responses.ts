@@ -1,25 +1,25 @@
 import { Settings } from '@aiostreams/utils';
 
-export const missingConfig = (origin: string) => {
+export const errorResponse = (
+  errorMessage: string,
+  origin?: string,
+  path?: string,
+  externalUrl?: string
+) => {
   return {
-    streams: [
-      {
-        externalUrl: origin + '/configure',
-        name: `[⚠️] ${Settings.ADDON_NAME}`,
-        description: 'You must configure this addon to use it',
-      },
-    ],
+    streams: [errorStream(errorMessage, origin, path, externalUrl)],
   };
 };
 
-export const invalidConfig = (origin: string, errorMessage: string) => {
+export const errorStream = (
+  errorMessage: string,
+  origin?: string,
+  path?: string,
+  externalUrl?: string
+) => {
   return {
-    streams: [
-      {
-        externalUrl: origin + '/configure',
-        name: `[⚠️] ${Settings.ADDON_NAME}`,
-        description: errorMessage,
-      },
-    ],
+    externalUrl: (origin && path ? origin + path : undefined) || externalUrl,
+    name: `[❌] ${Settings.ADDON_NAME}`,
+    description: errorMessage,
   };
 };
