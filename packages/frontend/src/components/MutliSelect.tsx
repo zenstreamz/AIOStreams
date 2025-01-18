@@ -92,6 +92,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   return (
     <>
       {isClient ? (
+        // https://github.com/JedWatson/react-select/issues/5859
         <Select
           isMulti
           value={
