@@ -262,7 +262,7 @@ function decryptEncryptedInfoFromConfig(config: Config): Config {
           service.credentials,
           `service ${service.id}`,
           true,
-          (key, value) => !isValueEncrypted(value)
+          (key, value) => isValueEncrypted(value)
         )
     );
   }
