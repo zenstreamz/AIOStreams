@@ -15,9 +15,7 @@ export class Settings {
   public static readonly BRANDING =
     process.env.BRANDING ?? process.env.NEXT_PUBLIC_ELFHOSTED_BRANDING;
   public static readonly SECRET_KEY = process.env.SECRET_KEY ?? '';
-  public static readonly CUSTOM_CONFIGS = process.env.CUSTOM_CONFIGS
-    ? JSON.parse(process.env.CUSTOM_CONFIGS)
-    : {};
+  public static readonly CUSTOM_CONFIGS = process.env.CUSTOM_CONFIGS || '';
   public static readonly COMET_URL =
     process.env.COMET_URL ?? 'https://comet.elfhosted.com/';
   public static readonly MEDIAFUSION_URL =
