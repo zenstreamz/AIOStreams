@@ -130,6 +130,7 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
     configJson = extractJsonConfig(config);
     console.log(`|DBG| server > Extracted config for stream request`);
     configJson = decryptEncryptedInfoFromConfig(configJson);
+    console.log(JSON.stringify(configJson, null, 2));
     console.log(
       `|DBG| server > Successfully removed or decrypted sensitive info`
     );
@@ -278,7 +279,7 @@ function decryptEncryptedInfoFromConfig(config: Config): Config {
           addon.options,
           `addon ${addon.id}`,
           true,
-          (key, value) => !isValueEncrypted(value) && /url/i.test(key)
+          (key, value) => isValueEncrypted(value) && /url/i.test(key)
         );
       }
     });
