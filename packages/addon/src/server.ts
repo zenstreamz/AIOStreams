@@ -26,7 +26,13 @@ console.log(`|INF| server > init: Starting server and loading settings...`);
       console.warn(`|WRN| server > init: ${key} = ${Settings[key]}`);
     }
     return;
+  } else if (key === 'CUSTOM_CONFIGS') {
+    console.log(
+      `|INF| server > init: ${key} = Detected ${Object.keys(Settings[key]).length} custom configs of keys: ${Object.keys(Settings[key]).join(', ')}`
+    );
+    return;
   }
+
   console.log(`|INF| server > init: ${key} = ${Settings[key]}`);
 });
 if (!Settings.SECRET_KEY) {
@@ -69,6 +75,14 @@ app.get('/configure', (req, res) => {
 
 app.get('/:config/configure', (req, res) => {
   const config = req.params.config;
+  // attempt to look in Settings.CUSTOM_CONFIGS to see if there is a key that matches the config
+  if (Settings.CUSTOM_CONFIGS) {
+    const customConfig = Settings.CUSTOM_CONFIGS[config];
+    if (customConfig) {
+      res.redirect(`/${customConfig}/configure`);
+      return;
+    }
+  }
   if (config.startsWith('E-')) {
     if (!Settings.SECRET_KEY) {
       res.status(302).redirect('/configure');
@@ -205,6 +219,16 @@ app.get('/stream/:type/:id', (req: Request, res: Response) => {
 
 app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
   const config = req.params.config;
+  // check if the 'config' is a key in Settings.CUSTOM_CONFIGS
+  if (Settings.CUSTOM_CONFIGS) {
+    const customConfig = Settings.CUSTOM_CONFIGS[config];
+    if (customConfig) {
+      res.redirect(
+        `/${customConfig}/stream/${req.params.type}/${req.params.id}.json`
+      );
+      return;
+    }
+  }
 
   // if config starts with E- then it is encrypted, decrypt it
   let configJson: Config;
