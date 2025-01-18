@@ -86,9 +86,11 @@ export class BaseWrapper {
       const headers = new Headers();
       const userIp = await this.getRequestingIp();
       if (userIp) {
-        console.debug(
-          `|DBG| wrappers > base > ${this.addonName}: Using IP: ${userIp}`
-        );
+        if (Settings.LOG_SENSITIVE_INFO) {
+          console.debug(
+            `|DBG| wrappers > base > ${this.addonName}: Using IP: ${userIp}`
+          );
+        }
         headers.set('X-Forwarded-For', userIp);
         headers.set('X-Real-IP', userIp);
       }
