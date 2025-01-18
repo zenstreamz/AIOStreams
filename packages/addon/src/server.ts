@@ -138,7 +138,14 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
     );
   } catch (error: any) {
     console.error(`|ERR| server > Failed to extract config: ${error.message}`);
-    res.json(errorResponse(error.message));
+    res.json(
+      errorResponse(
+        `${error.message}, please check the logs or click this stream to create an issue on GitHub`,
+        rootUrl(req),
+        undefined,
+        'https://github.com/Viren070/AIOStreams/issues/new?template=bug_report.yml'
+      )
+    );
     return;
   }
 
