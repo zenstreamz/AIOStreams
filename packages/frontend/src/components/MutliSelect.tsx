@@ -76,10 +76,15 @@ const selectStyles: StylesConfig = {
 
 interface MultiSelectProps {
   options: { value: string; label: string }[];
+  values?: string[];
   setValues: (values: string[]) => void;
 }
 
-const MultiSelect: React.FC<MultiSelectProps> = ({ options, setValues }) => {
+const MultiSelect: React.FC<MultiSelectProps> = ({
+  options,
+  setValues,
+  values,
+}) => {
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
@@ -87,9 +92,17 @@ const MultiSelect: React.FC<MultiSelectProps> = ({ options, setValues }) => {
   return (
     <>
       {isClient ? (
-        // https://github.com/JedWatson/react-select/issues/5859
         <Select
           isMulti
+          value={
+            values
+              ? values
+                  .map((value) =>
+                    options.find((option) => option.value === value)
+                  )
+                  .filter(Boolean)
+              : undefined
+          }
           closeMenuOnSelect={false}
           options={options}
           onChange={(selectedOptions: any) => {

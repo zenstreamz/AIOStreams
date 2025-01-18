@@ -249,6 +249,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
                       setValues={(values) =>
                         updateOption(index, option.id, values.join(','))
                       }
+                      values={addon.options[option.id]?.split(',') || []}
                     />
                   )}
                 </div>

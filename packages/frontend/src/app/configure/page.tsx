@@ -604,6 +604,13 @@ export default function Configure() {
       );
       setMediaFlowProxyUrl(decodedConfig.mediaFlowConfig?.proxyUrl || '');
       setMediaFlowApiPassword(decodedConfig.mediaFlowConfig?.apiPassword || '');
+      setMediaFlowPublicIp(decodedConfig.mediaFlowConfig?.publicIp || '');
+      setMediaFlowProxiedAddons(
+        decodedConfig.mediaFlowConfig?.proxiedAddons || null
+      );
+      setMediaFlowProxiedServices(
+        decodedConfig.mediaFlowConfig?.proxiedServices || null
+      );
     }
 
     const path = window.location.pathname;
@@ -849,6 +856,7 @@ export default function Configure() {
                   .sort((a, b) => a.localeCompare(b))
                   .map((language) => ({ value: language, label: language }))}
                 setValues={setPrioritisedLanguages}
+                values={prioritisedLanguages || []}
               />
             </div>
           </div>
@@ -869,6 +877,7 @@ export default function Configure() {
                   .sort((a, b) => a.localeCompare(b))
                   .map((language) => ({ value: language, label: language }))}
                 setValues={setExcludedLanguages}
+                values={excludedLanguages || []}
               />
             </div>
           </div>
@@ -1157,6 +1166,7 @@ export default function Configure() {
                       setValues={(selectedAddons) => {
                         setMediaFlowProxiedAddons(selectedAddons);
                       }}
+                      values={mediaFlowProxiedAddons || undefined}
                     />
                   </div>
                 </div>
@@ -1184,6 +1194,7 @@ export default function Configure() {
                       setValues={(selectedServices) => {
                         setMediaFlowProxiedServices(selectedServices);
                       }}
+                      values={mediaFlowProxiedServices || undefined}
                     />
                   </div>
                 </div>
