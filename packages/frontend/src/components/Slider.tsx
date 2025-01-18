@@ -34,7 +34,7 @@ const Slider: React.FC<SliderProps> = ({
       id={id}
       min="0"
       max={maxValue}
-      step={maxValue / 10000}
+      step={maxValue / 10240}
       value={value || 0}
       onChange={(e) => {
         setValue(

@@ -43,10 +43,10 @@ export class Settings {
     : 15;
   public static readonly MAX_MOVIE_SIZE = process.env.MAX_MOVIE_SIZE
     ? parseInt(process.env.MAX_MOVIE_SIZE)
-    : 150000000000; // 150GB
+    : 161061273600; // 150GiB
   public static readonly MAX_EPISODE_SIZE = process.env.MAX_EPISODE_SIZE
     ? parseInt(process.env.MAX_EPISODE_SIZE)
-    : 15000000000; // 15GB
+    : 16106127360; // 15GiB
   public static readonly MAX_TIMEOUT = process.env.MAX_TIMEOUT
     ? parseInt(process.env.MAX_TIMEOUT)
     : 50000;
