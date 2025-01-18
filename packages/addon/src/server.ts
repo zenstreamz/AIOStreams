@@ -374,6 +374,7 @@ function encryptValue(value: any, label: string): any {
 
 function decryptValue(value: any, label: string): any {
   try {
+    if (!isValueEncrypted(value)) return value;
     const decrypted = parseAndDecryptString(value);
     if (decrypted === null) throw new Error('Decryption failed');
     return decrypted;
