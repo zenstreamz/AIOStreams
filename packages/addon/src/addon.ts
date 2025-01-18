@@ -7,13 +7,7 @@ import {
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
-import {
-  Stream,
-  ParsedStream,
-  StreamRequest,
-  Config,
-  CollectedParsedStreams,
-} from '@aiostreams/types';
+import { Stream, ParsedStream, StreamRequest, Config } from '@aiostreams/types';
 import {
   gdriveFormat,
   torrentioFormat,
