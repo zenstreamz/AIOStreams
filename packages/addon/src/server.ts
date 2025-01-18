@@ -130,7 +130,9 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
     configJson = extractJsonConfig(config);
     console.log(`|DBG| server > Extracted config for stream request`);
     configJson = decryptEncryptedInfoFromConfig(configJson);
-    console.log(JSON.stringify(configJson, null, 2));
+    if (Settings.LOG_SENSITIVE_INFO) {
+      console.log(`|DBG| server > Final config: ${JSON.stringify(configJson)}`);
+    }
     console.log(
       `|DBG| server > Successfully removed or decrypted sensitive info`
     );
