@@ -957,8 +957,6 @@ export default function Configure() {
                   )
                 }
                 style={{
-                  marginLeft: 'auto',
-                  marginRight: '20px',
                   width: '100px',
                   height: '30px',
                 }}
@@ -1001,7 +999,7 @@ export default function Configure() {
                 This is useful for Vidi users.
               </p>
             </div>
-            <div className={styles.settingInput}>
+            <div className={styles.checkboxSettingInput}>
               <input
                 type="checkbox"
                 checked={addonNameInDescription}
@@ -1020,7 +1018,7 @@ export default function Configure() {
 
         <div className={styles.section}>
           <div className={styles.setting}>
-            <div className={styles.settingDescription}>
+            <div className={styles.ettingDescription}>
               <h2 style={{ padding: '5px' }}>Clean Results</h2>
               <p style={{ padding: '5px' }}>
                 Attempt to remove duplicate results. For a given file with
@@ -1030,7 +1028,7 @@ export default function Configure() {
                 stream is selected at random.
               </p>
             </div>
-            <div className={styles.settingInput}>
+            <div className={styles.checkboxSettingInput}>
               <input
                 type="checkbox"
                 checked={cleanResults}

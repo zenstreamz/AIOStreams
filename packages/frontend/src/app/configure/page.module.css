@@ -53,14 +53,16 @@
 
 .settingDescription {
   flex: 1;
-  padding-right: 20px;
 }
 
 .settingInput {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  width: 40%;
+}
+.settingInput select {
+  width: 100px;
+  height: 30px;
 }
 
 .slidersContainer {
@@ -155,7 +157,7 @@
 
 .mediaFlowSection {
   padding: 10px;
-  margin: 5px;
+  margin-top: 10px;
   border-width: 1px;
   border-style: solid;
   border-radius: var(--borderRadius);
