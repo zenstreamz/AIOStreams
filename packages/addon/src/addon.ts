@@ -435,6 +435,13 @@ export class AIOStreams {
 
   private shouldProxyStream(stream: ParsedStream): boolean {
     const mediaFlowConfig = getMediaFlowConfig(this.config);
+    if (Settings.LOG_SENSITIVE_INFO) {
+      console.debug(
+        `|DBG| addon > shouldProxyStream: MediaFlow config: ${JSON.stringify(
+          mediaFlowConfig
+        )}`
+      );
+    }
     if (!mediaFlowConfig.mediaFlowEnabled) return false;
     if (!stream.url) return false;
     // now check if mediaFlowConfig.proxiedAddons or mediaFlowConfig.proxiedServices is not null
