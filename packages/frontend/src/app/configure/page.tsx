@@ -171,8 +171,8 @@ export default function Configure() {
     number | null
   >(null);
   const [mediaFlowEnabled, setMediaFlowEnabled] = useState<boolean>(false);
-  const [mediaFlowProxyUrl, setmediaFlowProxyUrl] = useState<string>('');
-  const [mediaFlowApiPassword, setmediaFlowApiPassword] = useState<string>('');
+  const [mediaFlowProxyUrl, setMediaFlowProxyUrl] = useState<string>('');
+  const [mediaFlowApiPassword, setMediaFlowApiPassword] = useState<string>('');
   const [mediaFlowPublicIp, setMediaFlowPublicIp] = useState<string>('');
   const [mediaFlowProxiedAddons, setMediaFlowProxiedAddons] = useState<
     string[] | null
@@ -602,8 +602,8 @@ export default function Configure() {
       setMediaFlowEnabled(
         decodedConfig.mediaFlowConfig?.mediaFlowEnabled || false
       );
-      setmediaFlowProxyUrl(decodedConfig.mediaFlowConfig?.proxyUrl || '');
-      setmediaFlowApiPassword(decodedConfig.mediaFlowConfig?.apiPassword || '');
+      setMediaFlowProxyUrl(decodedConfig.mediaFlowConfig?.proxyUrl || '');
+      setMediaFlowApiPassword(decodedConfig.mediaFlowConfig?.apiPassword || '');
     }
 
     const path = window.location.pathname;
@@ -1084,7 +1084,7 @@ export default function Configure() {
                   <div>
                     <CredentialInput
                       credential={mediaFlowProxyUrl}
-                      setCredential={setmediaFlowProxyUrl}
+                      setCredential={setMediaFlowProxyUrl}
                       inputProps={{
                         placeholder: 'Enter your MediaFlow proxy URL',
                         disabled: !mediaFlowEnabled,
@@ -1102,7 +1102,7 @@ export default function Configure() {
                   <div>
                     <CredentialInput
                       credential={mediaFlowApiPassword}
-                      setCredential={setmediaFlowApiPassword}
+                      setCredential={setMediaFlowApiPassword}
                       inputProps={{
                         placeholder: 'Enter your MediaFlow API password',
                         disabled: !mediaFlowEnabled,
