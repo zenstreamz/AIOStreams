@@ -442,8 +442,13 @@ export class AIOStreams {
     if (
       mediaFlowConfig.proxiedAddons &&
       !mediaFlowConfig.proxiedAddons.includes(stream.addon.id)
-    )
-      return false;
+    ) {
+      if (Settings.LOG_SENSITIVE_INFO) {
+        console.debug(
+          `|DBG| addon > shouldProxyStream: Stream from addon ${stream.addon.id} is not proxied so skipping`
+        );
+      }
+    }
 
     if (
       (mediaFlowConfig.proxiedServices &&
@@ -452,8 +457,20 @@ export class AIOStreams {
       (mediaFlowConfig.proxiedServices &&
         !stream.provider &&
         !mediaFlowConfig.proxiedServices.includes('none'))
-    )
-      return false;
+    ) {
+      if (Settings.LOG_SENSITIVE_INFO) {
+        console.debug(
+          `|DBG| addon > shouldProxyStream: Stream from provider ${stream.provider?.id} is not proxied so skipping`
+        );
+        return false;
+      }
+    }
+
+    if (Settings.LOG_SENSITIVE_INFO) {
+      console.debug(
+        `|DBG| addon > shouldProxyStream: Stream from addon ${stream.addon.id} and provider ${stream.provider?.id} with URL ${stream.url} is eligible for proxying, attempting to create MediaFlow stream`
+      );
+    }
 
     return true;
   }
@@ -501,6 +518,11 @@ export class AIOStreams {
 
     let stream: Stream;
     const shouldProxy = this.shouldProxyStream(parsedStream);
+    if (Settings.LOG_SENSITIVE_INFO) {
+      console.debug(
+        `|DBG| addon > createStreamObject: Determined that stream ${name} should${shouldProxy ? '' : ' not'} be proxied`
+      );
+    }
     if (shouldProxy) {
       try {
         const mediaFlowStream = this.createMediaFlowStream(
