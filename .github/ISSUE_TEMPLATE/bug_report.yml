@@ -56,7 +56,7 @@ body:
     id: '4'
     attributes:
       label: Bug Description / Steps to Reproduce
-      description: Precisely describe the bug you encountered and the steps to reproduce it. Avoid vague descriptions.
+      description: Precisely describe the bug you encountered and the steps to reproduce it. Avoid vague descriptions. Include screenshots of your configuration if applicable.
     validations:
       required: true
   - type: textarea
