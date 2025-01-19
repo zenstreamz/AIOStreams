@@ -1,20 +1,27 @@
-name: Deploy Docker image to GitHub Container Registry
+name: Deploy Docker image to GitHub Container Registry and Docker Hub
 
 on:
   push:
     tags:
-      - '*'
+      - 'v*' # Trigger on any tag that starts with 'v'
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # Set up QEMU for multi-platform builds
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+
+      # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      # Log in to GitHub Container Registry (GHCR)
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -22,6 +29,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build and push Docker image to both GHCR and Docker Hub
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -30,3 +45,5 @@ jobs:
           tags: |
             ghcr.io/viren070/aiostreams:${{ github.ref_name }}
             ghcr.io/viren070/aiostreams:latest
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/aiostreams:${{ github.ref_name }}
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/aiostreams:latest
