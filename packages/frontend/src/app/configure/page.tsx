@@ -1164,7 +1164,9 @@ export default function Configure() {
                         })) || []
                       }
                       setValues={(selectedAddons) => {
-                        setMediaFlowProxiedAddons(selectedAddons);
+                        setMediaFlowProxiedAddons(
+                          selectedAddons.length === 0 ? null : selectedAddons
+                        );
                       }}
                       values={mediaFlowProxiedAddons || undefined}
                     />
@@ -1192,7 +1194,11 @@ export default function Configure() {
                         })),
                       ]}
                       setValues={(selectedServices) => {
-                        setMediaFlowProxiedServices(selectedServices);
+                        setMediaFlowProxiedServices(
+                          selectedServices.length === 0
+                            ? null
+                            : selectedServices
+                        );
                       }}
                       values={mediaFlowProxiedServices || undefined}
                     />
