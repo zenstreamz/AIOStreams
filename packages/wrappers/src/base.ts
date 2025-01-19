@@ -173,7 +173,7 @@ export class BaseWrapper {
       externalUrl: stream.externalUrl,
       _infoHash:
         stream.infoHash ||
-        (stream.url ? stream.url.match(/\/[a-fA-F0-9]{40}\//)?.[0] : undefined),
+        (stream.url ? stream.url.match(/[a-fA-F0-9]{40}/)?.[0] : undefined),
       torrent: {
         infoHash: stream.infoHash,
         fileIdx: stream.fileIdx,
