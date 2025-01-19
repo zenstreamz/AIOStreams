@@ -79,6 +79,14 @@ app.get(
   }
 );
 
+if (!Settings.DISABLE_CUSTOM_CONFIG_GENERATOR_ROUTE) {
+  app.get('/custom-config-generator', (req, res) => {
+    res.sendFile(
+      path.join(__dirname, '../../frontend/out/custom-config-generator.html')
+    );
+  });
+}
+
 app.get('/configure', (req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/out/configure.html'));
 });
