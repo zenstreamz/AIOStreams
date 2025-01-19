@@ -1,8 +1,11 @@
 import { ParsedStream } from '@aiostreams/types';
-import { formatDuration, formatSize } from './utils';
+import { formatDuration, formatSize, languageToEmoji } from './utils';
 import { serviceDetails } from '@aiostreams/utils';
 
-export function gdriveFormat(stream: ParsedStream): {
+export function gdriveFormat(
+  stream: ParsedStream,
+  minimalistic: boolean = false
+): {
   name: string;
   description: string;
 } {
@@ -24,7 +27,12 @@ export function gdriveFormat(stream: ParsedStream): {
     name += `[P2P] `;
   }
 
-  name += `${stream.addon.name} ${stream.personal ? '(Your Media) ' : ''}${stream.resolution}`;
+  name += `${stream.addon.name} ${stream.personal ? '(Your Media) ' : ''}`;
+  if (!minimalistic) {
+    name += stream.resolution;
+  } else {
+    name += stream.resolution !== 'Unknown' ? stream.resolution + '' : '';
+  }
 
   let description: string = `${stream.quality !== 'Unknown' ? '🎥 ' + stream.quality + ' ' : ''}${stream.encode !== 'Unknown' ? '🎞️ ' + stream.encode : ''}`;
 
@@ -40,7 +48,8 @@ export function gdriveFormat(stream: ParsedStream): {
   }
   if (
     stream.size ||
-    stream.torrent?.seeders ||
+    (stream.torrent?.seeders && !minimalistic) ||
+    (minimalistic && stream.torrent?.seeders && !stream.provider?.cached) ||
     stream.usenet?.age ||
     stream.duration
   ) {
@@ -51,17 +60,26 @@ export function gdriveFormat(stream: ParsedStream): {
       ? `⏱️ ${formatDuration(stream.duration)} `
       : '';
     description +=
-      stream.torrent?.seeders !== undefined
+      (stream.torrent?.seeders !== undefined && !minimalistic) ||
+      (minimalistic && stream.torrent?.seeders && !stream.provider?.cached)
         ? `👥 ${stream.torrent.seeders}`
         : '';
 
     description += stream.usenet?.age ? `📅 ${stream.usenet.age}` : '';
   }
+
   if (stream.languages.length !== 0) {
-    description += `\n🔊 ${stream.languages.join(' | ')}`;
+    let languages = stream.languages;
+    if (minimalistic) {
+      languages = languages.map(
+        (language) => languageToEmoji(language) || language
+      );
+    }
+    description += `\n🔊 ${languages.join(' | ')}`;
   }
 
-  description += `\n📄 ${stream.filename ? stream.filename : 'Unknown'}`;
-
+  if (!minimalistic && stream.filename) {
+    description += `\n📄 ${stream.filename ? stream.filename : 'Unknown'}`;
+  }
   return { name, description };
 }

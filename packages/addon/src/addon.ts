@@ -505,6 +505,15 @@ export class AIOStreams {
         description = _description;
         break;
       }
+      case 'minimalistic-gdrive': {
+        const { name: _name, description: _description } = gdriveFormat(
+          parsedStream,
+          true
+        );
+        name = _name;
+        description = _description;
+        break;
+      }
       case 'torrentio': {
         const { name: _name, description: _description } =
           torrentioFormat(parsedStream);

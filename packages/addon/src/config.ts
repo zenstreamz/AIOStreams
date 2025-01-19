@@ -1,7 +1,12 @@
 import { AddonDetail, Config } from '@aiostreams/types';
 import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
 
-export const allowedFormatters = ['gdrive', 'torrentio', 'torbox'];
+export const allowedFormatters = [
+  'gdrive',
+  'minimalistic-gdrive',
+  'torrentio',
+  'torbox',
+];
 
 export const allowedLanguages = [
   'Multi',
