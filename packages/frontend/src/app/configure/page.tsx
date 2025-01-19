@@ -1071,8 +1071,6 @@ export default function Configure() {
                   setMediaFlowEnabled(e.target.checked);
                 }}
                 style={{
-                  marginLeft: 'auto',
-                  marginRight: '20px',
                   width: '25px',
                   height: '25px',
                 }}
