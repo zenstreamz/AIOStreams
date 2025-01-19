@@ -193,131 +193,71 @@ export class AIOStreams {
     );
 
     if (this.config.cleanResults) {
-      const cleanResultsStartTime = new Date().getTime();
-      const uniqueStreams: ParsedStream[] = [];
+      const normaliseFilename = (filename?: string): string | undefined =>
+        filename
+          ?.replace(
+            /\.(mkv|mp4|avi|mov|wmv|flv|webm|m4v|mpg|mpeg|3gp|3g2|m2ts|ts|vob|ogv|ogm|divx|xvid|rm|rmvb|asf|mxf|mka|mks|mk3d|webm|f4v|f4p|f4a|f4b)$/i,
+            ''
+          )
+          .replace(/[^\p{L}\p{N}+]/gu, '')
+          .replace(/\s+/g, '')
+          .toLowerCase();
 
-      // Group streams by normalized filename
-      const streamsByHashOrName = filteredResults.reduce(
-        (acc, stream) => {
-          const normalisedFilename = stream.filename
-            ? stream.filename
-                .replace(
-                  /\.(mkv|mp4|avi|mov|wmv|flv|webm|m4v|mpg|mpeg|3gp|3g2|m2ts|ts|vob|ogv|ogm|divx|xvid|rm|rmvb|asf|mxf|mka|mks|mk3d|webm|f4v|f4p|f4a|f4b)$/i,
-                  ''
-                )
-                .replace(/[^\p{L}\p{N}+]/gu, '')
-                .replace(/\s+/g, '')
-                .toLowerCase()
-            : undefined;
-          const key = stream._infoHash || normalisedFilename;
-
-          if (!key) {
-            uniqueStreams.push(stream);
+      const groupStreamsByKey = (
+        streams: ParsedStream[],
+        keyExtractor: (stream: ParsedStream) => string | undefined
+      ): Record<string, ParsedStream[]> => {
+        return streams.reduce(
+          (acc, stream) => {
+            const key = keyExtractor(stream);
+            if (!key) {
+              uniqueStreams.push(stream); // Handle ungroupable streams
+              return acc;
+            }
+            acc[key] = acc[key] || [];
+            acc[key].push(stream);
             return acc;
-          }
+          },
+          {} as Record<string, ParsedStream[]>
+        );
+      };
 
-          acc[key] = acc[key] || [];
-          acc[key].push(stream);
-          return acc;
-        },
-        {} as Record<string, ParsedStream[]>
+      const cleanResultsStartTime = new Date().getTime();
+      // Initial deduplication by hash
+      const cleanResultsByHashStartTime = new Date().getTime();
+      let uniqueStreams: ParsedStream[] = [];
+      const initalResults = filteredResults;
+      const streamsByHash = groupStreamsByKey(
+        initalResults,
+        (stream) => stream._infoHash
       );
 
-      Object.values(streamsByHashOrName).forEach((groupedStreams) => {
-        if (groupedStreams.length === 1) {
-          uniqueStreams.push(groupedStreams[0]);
-          return;
-        }
-        //console.log(`==================\nDetermining unique streams for ${groupedStreams[0].filename} from ${groupedStreams.length} total duplicates`);
-        //console.log(groupedStreams.map(stream => `Addon ID: ${stream.addon.id}, Provider ID: ${stream.provider?.id}, Provider Cached: ${stream.provider?.cached}`));
-        // Separate streams into categories
-        const cachedStreams = groupedStreams.filter(
-          (stream) => stream.provider?.cached
-        );
-        const uncachedStreams = groupedStreams.filter(
-          (stream) => stream.provider && !stream.provider.cached
-        );
-        const noProviderStreams = groupedStreams.filter(
-          (stream) => !stream.provider
-        );
+      // Process grouped streams by hash
+      uniqueStreams = await this.processGroupedStreams(streamsByHash);
+      const filteredResultsByHash = uniqueStreams;
+      console.log(
+        `|INF| addon > getStreams: Deduplicated by hash in ${getTimeTakenSincePoint(cleanResultsByHashStartTime)} and removed ${
+          initalResults.length - uniqueStreams.length
+        } duplicates`
+      );
+      // Deduplication by normalised filename
+      const cleanResultsByFilenameStartTime = new Date().getTime();
+      const streamsByFilename = groupStreamsByKey(uniqueStreams, (stream) =>
+        normaliseFilename(stream.filename)
+      );
 
-        // Select uncached streams by addon priority (one per provider)
-        const selectedUncachedStreams = Object.values(
-          uncachedStreams.reduce(
-            (acc, stream) => {
-              acc[stream.provider!.id] = acc[stream.provider!.id] || [];
-              acc[stream.provider!.id].push(stream);
-              return acc;
-            },
-            {} as Record<string, ParsedStream[]>
-          )
-        ).map((providerGroup) => {
-          return providerGroup.sort((a, b) => {
-            const aIndex = this.config.addons.findIndex(
-              (addon) =>
-                `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
-            );
-            const bIndex = this.config.addons.findIndex(
-              (addon) =>
-                `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
-            );
-            return aIndex - bIndex;
-          })[0];
-        });
-        //selectedUncachedStreams.forEach(stream => console.log(`Selected uncached stream for provider ${stream.provider!.id}: Addon ID: ${stream.addon.id}`));
-
-        // Select cached streams by provider and addon priority
-        const selectedCachedStream = cachedStreams.sort((a, b) => {
-          const aProviderIndex = this.config.services.findIndex(
-            (service) => service.id === a.provider!.id
-          );
-          const bProviderIndex = this.config.services.findIndex(
-            (service) => service.id === b.provider!.id
-          );
-
-          if (aProviderIndex !== bProviderIndex) {
-            return aProviderIndex - bProviderIndex;
-          }
-
-          const aAddonIndex = this.config.addons.findIndex(
-            (addon) =>
-              `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
-          );
-          const bAddonIndex = this.config.addons.findIndex(
-            (addon) =>
-              `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
-          );
-
-          return aAddonIndex - bAddonIndex;
-        })[0];
-        // Select one non-provider stream (highest addon priority)
-        const selectedNoProviderStream = noProviderStreams.sort((a, b) => {
-          const aIndex = this.config.addons.findIndex(
-            (addon) =>
-              `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
-          );
-          const bIndex = this.config.addons.findIndex(
-            (addon) =>
-              `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
-          );
-          return aIndex - bIndex;
-        })[0];
-
-        // Combine selected streams for this group
-        if (selectedNoProviderStream) {
-          //console.log(`Selected no provider stream: Addon ID: ${selectedNoProviderStream.addon.id}`);
-          uniqueStreams.push(selectedNoProviderStream);
-        }
-        if (selectedCachedStream) {
-          //console.log(`Selected cached stream for provider ${selectedCachedStream.provider!.id} from Addon ID: ${selectedCachedStream.addon.id}`);
-          uniqueStreams.push(selectedCachedStream);
-        }
-        uniqueStreams.push(...selectedUncachedStreams);
-      });
-
+      // Process grouped streams by filename
+      uniqueStreams = await this.processGroupedStreams(streamsByFilename);
+      console.log(
+        `|INF| addon > getStreams: Deduplicated by filename in ${getTimeTakenSincePoint(cleanResultsByFilenameStartTime)} and removed ${
+          filteredResultsByHash.length - uniqueStreams.length
+        } duplicates`
+      );
       filteredResults = uniqueStreams;
       console.log(
-        `|INF| addon > getStreams: Cleaned results to ${filteredResults.length} streams in ${getTimeTakenSincePoint(cleanResultsStartTime)}`
+        `|INF| addon > getStreams: Deduplicated results in ${getTimeTakenSincePoint(cleanResultsStartTime)} and removed a total of ${
+          initalResults.length - uniqueStreams.length
+        } duplicates`
       );
     }
     // Apply sorting
@@ -934,5 +874,103 @@ export class AIOStreams {
         return await wrapper.getParsedStreams(streamRequest);
       }
     }
+  }
+  private async processGroupedStreams(
+    groupedStreams: Record<string, ParsedStream[]>
+  ) {
+    const uniqueStreams: ParsedStream[] = [];
+    Object.values(groupedStreams).forEach((groupedStreams) => {
+      if (groupedStreams.length === 1) {
+        uniqueStreams.push(groupedStreams[0]);
+        return;
+      }
+      //console.log(`==================\nDetermining unique streams for ${groupedStreams[0].filename} from ${groupedStreams.length} total duplicates`);
+      //console.log(groupedStreams.map(stream => `Addon ID: ${stream.addon.id}, Provider ID: ${stream.provider?.id}, Provider Cached: ${stream.provider?.cached}`));
+      // Separate streams into categories
+      const cachedStreams = groupedStreams.filter(
+        (stream) => stream.provider?.cached
+      );
+      const uncachedStreams = groupedStreams.filter(
+        (stream) => stream.provider && !stream.provider.cached
+      );
+      const noProviderStreams = groupedStreams.filter(
+        (stream) => !stream.provider
+      );
+
+      // Select uncached streams by addon priority (one per provider)
+      const selectedUncachedStreams = Object.values(
+        uncachedStreams.reduce(
+          (acc, stream) => {
+            acc[stream.provider!.id] = acc[stream.provider!.id] || [];
+            acc[stream.provider!.id].push(stream);
+            return acc;
+          },
+          {} as Record<string, ParsedStream[]>
+        )
+      ).map((providerGroup) => {
+        return providerGroup.sort((a, b) => {
+          const aIndex = this.config.addons.findIndex(
+            (addon) =>
+              `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
+          );
+          const bIndex = this.config.addons.findIndex(
+            (addon) =>
+              `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
+          );
+          return aIndex - bIndex;
+        })[0];
+      });
+      //selectedUncachedStreams.forEach(stream => console.log(`Selected uncached stream for provider ${stream.provider!.id}: Addon ID: ${stream.addon.id}`));
+
+      // Select cached streams by provider and addon priority
+      const selectedCachedStream = cachedStreams.sort((a, b) => {
+        const aProviderIndex = this.config.services.findIndex(
+          (service) => service.id === a.provider!.id
+        );
+        const bProviderIndex = this.config.services.findIndex(
+          (service) => service.id === b.provider!.id
+        );
+
+        if (aProviderIndex !== bProviderIndex) {
+          return aProviderIndex - bProviderIndex;
+        }
+
+        const aAddonIndex = this.config.addons.findIndex(
+          (addon) =>
+            `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
+        );
+        const bAddonIndex = this.config.addons.findIndex(
+          (addon) =>
+            `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
+        );
+
+        return aAddonIndex - bAddonIndex;
+      })[0];
+      // Select one non-provider stream (highest addon priority)
+      const selectedNoProviderStream = noProviderStreams.sort((a, b) => {
+        const aIndex = this.config.addons.findIndex(
+          (addon) =>
+            `${addon.id}-${JSON.stringify(addon.options)}` === a.addon.id
+        );
+        const bIndex = this.config.addons.findIndex(
+          (addon) =>
+            `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
+        );
+        return aIndex - bIndex;
+      })[0];
+
+      // Combine selected streams for this group
+      if (selectedNoProviderStream) {
+        //console.log(`Selected no provider stream: Addon ID: ${selectedNoProviderStream.addon.id}`);
+        uniqueStreams.push(selectedNoProviderStream);
+      }
+      if (selectedCachedStream) {
+        //console.log(`Selected cached stream for provider ${selectedCachedStream.provider!.id} from Addon ID: ${selectedCachedStream.addon.id}`);
+        uniqueStreams.push(selectedCachedStream);
+      }
+      uniqueStreams.push(...selectedUncachedStreams);
+    });
+
+    return uniqueStreams;
   }
 }
