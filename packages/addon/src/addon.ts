@@ -448,6 +448,7 @@ export class AIOStreams {
 
     if (
       mediaFlowConfig.proxiedAddons &&
+      mediaFlowConfig.proxiedAddons.length > 0 &&
       !mediaFlowConfig.proxiedAddons.includes(stream.addon.id)
     ) {
       if (Settings.LOG_SENSITIVE_INFO) {
@@ -459,9 +460,11 @@ export class AIOStreams {
 
     if (
       (mediaFlowConfig.proxiedServices &&
+        mediaFlowConfig.proxiedServices.length > 0 &&
         stream.provider &&
         !mediaFlowConfig.proxiedServices.includes(stream.provider.id)) ||
       (mediaFlowConfig.proxiedServices &&
+        mediaFlowConfig.proxiedServices.length > 0 &&
         !stream.provider &&
         !mediaFlowConfig.proxiedServices.includes('none'))
     ) {
