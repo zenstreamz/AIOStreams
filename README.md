@@ -202,6 +202,9 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 
 6. Your addon will be hosted at {username}-{space-name}.hf.space. You can also find a direct URL to it by clicking the 3 dots > Embed this space > Direct URL > Copy
 
+>[!WARNING]
+> The build process generally takes around 5 minutes. However, it can sometimes get stuck sometimes or fail. In this case, go to `Settings`, and click `Factory Rebuild`. If it fails after factory rebuilding more than 3 times, you can create an issue.
+
 ##### Updating
 
 To update the addon, you can simply go to the `Settings` tab and click `Factory rebuild`. This will rebuild the addon with the latest changes.
@@ -263,13 +266,27 @@ AIOStreams is available as a [paid product](https://store.elfhosted.com/product/
 
 #### Docker
 
-Use the Dockerfile with [Docker](https://docs.docker.com/get-docker/) installed .
+[Docker](https://docs.docker.com/get-docker/) is a quick and convenient way to run this. Official images are available at the [ghcr.io](https://github.com/Viren070/AIOStreams/pkgs/container/aiostreams) and [docker.io](https://hub.docker.com/r/viren070/aiostreams) registries
 
+You can use the prebuilt images using one of the following commands:
+
+**GitHub Container Registry**:
 ```
 docker run -p 8080:3000 ghcr.io/viren070/aiostreams:latest
 ```
+**Docker Hub**:
+```
+docker run -p 8080:3000 viren070/aiostreams:latest
+```
 
-Or, build the docker image yourself
+If you would like to pass one of the [environment variables](CONFIGURING.md), you can provide the -e flag, e.g. to provide a SECRET_KEY (recommended, see [CONFIGURING.md](CONFIGURING.md) for how to generate a secret key.): 
+
+```
+docker run -p 8080:3000 -e SECRET_KEY=... viren070/aiostreams:latest
+```
+
+
+If you don't want to use a prebuilt image, or want to build from a commit that isn't tagged with a version yet, you can build the image yourself using the following commands: 
 
 ```
 git clone https://github.com/Viren070/aiostreams.git
