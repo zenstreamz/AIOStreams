@@ -323,7 +323,7 @@ export class BaseWrapper {
       indexer,
       stream.duration,
       stream.personal,
-      stream.infoHash || this.extractInfoHash(stream.url)
+      stream.infoHash || this.extractInfoHash(stream.url || '')
     );
   }
 }
