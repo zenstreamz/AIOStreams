@@ -5,3 +5,4 @@ export * from './comet';
 export * from './mediafusion';
 export * from './easynews';
 export * from './easynewsPlus';
+export * from './debridio';

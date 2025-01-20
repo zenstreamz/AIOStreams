@@ -31,18 +31,8 @@ export class Torrentio extends BaseWrapper {
     const sizeInBytes = stream.title
       ? extractSizeInBytes(stream.title, 1024)
       : 0;
-    const debridMatch = RegExp(/^\[([a-zA-Z]{2})(\+| download)\]/).exec(
-      stream.name!
-    );
-    const debrid = debridMatch
-      ? {
-          id:
-            serviceDetails.find((service) =>
-              service.knownNames.includes(debridMatch[1])
-            )?.id || debridMatch[1],
-          cached: debridMatch[2] === '+',
-        }
-      : undefined;
+
+    const debrid = this.parseServiceData(stream);
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.title!);
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
@@ -89,7 +79,10 @@ export class Torrentio extends BaseWrapper {
       debrid,
       seeders,
       undefined,
-      indexer
+      indexer,
+      undefined,
+      undefined,
+      this.extractInfoHash(stream.url || '')
     );
     return parsedStream;
   }

@@ -308,6 +308,51 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
   {
+    name: 'Debridio',
+    id: 'debridio',
+    requiresService: true,
+    supportedServices: ['easydebrid'],
+    options: [
+      {
+        id: 'prioritiseDebrid',
+        required: false,
+        label: 'Prioritise Debrid Service',
+        description:
+          'Prioritise a specific debrid service when fetching streams. This option is useful when you want to use a specific debrid service for fetching streams. By default, the addon will make a separate request for each debrid service. I highly recommend provding a value for this option as it will speed up the fetching process and remove redundant results.',
+        type: 'select',
+        options: [{ value: 'easydebrid', label: 'EasyDebrid' }],
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description:
+          "Override the name of the addon that shows up in the results. Leave it empty to use the default name of 'Debridio'.",
+        type: 'text',
+      },
+      {
+        id: 'overrideUrl',
+        required: false,
+        label: 'Override URL',
+        description:
+          'Override the URL used to fetch streams from the Debridio addon. By default, the URL is generated based on the username and password provided for the Debridio service. Use this option to override the URL with a custom URL.',
+        type: 'text',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description:
+          'The timeout for fetching streams from the Debridio addon in milliseconds. This is the time in milliseconds that the addon will wait for a response from Debridio before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
+        },
+      },
+    ],
+  },
+  {
     name: 'Stremio GDrive',
     id: 'gdrive',
     requiresService: false,
@@ -385,7 +430,7 @@ export const serviceDetails = [
   {
     name: 'Real Debrid',
     shortName: 'RD',
-    knownNames: ['RD', 'Real Debrid'],
+    knownNames: ['RD', 'Real Debrid', 'RealDebrid', 'Real-Debrid'],
     id: 'realdebrid',
     credentials: [
       {

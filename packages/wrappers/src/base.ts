@@ -153,6 +153,10 @@ export class BaseWrapper {
     }
   }
 
+  protected extractInfoHash(url: string): string | undefined {
+    return url.match(/(?<=[-/[(;&])[a-fA-F0-9]{40}(?=[-\]\)/;&])/)?.[0];
+  }
+
   protected createParsedResult(
     parsedInfo: ParsedNameData,
     stream: Stream,
@@ -163,7 +167,8 @@ export class BaseWrapper {
     usenetAge?: string,
     indexer?: string,
     duration?: number,
-    personal?: boolean
+    personal?: boolean,
+    infoHash?: string
   ): ParsedStream {
     return {
       ...parsedInfo,
@@ -172,9 +177,7 @@ export class BaseWrapper {
       size: size,
       url: stream.url,
       externalUrl: stream.externalUrl,
-      _infoHash:
-        stream.infoHash ||
-        (stream.url ? stream.url.match(/[a-fA-F0-9]{40}/)?.[0] : undefined),
+      _infoHash: infoHash,
       torrent: {
         infoHash: stream.infoHash,
         fileIdx: stream.fileIdx,
@@ -207,6 +210,45 @@ export class BaseWrapper {
     };
   }
 
+  protected parseServiceData(
+    stream: Stream
+  ): ParsedStream['provider'] | undefined {
+    const services = serviceDetails;
+    const cachedSymbols = ['+', '⚡', '🚀', 'cached'];
+    const uncachedSymbols = ['⏳', 'download', 'UNCACHED'];
+    let provider: ParsedStream['provider'] | undefined;
+    const string = stream.name || '';
+    services.forEach((service) => {
+      // for each service, generate a regexp which creates a regex with all known names separated by |
+      const regex = new RegExp(
+        `(^|(?<![^ |[(_\\/\\-.]))(${service.knownNames.join('|')})(?=[ ⏳⚡+/|\\)\\]_.-]|$)`,
+        'i'
+      );
+      // check if the string contains the regex
+      if (regex.test(string) || regex.test(stream.url || '')) {
+        let cached: boolean | undefined = undefined;
+        // check if any of the uncachedSymbols are in the string
+        if (uncachedSymbols.some((symbol) => string.includes(symbol))) {
+          cached = false;
+        }
+        // check if any of the cachedSymbols are in the string
+        else if (cachedSymbols.some((symbol) => string.includes(symbol))) {
+          cached = true;
+        }
+
+        provider = {
+          id: service.id,
+          cached: cached,
+        };
+      }
+    });
+    if (!provider) {
+      console.log(
+        `|WRN| wrappers > base > parseServiceData: No provider found for ${string}`
+      );
+    }
+    return provider;
+  }
   protected parseStream(stream: any): ParsedStream | undefined {
     // attempt to look for filename in behaviorHints.filename, return undefined if not found
     let filename = stream.behaviorHints?.filename;
@@ -263,39 +305,8 @@ export class BaseWrapper {
     }
 
     // look for providers
-    const services = serviceDetails;
-    const cachedSymbols = ['+', '⚡'];
-    const uncachedSymbols = ['⏳', 'download'];
-
-    // look at the stream.name for one of the knownNames in each service
     let provider: ParsedStream['provider'] | undefined;
-    if (stream.name) {
-      services.forEach((service) => {
-        // check if any of the knownNames are in the stream.name using regex
-        const found = service.knownNames.some((name) => {
-          const regex = new RegExp(`\\[${name}.*?\\]`, 'i');
-          return regex.test(stream.name);
-        });
-        let cached: boolean | undefined = undefined;
-        if (found) {
-          // check if any of the uncachedSymbols are in the stream.name
-          if (uncachedSymbols.some((symbol) => stream.name?.includes(symbol))) {
-            cached = false;
-          }
-          // check if any of the cachedSymbols are in the stream.name
-          else if (
-            cachedSymbols.some((symbol) => stream.name?.includes(symbol))
-          ) {
-            cached = true;
-          }
-
-          provider = {
-            id: service.id,
-            cached: cached,
-          };
-        }
-      });
-    }
+    provider = this.parseServiceData(stream);
 
     if (stream.infoHash && provider) {
       // if its a p2p result, it is not from a debrid service
@@ -309,7 +320,10 @@ export class BaseWrapper {
       provider,
       seeders ? parseInt(seeders) : undefined,
       undefined,
-      indexer
+      indexer,
+      stream.duration,
+      stream.personal,
+      stream.infoHash || this.extractInfoHash(stream.url)
     );
   }
 }

@@ -47,16 +47,7 @@ export class MediaFusion extends BaseWrapper {
     const provider = nameParts[nameParts.length - 3];
     const emoji = nameParts[nameParts.length - 1];
 
-    const debrid =
-      provider !== 'P2P' && (emoji === '⏳' || emoji === '⚡️')
-        ? {
-            id:
-              serviceDetails.find((service) =>
-                service.knownNames.includes(provider)
-              )?.id || provider,
-            cached: emoji === '⚡️',
-          }
-        : undefined;
+    const debrid = this.parseServiceData(stream);
 
     const indexerMatch = RegExp(
       /🔗 ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u
@@ -94,7 +85,10 @@ export class MediaFusion extends BaseWrapper {
       debrid,
       seeders,
       undefined,
-      indexer
+      indexer,
+      undefined,
+      undefined,
+      this.extractInfoHash(stream.url || '')
     );
     return parsedStream;
   }

@@ -1,6 +1,7 @@
 import {
   BaseWrapper,
   getCometStreams,
+  getDebridioStreams,
   getEasynewsPlusStreams,
   getEasynewsStreams,
   getMediafusionStreams,
@@ -193,6 +194,8 @@ export class AIOStreams {
     );
 
     if (this.config.cleanResults) {
+      const cleanedStreams: ParsedStream[] = [];
+      const initialStreams = filteredResults;
       const normaliseFilename = (filename?: string): string | undefined =>
         filename
           ?.replace(
@@ -211,7 +214,9 @@ export class AIOStreams {
           (acc, stream) => {
             const key = keyExtractor(stream);
             if (!key) {
-              uniqueStreams.push(stream); // Handle ungroupable streams
+              if (!cleanedStreams.includes(stream)) {
+                cleanedStreams.push(stream);
+              }
               return acc;
             }
             acc[key] = acc[key] || [];
@@ -223,42 +228,53 @@ export class AIOStreams {
       };
 
       const cleanResultsStartTime = new Date().getTime();
-      // Initial deduplication by hash
-      const cleanResultsByHashStartTime = new Date().getTime();
-      let uniqueStreams: ParsedStream[] = [];
-      const initalResults = filteredResults;
-      const streamsByHash = groupStreamsByKey(
-        initalResults,
-        (stream) => stream._infoHash
-      );
-
-      // Process grouped streams by hash
-      uniqueStreams = await this.processGroupedStreams(streamsByHash);
-      const filteredResultsByHash = uniqueStreams;
-      console.log(
-        `|INF| addon > getStreams: Deduplicated by hash in ${getTimeTakenSincePoint(cleanResultsByHashStartTime)} and removed ${
-          initalResults.length - uniqueStreams.length
-        } duplicates`
-      );
       // Deduplication by normalised filename
       const cleanResultsByFilenameStartTime = new Date().getTime();
-      const streamsByFilename = groupStreamsByKey(uniqueStreams, (stream) =>
-        normaliseFilename(stream.filename)
+      console.log(
+        `|INF| addon > cleaner: Received ${initialStreams.length} streams to clean`
+      );
+      const streamsGroupedByFilename = groupStreamsByKey(
+        initialStreams,
+        (stream) => normaliseFilename(stream.filename)
+      );
+
+      console.log(
+        `|INF| addon > cleaner: Found ${Object.keys(streamsGroupedByFilename).length} unique filenames`
       );
 
       // Process grouped streams by filename
-      uniqueStreams = await this.processGroupedStreams(streamsByFilename);
-      console.log(
-        `|INF| addon > getStreams: Deduplicated by filename in ${getTimeTakenSincePoint(cleanResultsByFilenameStartTime)} and removed ${
-          filteredResultsByHash.length - uniqueStreams.length
-        } duplicates`
+      const cleanedStreamsByFilename = await this.processGroupedStreams(
+        streamsGroupedByFilename
       );
-      filteredResults = uniqueStreams;
+
       console.log(
-        `|INF| addon > getStreams: Deduplicated results in ${getTimeTakenSincePoint(cleanResultsStartTime)} and removed a total of ${
-          initalResults.length - uniqueStreams.length
-        } duplicates`
+        `|INF| addon > cleaner: Deduplicated streams by filename to ${cleanedStreamsByFilename.length} streams in ${getTimeTakenSincePoint(cleanResultsByFilenameStartTime)}`
       );
+
+      // Deduplication by hash
+      const cleanResultsByHashStartTime = new Date().getTime();
+
+      const streamsGroupedByHash = groupStreamsByKey(
+        cleanedStreamsByFilename,
+        (stream) => stream._infoHash
+      );
+      console.log(
+        `|INF| addon > cleaner: Found ${Object.keys(streamsGroupedByHash).length} unique hashes with ${cleanedStreamsByFilename.length - Object.values(streamsGroupedByHash).reduce((sum, group) => sum + group.length, 0)} streams not grouped`
+      );
+
+      // Process grouped streams by hash
+      const cleanedStreamsByHash =
+        await this.processGroupedStreams(streamsGroupedByHash);
+
+      console.log(
+        `|INF| addon > cleaner: Deduplicated streams by hash to ${cleanedStreamsByHash.length} streams in ${getTimeTakenSincePoint(cleanResultsByHashStartTime)}`
+      );
+
+      cleanedStreams.push(...cleanedStreamsByHash);
+      console.log(
+        `|INF| addon > cleaner: Deduplicated streams to ${cleanedStreams.length} streams in ${getTimeTakenSincePoint(cleanResultsStartTime)}`
+      );
+      filteredResults = cleanedStreams;
     }
     // Apply sorting
     const sortStartTime = new Date().getTime();
@@ -841,6 +857,14 @@ export class AIOStreams {
           addonId
         );
       }
+      case 'debridio': {
+        return await getDebridioStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
+      }
       case 'gdrive': {
         if (!addon.options.addonUrl) {
           throw new Error('The addon URL was undefined for GDrive');
@@ -884,8 +908,17 @@ export class AIOStreams {
         uniqueStreams.push(groupedStreams[0]);
         return;
       }
-      //console.log(`==================\nDetermining unique streams for ${groupedStreams[0].filename} from ${groupedStreams.length} total duplicates`);
-      //console.log(groupedStreams.map(stream => `Addon ID: ${stream.addon.id}, Provider ID: ${stream.provider?.id}, Provider Cached: ${stream.provider?.cached}`));
+
+      /*console.log(
+        `==================\nDetermining unique streams for ${groupedStreams[0].filename} from ${groupedStreams.length} total duplicates`
+      );
+      console.log(
+        groupedStreams.map(
+          (stream) =>
+            `Addon ID: ${stream.addon.id}, Provider ID: ${stream.provider?.id}, Provider Cached: ${stream.provider?.cached}, type: ${stream.torrent ? 'torrent' : 'usenet'}`
+        )
+      );
+      console.log('==================');*/
       // Separate streams into categories
       const cachedStreams = groupedStreams.filter(
         (stream) => stream.provider?.cached
@@ -944,7 +977,14 @@ export class AIOStreams {
             `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
         );
 
-        return aAddonIndex - bAddonIndex;
+        if (aAddonIndex !== bAddonIndex) {
+          return aAddonIndex - bAddonIndex;
+        }
+
+        // now look at the type of stream. prefer usenet over torrents
+        if (a.torrent?.seeders && !b.torrent?.seeders) return 1;
+        if (!a.torrent?.seeders && b.torrent?.seeders) return -1;
+        return 0;
       })[0];
       // Select one non-provider stream (highest addon priority)
       const selectedNoProviderStream = noProviderStreams.sort((a, b) => {
@@ -956,7 +996,15 @@ export class AIOStreams {
           (addon) =>
             `${addon.id}-${JSON.stringify(addon.options)}` === b.addon.id
         );
-        return aIndex - bIndex;
+
+        if (aIndex !== bIndex) {
+          return aIndex - bIndex;
+        }
+
+        // now look at the type of stream. prefer usenet over torrents
+        if (a.torrent?.seeders && !b.torrent?.seeders) return 1;
+        if (!a.torrent?.seeders && b.torrent?.seeders) return -1;
+        return 0;
       })[0];
 
       // Combine selected streams for this group

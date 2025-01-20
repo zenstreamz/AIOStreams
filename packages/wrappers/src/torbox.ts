@@ -125,6 +125,11 @@ export class Torbox extends BaseWrapper {
           (dAgeOrSeeders ? parseInt(dAgeOrSeeders) : undefined)
         : undefined;
     const age = type === 'usenet' ? dAgeOrSeeders || undefined : undefined;
+    let infoHash = stream.hash || this.extractInfoHash(stream.url);
+    if (age && infoHash) {
+      // we only need the infoHash for torrents
+      infoHash = undefined;
+    }
 
     const parsedStream: ParsedStream = this.createParsedResult(
       parsedFilename,
@@ -136,7 +141,8 @@ export class Torbox extends BaseWrapper {
       age,
       undefined,
       undefined,
-      personal
+      personal,
+      infoHash
     );
 
     return parsedStream;

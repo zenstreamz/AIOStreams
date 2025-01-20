@@ -34,6 +34,8 @@ export class Settings {
   public static readonly EASYNEWS_PLUS_URL =
     process.env.EASYNEWS_PLUS_URL ??
     'https://b89262c192b0-stremio-easynews-addon.baby-beamup.club/';
+  public static readonly DEBRIDIO_URL =
+    process.env.DEBRIDIO_URL ?? 'https://debridio.adobotec.com/';
   public static readonly ADDON_PROXY = process.env.ADDON_PROXY ?? '';
   public static readonly DEFAULT_MEDIAFLOW_URL =
     process.env.DEFAULT_MEDIAFLOW_URL ?? '';
@@ -82,6 +84,10 @@ export class Settings {
   public static readonly DEFAULT_EASYNEWS_PLUS_TIMEMOUT = process.env
     .DEFAULT_EASYNEWS_PLUS_TIMEMOUT
     ? parseInt(process.env.DEFAULT_EASYNEWS_PLUS_TIMEMOUT)
+    : 15000;
+  public static readonly DEFAULT_DEBRIDIO_TIMEOUT = process.env
+    .DEFAULT_DEBRIDIO_TIMEOUT
+    ? parseInt(process.env.DEFAULT_DEBRIDIO_TIMEOUT)
     : 15000;
   public static readonly SHOW_DIE = process.env.SHOW_DIE
     ? process.env.SHOW_DIE === 'true'

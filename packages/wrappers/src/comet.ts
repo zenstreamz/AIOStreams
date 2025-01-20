@@ -41,16 +41,7 @@ export class Comet extends BaseWrapper {
         ? extractSizeInBytes(stream.description, 1024)
         : undefined;
 
-    const debridMatch = RegExp(/^\[([a-zA-Z]{2})(\⚡)\]/).exec(stream.name!);
-    const debrid = debridMatch
-      ? {
-          id:
-            serviceDetails.find((service) =>
-              service.knownNames.includes(debridMatch[1])
-            )?.id || debridMatch[1],
-          cached: debridMatch[2] === '⚡',
-        }
-      : undefined;
+    const debrid = this.parseServiceData(stream);
 
     const indexerMatch = RegExp(/🔎 ([a-zA-Z0-9]+)/).exec(
       stream.description || ''
@@ -65,7 +56,10 @@ export class Comet extends BaseWrapper {
       debrid,
       undefined,
       undefined,
-      indexer
+      indexer,
+      undefined,
+      undefined,
+      this.extractInfoHash(stream.url || '')
     );
     return parsedStream;
   }
