@@ -1,9 +1,4 @@
-import {
-  AIOStreams,
-  invalidConfig,
-  missingConfig,
-  validateConfig,
-} from '@aiostreams/addon';
+import { AIOStreams, errorResponse, validateConfig } from '@aiostreams/addon';
 import manifest from '@aiostreams/addon/src/manifest';
 import { Config, StreamRequest } from '@aiostreams/types';
 
@@ -65,7 +60,13 @@ export default {
       if (components.includes('stream')) {
         // when /stream is requested without config
         if (components.length !== 4) {
-          return createJsonResponse(missingConfig(url.origin));
+          return createJsonResponse(
+            errorResponse(
+              'You must configure this addon first',
+              url.origin,
+              '/configure'
+            )
+          );
         }
 
         const config = components[0];
@@ -93,7 +94,11 @@ export default {
           decodedConfig = JSON.parse(atob(config));
         } catch (error: any) {
           return createJsonResponse(
-            invalidConfig(url.origin, 'Outdated Configuration')
+            errorResponse(
+              'Unable to parse config, please reconfigure or create an issue on GitHub',
+              url.origin,
+              '/configure'
+            )
           );
         }
         const { valid, errorMessage, errorCode } =
@@ -101,7 +106,7 @@ export default {
         if (!valid) {
           console.error(`Invalid config: ${errorMessage}`);
           return createJsonResponse(
-            invalidConfig(url.origin, errorMessage ?? 'Unknown')
+            errorResponse(errorMessage ?? 'Unknown', url.origin, '/configure')
           );
         }
 
