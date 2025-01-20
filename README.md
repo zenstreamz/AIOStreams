@@ -216,14 +216,23 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 > [!NOTE]
 > Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
 
+> [!WARNING]
+> Cloudflare Workers tend to get blocked by Torrentio quickly. It is also not possible to use the ADDON_PROXY environment variable with Cloudflare Workers. You must also edit the code for it to be possible to run on a cloudflare worker due to an [issue](https://github.com/Viren070/AIOStreams/issues/32). 
 1. Sign up for a [Cloudflare Account](https://dash.cloudflare.com/sign-up/workers-and-pages)
 2. Install Node.js (I would recommend using package managers e.g. fnm on Windows)
 3. Install Git
-4. Run the following commands:
+5. Run the following commands:
 
-```
+
+
+```bash
 git clone https://github.com/Viren070/AIOStreams.git
 cd AIOStreams
+```
+
+6. Now follow [these instructions](https://github.com/Viren070/AIOStreams/issues/32#issuecomment-2602643959)
+7. Run the remaining commands
+```bash
 npm i
 npm run build
 npm run deploy:cloudflare-worker
@@ -232,7 +241,7 @@ npm run deploy:cloudflare-worker
 ##### Updating
 
 To update the addon, you can simply run the following commands to pull the latest changes, build the project, and deploy the worker.
-This will update the worker with the latest changes, which may not be stable.
+This will update the worker with the latest changes, which may not be stable. You must also repeat step 6. You may get some sort of merge conflict, in this case, just delete the `AIOStreams` folder and start over. 
 
 ```
 git pull
