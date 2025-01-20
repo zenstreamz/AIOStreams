@@ -67,9 +67,10 @@ export class BaseWrapper {
     const mediaFlowConfig = getMediaFlowConfig(this.userConfig);
     if (mediaFlowConfig.mediaFlowEnabled) {
       const mediaFlowIp = await getMediaFlowPublicIp(mediaFlowConfig);
-      if (mediaFlowIp) {
-        userIp = mediaFlowIp;
+      if (!mediaFlowIp) {
+        throw new Error('Failed to get public IP from MediaFlow');
       }
+      userIp = mediaFlowIp;
     }
     return userIp;
   }
