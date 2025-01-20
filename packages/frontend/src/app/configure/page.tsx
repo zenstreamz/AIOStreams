@@ -277,15 +277,24 @@ export default function Configure() {
       if (!response) {
         throw new Error('encrypt-user-data failed: no response within timeout');
       }
+
       if (!response.ok) {
         throw new Error(
-          `encrypt-user-data failed with status ${response.status}`
+          `encrypt-user-data failed with status ${response.status} and statusText ${response.statusText}`
         );
       }
 
       const data = await response.json();
-      if (!data.success)
+      if (!data.success) {
+        if (data.error) {
+          return {
+            success: false,
+            manifest: null,
+            message: data.error,
+          };
+        }
         throw new Error(`Encryption service failed, ${data.message}`);
+      }
 
       const encryptedConfig = data.data;
       return {
@@ -342,7 +351,7 @@ export default function Configure() {
       if (!manifestUrl.success || !manifestUrl.manifest) {
         setDisableButtons(false);
         toast.update(id, {
-          render: 'Failed to generate manifest URL',
+          render: manifestUrl.message || 'Failed to generate manifest URL',
           type: 'error',
           autoClose: 5000,
           isLoading: false,
@@ -387,7 +396,7 @@ export default function Configure() {
       const manifestUrl = await getManifestUrl();
       if (!manifestUrl.success || !manifestUrl.manifest) {
         toast.update(id, {
-          render: 'Failed to generate manifest URL',
+          render: manifestUrl.message || 'Failed to generate manifest URL',
           type: 'error',
           autoClose: 5000,
           isLoading: false,
@@ -436,7 +445,7 @@ export default function Configure() {
       const manifestUrl = await getManifestUrl();
       if (!manifestUrl.success || !manifestUrl.manifest) {
         toast.update(id, {
-          render: 'Failed to generate manifest URL',
+          render: manifestUrl.message || 'Failed to generate manifest URL',
           type: 'error',
           autoClose: 5000,
           isLoading: false,

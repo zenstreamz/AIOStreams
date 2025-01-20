@@ -210,6 +210,16 @@ app.post('/encrypt-user-data', (req, res) => {
       res.status(500).json({ success: false, message: 'Secret key not set' });
       return;
     }
+    const { valid, errorCode, errorMessage } = validateConfig(JSON.parse(data));
+    if (!valid) {
+      console.error(
+        `|ERR| server > /encrypt-user-data: Invalid config: ${errorCode} - ${errorMessage}`
+      );
+      res
+        .status(200)
+        .json({ success: false, message: errorMessage, error: errorMessage });
+      return;
+    }
     const encryptedData = compressAndEncrypt(data);
     console.log(`|DBG| server > /encrypt-user-data: Encrypted data`);
     res.status(200).json({ success: true, data: encryptedData });

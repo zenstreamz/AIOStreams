@@ -95,4 +95,10 @@ export class Settings {
   public static readonly LOG_SENSITIVE_INFO = process.env.LOG_SENSITIVE_INFO
     ? process.env.LOG_SENSITIVE_INFO === 'true'
     : false;
+  public static readonly DISABLE_TORRENTIO = process.env.DISABLE_TORRENTIO
+    ? process.env.DISABLE_TORRENTIO === 'true'
+    : false;
+  public static readonly DISABLE_TORRENTIO_MESSAGE =
+    process.env.DISABLE_TORRENTIO_MESSAGE ||
+    'The Torrentio addon has been disabled, please remove it to use this addon.';
 }

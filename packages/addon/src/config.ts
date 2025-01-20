@@ -92,6 +92,13 @@ export function validateConfig(config: Config): {
   }
 
   for (const addon of config.addons) {
+    if (Settings.DISABLE_TORRENTIO && addon.id === 'torrentio') {
+      return createResponse(
+        false,
+        'torrentioDisabled',
+        Settings.DISABLE_TORRENTIO_MESSAGE
+      );
+    }
     // if torbox addon is enabled, torbox service must be enabled and torbox api key must be set
     if (addon.id === 'torbox') {
       const torboxService = config.services.find(
@@ -134,19 +141,58 @@ export function validateConfig(config: Config): {
 
         if (
           option.id.toLowerCase().includes('url') &&
-          addon.options[option.id] &&
-          addon.options[option.id]?.match(
-            /^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/
-          ) === null
+          addon.options[option.id]
         ) {
-          try {
-            new URL(addon.options[option.id] as string);
-          } catch (_) {
+          if (
+            Settings.DISABLE_TORRENTIO &&
+            addon.options[option.id]?.match(/torrentio.strem.fun/) !== null
+          ) {
+            // if torrentio is disabled, don't allow the user to set URLs with torrentio.strem.fun
             return createResponse(
               false,
-              'invalidUrl',
-              `Invalid URL for ${option.label}`
+              'torrentioDisabled',
+              Settings.DISABLE_TORRENTIO_MESSAGE
             );
+          } else if (
+            Settings.DISABLE_TORRENTIO &&
+            addon.options[option.id]?.match(/stremthru.elfhosted.com/) !== null
+          ) {
+            // if torrentio is disabled, we need to inspect the stremthru URL to see if it's using torrentio
+            try {
+              const url = new URL(addon.options[option.id] as string);
+              // get the component before manifest.json
+              const pathComponents = url.pathname.split('/');
+              if (pathComponents.includes('manifest.json')) {
+                const index = pathComponents.indexOf('manifest.json');
+                const componentBeforeManifest = pathComponents[index - 1];
+                // base64 decode the component before manifest.json
+                const decodedComponent = atob(componentBeforeManifest);
+                const stremthruData = JSON.parse(decodedComponent);
+                if (stremthruData?.manifest_url?.match(/torrentio.strem.fun/)) {
+                  return createResponse(
+                    false,
+                    'torrentioDisabled',
+                    Settings.DISABLE_TORRENTIO_MESSAGE
+                  );
+                }
+              }
+            } catch (_) {
+              // ignore
+            }
+          } else if (
+            addon.options[option.id]?.match(
+              /^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/
+            ) === null
+          ) {
+            try {
+              new URL(addon.options[option.id] as string);
+            } catch (_) {
+              return createResponse(
+                false,
+                'invalidUrl',
+                ` Invalid URL for ${option.label}`
+              );
+            }
           }
         }
 
