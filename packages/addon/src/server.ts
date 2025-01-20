@@ -162,7 +162,11 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
   if (type !== 'movie' && type !== 'series') {
     console.error(`|ERR| server > Invalid type for stream request`);
     res.json(
-      errorResponse('Invalid type for stream request, must be movie or series')
+      errorResponse(
+        'Invalid type for stream request, must be movie or series',
+        rootUrl(req),
+        '/'
+      )
     );
     return;
   }
@@ -174,7 +178,9 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
       console.error(
         `|ERR| server > Received invalid config: ${errorCode} - ${errorMessage}`
       );
-      res.json(errorResponse(rootUrl(req), errorMessage ?? 'Unknown'));
+      res.json(
+        errorResponse(errorMessage ?? 'Unknown', rootUrl(req), '/configure')
+      );
       return;
     }
     configJson.requestingIp = req.get('CF-Connecting-IP') || req.ip;
@@ -187,7 +193,7 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
     res.json(
       errorResponse(
         'An unexpected error occurred, please check the logs or create an issue on GitHub',
-        undefined,
+        rootUrl(req),
         undefined,
         'https://github.com/Viren070/AIOStreams/issues/new?template=bug_report.yml'
       )
