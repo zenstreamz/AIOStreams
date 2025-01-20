@@ -225,7 +225,7 @@ export class BaseWrapper {
         'i'
       );
       // check if the string contains the regex
-      if (regex.test(string) || regex.test(stream.url || '')) {
+      if (regex.test(string)) {
         let cached: boolean | undefined = undefined;
         // check if any of the uncachedSymbols are in the string
         if (uncachedSymbols.some((symbol) => string.includes(symbol))) {
