@@ -229,15 +229,11 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 git clone https://github.com/Viren070/AIOStreams.git
 cd AIOStreams
 npm i
-```
-
-6. Now follow [these instructions](https://github.com/Viren070/AIOStreams/issues/32#issuecomment-2602643959)
-7. Run the remaining commands
-
-```bash
 npm run build
 npm run deploy:cloudflare-worker
 ```
+
+If you get an error about the `node:sqlite` module, follow [these instructions](https://github.com/Viren070/AIOStreams/issues/32#issuecomment-2602643959)
 
 ##### Updating
 
