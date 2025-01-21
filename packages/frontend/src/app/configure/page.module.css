@@ -14,7 +14,8 @@
 }
 
 .content {
-  background-color: #000000; /* Slightly lighter black */
+  position: relative;
+  background-color: #000000;
   border-radius: var(--borderRadius);
   box-shadow: 0 8px 16px rgb(0, 0, 0);
   padding: 20px;
@@ -164,4 +165,52 @@
   border-style: solid;
   border-radius: var(--borderRadius);
   border-color: #777777;
+}
+
+.supportMeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #080808;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: none;
+  margin: 1px;
+  color: white;
+  border-radius: var(--borderRadius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Space between the heart and text */
+  padding: 8px 16px; /* Adjust padding as needed */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+  font-size: 14px; /* Text size */
+  font-family: Arial, sans-serif; /* Font family */
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    border-color 0.3s;
+}
+
+@media (pointer: fine) {
+  .supportMeButton:hover {
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.1
+    ); /* Slight background highlight on hover */
+    border-color: rgba(255, 255, 255, 0.815); /* More visible border on hover */
+  }
+}
+
+.supportMeButton:active {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.2
+  ); /* Slight background highlight on click */
+  border-color: rgba(255, 255, 255, 0.815); /* More visible border on click */
 }
