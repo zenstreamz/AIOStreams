@@ -7,6 +7,7 @@ import {
   getJackettioStreams,
   getMediafusionStreams,
   getOrionStreams,
+  getPeerflixStreams,
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
@@ -457,10 +458,6 @@ export class AIOStreams {
   ): Promise<Stream | null> {
     let name: string = '';
     let description: string = '';
-    console.log(
-      `|DBG| addon > createStreamObject: Using formatter ${this.config.formatter}`
-    );
-
     switch (this.config.formatter) {
       case 'gdrive': {
         const { name: _name, description: _description } =
@@ -890,6 +887,14 @@ export class AIOStreams {
       }
       case 'debridio': {
         return await getDebridioStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
+      }
+      case 'peerflix': {
+        return await getPeerflixStreams(
           this.config,
           addon.options,
           streamRequest,

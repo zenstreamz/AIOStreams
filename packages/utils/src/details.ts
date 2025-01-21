@@ -474,6 +474,70 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
   {
+    name: 'Peerflix',
+    id: 'peerflix',
+    requiresService: false,
+    supportedServices: [
+      'realdebrid',
+      'alldebrid',
+      'torbox',
+      'debridlink',
+      'offcloud',
+      'putio',
+      'premiumize',
+    ],
+    options: [
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description:
+          'Override the name of the Peerflix addon that shows up in the results',
+        type: 'text',
+      },
+      {
+        id: 'overrideUrl',
+        secret: true,
+        required: false,
+        label: 'Override URL',
+        description:
+          'Override the URL used to fetch streams from the peerflix addon. This option is incompatible with the useMultipleInstances option. By default, the URL is generated based on the selected services and their credentials. Use this option to override the URL with a custom URL.',
+        type: 'text',
+      },
+      {
+        id: 'useMultipleInstances',
+        required: false,
+        label: 'Use Multiple Instances',
+        description:
+          'Peerflix supports multiple debrid services. By default, AIOStreams will pass all services to Peerflix in one request.\
+          If you would like to override this behaviour and make a separate request for each service, enable this option.\
+          I do not recommend enabling this option.',
+        type: 'checkbox',
+      },
+      {
+        id: 'showP2PStreams',
+        required: false,
+        label: 'Show P2P Streams',
+        description:
+          'If you have not provided any debrid services, this option does not apply to you. This option is for those who are using Peerflix with debrid services. By default, Peerflix will only show streams from debrid services. If you would like to show P2P streams as well, enable this option.\
+          Enabling this option will show P2P (torrent) streams for the torrents that were uncached on the debrid services',
+        type: 'checkbox',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description:
+          'The timeout for fetching streams from the Peerflix addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
+        },
+      },
+    ],
+  },
+  {
     name: 'Stremio GDrive',
     id: 'gdrive',
     requiresService: false,

@@ -31,6 +31,8 @@ export class Settings {
   public static readonly ORION_STREMIO_ADDON_URL =
     process.env.ORION_STREMIO_ADDON_URL ??
     'https://5a0d1888fa64-orion.baby-beamup.club/';
+  public static readonly PEERFLIX_URL =
+    process.env.PEERFLIX_URL ?? 'https://peerflix-addon.onrender.com/';
   public static readonly TORBOX_STREMIO_URL =
     process.env.TORBOX_STREMIO_URL ?? 'https://stremio.torbox.app/';
   public static readonly EASYNEWS_URL =
@@ -89,6 +91,10 @@ export class Settings {
   public static readonly DEFAULT_ORION_TIMEOUT = process.env
     .DEFAULT_ORION_TIMEOUT
     ? parseInt(process.env.DEFAULT_ORION_TIMEOUT)
+    : 15000;
+  public static readonly DEFAULT_PEERFLIX_TIMEOUT = process.env
+    .DEFAULT_PEERFLIX_TIMEOUT
+    ? parseInt(process.env.DEFAULT_PEERFLIX_TIMEOUT)
     : 15000;
   public static readonly DEFAULT_EASYNEWS_TIMEMOUT = process.env
     .DEFAULT_EASYNEWS_TIMEMOUT
