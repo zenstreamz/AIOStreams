@@ -184,7 +184,7 @@ const AddonsList: React.FC<AddonsListProps> = ({
                   </label>
                   {option.description && <small>{option.description}</small>}
                   {option.type === 'text' &&
-                    (option.id.toLowerCase().includes('url') ? (
+                    (option.secret ? (
                       <CredentialInput
                         credential={addon.options[option.id] || ''}
                         setCredential={(value) =>

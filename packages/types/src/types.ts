@@ -171,6 +171,7 @@ export interface Config {
 
 interface BaseOptionDetail {
   id: string;
+  secret?: boolean;
   required?: boolean;
   label: string;
   description?: string;

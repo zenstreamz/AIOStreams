@@ -6,6 +6,7 @@ import {
   getEasynewsStreams,
   getJackettioStreams,
   getMediafusionStreams,
+  getOrionStreams,
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
@@ -845,6 +846,14 @@ export class AIOStreams {
       }
       case 'jackettio': {
         return await getJackettioStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
+      }
+      case 'orion-stremio-addon': {
+        return await getOrionStreams(
           this.config,
           addon.options,
           streamRequest,

@@ -7,3 +7,4 @@ export * from './easynews';
 export * from './easynewsPlus';
 export * from './debridio';
 export * from './jackettio';
+export * from './orion';

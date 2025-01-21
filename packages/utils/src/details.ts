@@ -26,6 +26,7 @@ export const addonDetails: AddonDetail[] = [
       },
       {
         id: 'overrideUrl',
+        secret: true,
         required: false,
         label: 'Override URL',
         description:
@@ -93,6 +94,7 @@ export const addonDetails: AddonDetail[] = [
       },
       {
         id: 'overrideUrl',
+        secret: true,
         required: false,
         label: 'Override URL',
         description:
@@ -156,6 +158,7 @@ export const addonDetails: AddonDetail[] = [
       },
       {
         id: 'overrideUrl',
+        secret: true,
         required: false,
         label: 'Override URL',
         description:
@@ -237,6 +240,7 @@ export const addonDetails: AddonDetail[] = [
       },
       {
         id: 'overrideUrl',
+        secret: true,
         required: false,
         label: 'Override URL',
         description:
@@ -301,6 +305,7 @@ export const addonDetails: AddonDetail[] = [
       },
       {
         id: 'overrideUrl',
+        secret: true,
         required: false,
         label: 'Override URL',
         description:
@@ -337,6 +342,7 @@ export const addonDetails: AddonDetail[] = [
       },
       {
         id: 'overrideUrl',
+        secret: true,
         required: false,
         label: 'Override URL',
         description:
@@ -382,6 +388,7 @@ export const addonDetails: AddonDetail[] = [
       },
       {
         id: 'overrideUrl',
+        secret: true,
         required: false,
         label: 'Override URL',
         description:
@@ -403,6 +410,70 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
   {
+    name: 'Orion Stremio Addon',
+    id: 'orion-stremio-addon',
+    requiresService: false,
+    supportedServices: [
+      'realdebrid',
+      'alldebrid',
+      'premiumize',
+      'debridlink',
+      'offcloud',
+    ],
+    options: [
+      {
+        id: 'orionApiKey',
+        required: true,
+        label: 'Orion API Key',
+        description:
+          'The API key for the Orion addon. You can get your API key from the Orion website',
+        type: 'text',
+        secret: true,
+      },
+      {
+        id: 'linkLimit',
+        required: false,
+        label: 'Link Limit',
+        description:
+          'The maximum number of links to fetch from the Orion addon. Leave it empty to use the default limit.',
+        type: 'number',
+        constraints: {
+          min: 1,
+          max: 50,
+        },
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description:
+          "Override the name of the addon that shows up in the results. Leave it empty to use the default name of 'Orion'.",
+        type: 'text',
+      },
+      {
+        id: 'overrideUrl',
+        secret: true,
+        required: false,
+        label: 'Override URL',
+        description:
+          'Override the URL used to fetch streams from the Orion addon. By default, the URL is generated based on the selected services and their credentials. Use this option to override the URL with a custom URL.',
+        type: 'text',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description:
+          'The timeout for fetching streams from the Orion addon in milliseconds. This is the time in milliseconds that the addon will wait for a response from Orion before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
+        },
+      },
+    ],
+  },
+  {
     name: 'Stremio GDrive',
     id: 'gdrive',
     requiresService: false,
@@ -410,6 +481,7 @@ export const addonDetails: AddonDetail[] = [
     options: [
       {
         id: 'addonUrl',
+        secret: true,
         required: true,
         label: 'Addon URL',
         description:
@@ -459,6 +531,7 @@ export const addonDetails: AddonDetail[] = [
           'The URL of the custom addon. This is the URL that will be used to fetch streams from the custom addon. The URL should point to the manifest.json file of the custom addon',
         label: 'URL',
         type: 'text',
+        secret: true,
       },
       {
         id: 'indexerTimeout',
