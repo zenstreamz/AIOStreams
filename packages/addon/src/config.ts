@@ -145,7 +145,7 @@ export function validateConfig(config: Config): {
         ) {
           if (
             Settings.DISABLE_TORRENTIO &&
-            addon.options[option.id]?.match(/torrentio.strem.fun/) !== null
+            addon.options[option.id]?.match(/torrentio\.strem\.fun/) !== null
           ) {
             // if torrentio is disabled, don't allow the user to set URLs with torrentio.strem.fun
             return createResponse(
@@ -155,7 +155,8 @@ export function validateConfig(config: Config): {
             );
           } else if (
             Settings.DISABLE_TORRENTIO &&
-            addon.options[option.id]?.match(/stremthru.elfhosted.com/) !== null
+            addon.options[option.id]?.match(/stremthru\.elfhosted\.com/) !==
+              null
           ) {
             // if torrentio is disabled, we need to inspect the stremthru URL to see if it's using torrentio
             try {
