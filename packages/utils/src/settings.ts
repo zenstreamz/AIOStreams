@@ -24,6 +24,8 @@ export class Settings {
     process.env.MEDIAFUSION_URL ?? 'https://mediafusion.elfhosted.com/';
   public static readonly MEDIAFUSION_API_PASSWORD =
     process.env.MEDIAFUSION_API_PASSWORD ?? '';
+  public static readonly JACKETTIO_URL =
+    process.env.JACKETTIO_URL ?? 'https://jackettio.elfhosted.com/';
   public static readonly TORRENTIO_URL =
     process.env.TORRENTIO_URL ?? 'https://torrentio.strem.fun/';
   public static readonly TORBOX_STREMIO_URL =
@@ -76,6 +78,10 @@ export class Settings {
   public static readonly DEFAULT_MEDIAFUSION_TIMEOUT = process.env
     .DEFAULT_MEDIAFUSION_TIMEOUT
     ? parseInt(process.env.DEFAULT_MEDIAFUSION_TIMEOUT)
+    : 15000;
+  public static readonly DEFAULT_JACKETTIO_TIMEOUT = process.env
+    .DEFAULT_JACKETTIO_TIMEOUT
+    ? parseInt(process.env.DEFAULT_JACKETTIO_TIMEOUT)
     : 15000;
   public static readonly DEFAULT_EASYNEWS_TIMEMOUT = process.env
     .DEFAULT_EASYNEWS_TIMEMOUT

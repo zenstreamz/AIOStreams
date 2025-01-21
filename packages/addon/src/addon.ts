@@ -4,6 +4,7 @@ import {
   getDebridioStreams,
   getEasynewsPlusStreams,
   getEasynewsStreams,
+  getJackettioStreams,
   getMediafusionStreams,
   getTorboxStreams,
   getTorrentioStreams,
@@ -836,6 +837,14 @@ export class AIOStreams {
       }
       case 'mediafusion': {
         return await getMediafusionStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
+      }
+      case 'jackettio': {
+        return await getJackettioStreams(
           this.config,
           addon.options,
           streamRequest,

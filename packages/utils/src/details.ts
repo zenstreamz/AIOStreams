@@ -208,6 +208,56 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
   {
+    name: 'Jackettio',
+    id: 'jackettio',
+    requiresService: true,
+    supportedServices: ['realdebrid', 'alldebrid', 'premiumize', 'debridlink'],
+    options: [
+      {
+        id: 'prioritiseDebrid',
+        required: false,
+        label: 'Prioritise Debrid Service',
+        description:
+          'Prioritise a specific debrid service when fetching streams. This option is useful when you want to use a specific debrid service for fetching streams. By default, the addon will make a separate request for each debrid service. I highly recommend provding a value for this option as it will speed up the fetching process and remove redundant results.',
+        type: 'select',
+        options: [
+          { value: 'realdebrid', label: 'Real Debrid' },
+          { value: 'alldebrid', label: 'All Debrid' },
+          { value: 'premiumize', label: 'Premiumize' },
+          { value: 'debridlink', label: 'Debrid Link' },
+        ],
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description:
+          'Override the name of the Jackettio addon that shows up in the results',
+        type: 'text',
+      },
+      {
+        id: 'overrideUrl',
+        required: false,
+        label: 'Override URL',
+        description:
+          'Override the URL used to fetch streams from the Jackettio addon. This option is incompatible with the prioritiseDebrid option. By default, the URL is generated based on the selected services and their credentials. Use this option to override the URL with a custom URL.',
+        type: 'text',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description:
+          'The timeout for fetching streams from the Jackettio addon. This is the time in milliseconds that the addon will wait for a response before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
+        },
+      },
+    ],
+  },
+  {
     name: 'Torbox',
     id: 'torbox',
     requiresService: true,
