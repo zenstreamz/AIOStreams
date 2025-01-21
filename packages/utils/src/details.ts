@@ -432,6 +432,7 @@ export const serviceDetails = [
     shortName: 'RD',
     knownNames: ['RD', 'Real Debrid', 'RealDebrid', 'Real-Debrid'],
     id: 'realdebrid',
+    signUpLink: 'https://real-debrid.com/?id=9483829',
     credentials: [
       {
         label: 'API Key',
@@ -445,6 +446,7 @@ export const serviceDetails = [
     id: 'alldebrid',
     shortName: 'AD',
     knownNames: ['AD', 'All Debrid', 'AllDebrid', 'All-Debrid'],
+    signUpLink: 'https://alldebrid.com/?uid=3n8qa&lang=en',
     credentials: [
       {
         label: 'API Key',
@@ -458,6 +460,7 @@ export const serviceDetails = [
     id: 'premiumize',
     shortName: 'PM',
     knownNames: ['PM', 'Premiumize'],
+    signUpLink: 'https://www.premiumize.me/register',
     credentials: [
       {
         label: 'API Key',
@@ -471,6 +474,7 @@ export const serviceDetails = [
     id: 'debridlink',
     shortName: 'DL',
     knownNames: ['DL', 'Debrid Link', 'DebridLink', 'Debrid-Link'],
+    signUpLink: 'https://debrid-link.com/id/EY0JO',
     credentials: [
       {
         label: 'API Key',
@@ -484,6 +488,8 @@ export const serviceDetails = [
     id: 'torbox',
     shortName: 'TB',
     knownNames: ['TB', 'TRB', 'Torbox'],
+    signUpLink:
+      'https://torbox.app/subscription?referral=9ca21adb-dbcb-4fb0-9195-412a5f3519bc',
     credentials: [
       {
         label: 'API Key',
@@ -497,6 +503,7 @@ export const serviceDetails = [
     id: 'offcloud',
     shortName: 'OC',
     knownNames: ['OC', 'Offcloud'],
+    signUpLink: 'https://offcloud.com/?=06202a3d',
     credentials: [
       {
         label: 'API Key',
@@ -510,6 +517,7 @@ export const serviceDetails = [
     id: 'putio',
     shortName: 'P.IO',
     knownNames: ['PO', 'put.io', 'putio'],
+    signUpLink: 'https://put.io/',
     credentials: [
       {
         label: 'Client ID',
@@ -528,6 +536,7 @@ export const serviceDetails = [
     id: 'easynews',
     shortName: 'EN',
     knownNames: ['EN', 'Easynews'],
+    signUpLink: 'https://www.easynews.com/',
     credentials: [
       {
         label: 'Username',
@@ -546,6 +555,7 @@ export const serviceDetails = [
     id: 'easydebrid',
     shortName: 'ED',
     knownNames: ['ED', 'EasyDebrid'],
+    signUpLink: 'https://paradise-cloud.com/products/easydebrid',
     credentials: [
       {
         label: 'API Key',
@@ -559,6 +569,8 @@ export const serviceDetails = [
     id: 'pikpak',
     shortName: 'PKP',
     knownNames: ['PP', 'PikPak', 'PKP'],
+    signUpLink:
+      'https://mypikpak.com/drive/activity/invited?invitation-code=72822731',
     credentials: [
       {
         label: 'Email',
@@ -575,6 +587,7 @@ export const serviceDetails = [
     id: 'seedr',
     shortName: 'SDR',
     knownNames: ['SR', 'Seedr', 'SDR'],
+    signUpLink: 'https://www.seedr.cc/?r=6542079',
     credentials: [
       {
         label:

@@ -17,6 +17,7 @@ interface ServiceInputProps {
   moveService: (direction: 'up' | 'down') => void;
   canMoveUp: boolean;
   canMoveDown: boolean;
+  signUpLink?: string;
 }
 
 const ServiceInput: React.FC<ServiceInputProps> = ({
@@ -27,13 +28,29 @@ const ServiceInput: React.FC<ServiceInputProps> = ({
   moveService,
   canMoveUp,
   canMoveDown,
+  signUpLink,
 }) => {
   return (
     <div
       className={`${styles.card} ${enabled ? styles.enabled : styles.disabled}`}
     >
       <div className={styles.header}>
-        <span className={styles.serviceName}>{serviceName}</span>
+        <span className={styles.serviceName}>
+          {serviceName}
+          {enabled && signUpLink && (
+            <span className={styles.smallText}>
+              {` (Don't have an account? Sign up with `}
+              <a
+                href={signUpLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.link}
+              >
+                this link)
+              </a>
+            </span>
+          )}
+        </span>
         <div className={styles.actions}>
           {canMoveUp && (
             <button

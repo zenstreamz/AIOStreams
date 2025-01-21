@@ -35,6 +35,15 @@
   align-items: center;
 }
 
+.smallText {
+  font-size: 0.7em;
+  color: #ffffffc5;
+}
+
+.smallText a {
+  color: #dfdfdf67;
+}
+
 .serviceName {
   font-size: 1.2em;
   font-weight: bold;

@@ -785,6 +785,10 @@ export default function Configure() {
               }}
               canMoveUp={index > 0}
               canMoveDown={index < services.length - 1}
+              signUpLink={
+                serviceDetails.find((detail) => detail.id === service.id)
+                  ?.signUpLink
+              }
             />
           ))}
 
