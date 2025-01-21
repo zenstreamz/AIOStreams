@@ -77,6 +77,7 @@ It currently supports:
 - MediaFusion
 - Comet
 - Torbox Addon
+- Debridio
 - Easynews
 - Easynews+
 - [Stremio GDrive](https://github.com/Viren070/stremio-gdrive-addon)
