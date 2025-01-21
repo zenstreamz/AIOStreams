@@ -108,6 +108,10 @@ export class Settings {
     .DEFAULT_DEBRIDIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_DEBRIDIO_TIMEOUT)
     : 15000;
+  public static readonly DEFAULT_DMM_CAST_TIMEOUT = process.env
+    .DEFAULT_DMM_CAST_TIMEOUT
+    ? parseInt(process.env.DEFAULT_DMM_CAST_TIMEOUT)
+    : 15000;
   public static readonly SHOW_DIE = process.env.SHOW_DIE
     ? process.env.SHOW_DIE === 'true'
     : true;

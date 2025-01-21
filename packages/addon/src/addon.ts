@@ -2,6 +2,7 @@ import {
   BaseWrapper,
   getCometStreams,
   getDebridioStreams,
+  getDMMCastStreams,
   getEasynewsPlusStreams,
   getEasynewsStreams,
   getJackettioStreams,
@@ -895,6 +896,14 @@ export class AIOStreams {
       }
       case 'peerflix': {
         return await getPeerflixStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
+      }
+      case 'dmm-cast': {
+        return await getDMMCastStreams(
           this.config,
           addon.options,
           streamRequest,

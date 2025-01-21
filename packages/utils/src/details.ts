@@ -538,6 +538,43 @@ export const addonDetails: AddonDetail[] = [
     ],
   },
   {
+    name: 'DMM Cast',
+    id: 'dmm-cast',
+    requiresService: false,
+    supportedServices: [],
+    options: [
+      {
+        id: 'installationUrl',
+        required: true,
+        label: 'Installation URL',
+        description:
+          'The installation URL for the DMM cast addon specific to your account. You can find this at https://debridmediamanager.com/stremio',
+        type: 'text',
+        secret: true,
+      },
+      {
+        id: 'overrideName',
+        required: false,
+        label: 'Override Addon Name',
+        description:
+          "Override the name of the addon that shows up in the results. Leave it empty to use the default name of 'DMM Cast'.",
+        type: 'text',
+      },
+      {
+        id: 'indexerTimeout',
+        required: false,
+        label: 'Override Indexer Timeout',
+        description:
+          'The timeout for fetching streams from the DMM Cast addon in milliseconds. This is the time in milliseconds that the addon will wait for a response from DMM Cast before timing out. Leave it empty to use the recommended timeout.',
+        type: 'number',
+        constraints: {
+          min: Settings.MIN_TIMEOUT,
+          max: Settings.MAX_TIMEOUT,
+        },
+      },
+    ],
+  },
+  {
     name: 'Stremio GDrive',
     id: 'gdrive',
     requiresService: false,

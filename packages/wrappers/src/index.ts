@@ -9,3 +9,4 @@ export * from './debridio';
 export * from './jackettio';
 export * from './orion';
 export * from './peerflix';
+export * from './dmmCast';
