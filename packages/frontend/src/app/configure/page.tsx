@@ -687,7 +687,19 @@ export default function Configure() {
           />
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <h1 style={{ textAlign: 'center' }}>AIOStreams</h1>
-            <span className={styles.version}>v{version}</span>
+            <span
+              className={styles.version}
+              title={`See what's new in v${version}`}
+              onClick={() => {
+                window.open(
+                  `https://github.com/Viren070/AIOStreams/releases/tag/v${version}`,
+                  '_blank',
+                  'noopener noreferrer'
+                );
+              }}
+            >
+              v{version}
+            </span>
           </div>
           {process.env.NEXT_PUBLIC_BRANDING && (
             <div
