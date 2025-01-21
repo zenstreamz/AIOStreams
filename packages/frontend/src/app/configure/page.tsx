@@ -138,6 +138,9 @@ const defaultServices = serviceDetails.map((service) => ({
 }));
 
 export default function Configure() {
+  const [formatterOptions, setFormatterOptions] = useState<string[]>(
+    allowedFormatters.filter((f) => f !== 'imposter')
+  );
   const [resolutions, setResolutions] =
     useState<Resolution[]>(defaultResolutions);
   const [qualities, setQualities] = useState<Quality[]>(defaultQualities);
@@ -1043,7 +1046,23 @@ export default function Configure() {
             <div className={styles.settingDescription}>
               <h2 style={{ padding: '5px' }}>Formatter</h2>
               <p style={{ padding: '5px' }}>
-                Change how your stream results are formatted.
+                Change how your stream results are f
+                <span
+                  onClick={() => {
+                    if (formatterOptions.includes('imposter')) {
+                      return;
+                    }
+                    showToast(
+                      "What's this doing here....?",
+                      'info',
+                      'ImposterFormatter'
+                    );
+                    setFormatterOptions([...formatterOptions, 'imposter']);
+                  }}
+                >
+                  ◌
+                </span>
+                rmatted.
               </p>
             </div>
             <div className={styles.settingInput}>
@@ -1051,7 +1070,7 @@ export default function Configure() {
                 value={formatter}
                 onChange={(e) => setFormatter(e.target.value)}
               >
-                {allowedFormatters.map((formatter) => (
+                {formatterOptions.map((formatter) => (
                   <option key={formatter} value={formatter}>
                     {formatter}
                   </option>

@@ -15,6 +15,7 @@ import {
   gdriveFormat,
   torrentioFormat,
   torboxFormat,
+  imposterFormat,
 } from '@aiostreams/formatters';
 import {
   createProxiedMediaFlowUrl,
@@ -456,6 +457,10 @@ export class AIOStreams {
   ): Promise<Stream | null> {
     let name: string = '';
     let description: string = '';
+    console.log(
+      `|DBG| addon > createStreamObject: Using formatter ${this.config.formatter}`
+    );
+
     switch (this.config.formatter) {
       case 'gdrive': {
         const { name: _name, description: _description } =
@@ -469,6 +474,13 @@ export class AIOStreams {
           parsedStream,
           true
         );
+        name = _name;
+        description = _description;
+        break;
+      }
+      case 'imposter': {
+        const { name: _name, description: _description } =
+          imposterFormat(parsedStream);
         name = _name;
         description = _description;
         break;

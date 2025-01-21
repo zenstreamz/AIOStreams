@@ -6,6 +6,7 @@ export const allowedFormatters = [
   'minimalistic-gdrive',
   'torrentio',
   'torbox',
+  'imposter',
 ];
 
 export const allowedLanguages = [
