@@ -36,7 +36,10 @@ export class Debridio extends BaseWrapper {
         ? extractSizeInBytes(metaString, 1024)
         : undefined;
 
-    const debrid = this.parseServiceData(stream);
+    const debrid = this.parseServiceData(stream) || {
+      id: 'easydebrid',
+      cached: false,
+    };
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.title!);
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
