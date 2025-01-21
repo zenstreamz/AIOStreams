@@ -419,6 +419,7 @@ export class AIOStreams {
           `|DBG| addon > shouldProxyStream: Stream from addon ${stream.addon.id} is not proxied so skipping`
         );
       }
+      return false;
     }
 
     if (
@@ -435,8 +436,8 @@ export class AIOStreams {
         console.debug(
           `|DBG| addon > shouldProxyStream: Stream from provider ${stream.provider?.id} is not proxied so skipping`
         );
-        return false;
       }
+      return false;
     }
 
     if (Settings.LOG_SENSITIVE_INFO) {
