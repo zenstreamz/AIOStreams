@@ -678,7 +678,7 @@ export default function Configure() {
               ></path>{' '}
             </g>
           </svg>
-          Sponsor
+          Donate
         </button>
         <div className={styles.header}>
           <Image
