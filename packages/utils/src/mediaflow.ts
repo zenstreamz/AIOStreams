@@ -12,10 +12,7 @@ export function createProxiedMediaFlowUrl(
     response?: Record<string, string>;
   }
 ) {
-  const streamUrl = url;
-  const mediaFlowUrl = mediaFlowConfig?.proxyUrl?.replace(/\/$/, '');
-  const mediaFlowApiPassword = mediaFlowConfig?.apiPassword;
-  if (!streamUrl) {
+  if (!url) {
     console.error(
       '|ERR| mediaflow > createProxiedMediaFlowUrl > streamUrl is missing, could not create proxied URL'
     );
@@ -27,7 +24,7 @@ export function createProxiedMediaFlowUrl(
     );
     throw new Error('MediaFlow configuration is missing');
   }
-  if (!mediaFlowUrl || !mediaFlowApiPassword) {
+  if (!mediaFlowConfig?.proxyUrl || !mediaFlowConfig?.apiPassword) {
     console.error(
       '|ERR| mediaflow > createProxiedMediaFlowUrl > mediaFlowUrl or API password is missing'
     );
@@ -35,12 +32,12 @@ export function createProxiedMediaFlowUrl(
   }
 
   const queryParams: Record<string, string> = {
-    api_password: mediaFlowApiPassword,
+    api_password: mediaFlowConfig.apiPassword,
   };
-  queryParams.d = streamUrl;
+  queryParams.d = url;
 
   const responseHeaders = headers?.response || {
-    'Content-Disposition': `attachment; filename=${path.basename(streamUrl)}`,
+    'Content-Disposition': `attachment; filename=${path.basename(url)}`,
   };
   const requestHeaders = headers?.request || {};
 
@@ -57,10 +54,11 @@ export function createProxiedMediaFlowUrl(
   }
 
   const encodedParams = new URLSearchParams(queryParams).toString();
-  const baseUrl = new URL('/proxy/stream', mediaFlowUrl).toString();
-  const proxiedUrl = `${baseUrl}?${encodedParams}`;
-  //console.debug(`|DBG| mediaflow > createProxiedMediaFlowUrl > Proxied URL: ${proxiedUrl.replace(mediaFlowApiPassword, '***').replace(streamUrl, '***')}`);
-  return proxiedUrl;
+  const proxiedUrl = new URL(mediaFlowConfig.proxyUrl.replace(/\/$/, ''));
+  const proxyEndpoint = 'proxy/stream';
+  proxiedUrl.pathname = `${proxiedUrl.pathname}${proxyEndpoint}`;
+  proxiedUrl.search = encodedParams;
+  return proxiedUrl.toString();
 }
 
 export async function getMediaFlowPublicIp(
@@ -74,8 +72,7 @@ export async function getMediaFlowPublicIp(
       throw new Error('MediaFlow configuration is missing');
     }
 
-    const mediaFlowUrl = mediaFlowConfig?.proxyUrl?.replace(/\/$/, '');
-    if (!mediaFlowUrl) {
+    if (!mediaFlowConfig?.proxyUrl) {
       console.error(
         '|ERR| mediaflow > getMediaFlowPublicIp > mediaFlowUrl is missing'
       );
@@ -86,8 +83,8 @@ export async function getMediaFlowPublicIp(
       return mediaFlowConfig.publicIp;
     }
 
-    const parsedUrl = new URL(mediaFlowUrl);
-    if (PRIVATE_CIDR.test(parsedUrl.hostname)) {
+    const mediaFlowUrl = new URL(mediaFlowConfig.proxyUrl.replace(/\/$/, ''));
+    if (PRIVATE_CIDR.test(mediaFlowUrl.hostname)) {
       // MediaFlow proxy URL is a private IP address
       console.debug(
         '|DBG| mediaflow > getMediaFlowPublicIp > MediaFlow proxy URL is a private IP address so returning null'
@@ -98,19 +95,21 @@ export async function getMediaFlowPublicIp(
     console.debug(
       '|DBG| mediaflow > getMediaFlowPublicIp > GET /proxy/ip?api_password=***'
     );
-    const response = await fetch(
-      new URL(
-        `/proxy/ip?api_password=${encodeURIComponent(mediaFlowConfig.apiPassword)}`,
-        mediaFlowUrl
-      ).toString(),
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: AbortSignal.timeout(20000),
-      }
-    );
+
+    const proxyIpUrl = mediaFlowUrl;
+    const proxyIpPath = '/proxy/ip';
+    proxyIpUrl.pathname = `${proxyIpUrl.pathname}${proxyIpPath}`;
+    proxyIpUrl.search = new URLSearchParams({
+      api_password: mediaFlowConfig.apiPassword,
+    }).toString();
+
+    const response = await fetch(proxyIpUrl.toString(), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(20000),
+    });
 
     if (!response.ok) {
       throw new Error(`${response.status}: ${response.statusText}`);
