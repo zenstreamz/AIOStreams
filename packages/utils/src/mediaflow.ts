@@ -55,8 +55,8 @@ export function createProxiedMediaFlowUrl(
 
   const encodedParams = new URLSearchParams(queryParams).toString();
   const proxiedUrl = new URL(mediaFlowConfig.proxyUrl.replace(/\/$/, ''));
-  const proxyEndpoint = 'proxy/stream';
-  proxiedUrl.pathname = `${proxiedUrl.pathname}${proxyEndpoint}`;
+  const proxyEndpoint = '/proxy/stream';
+  proxiedUrl.pathname = `${proxiedUrl.pathname === '/' ? '' : proxiedUrl.pathname}${proxyEndpoint}`;
   proxiedUrl.search = encodedParams;
   return proxiedUrl.toString();
 }
@@ -98,7 +98,7 @@ export async function getMediaFlowPublicIp(
 
     const proxyIpUrl = mediaFlowUrl;
     const proxyIpPath = '/proxy/ip';
-    proxyIpUrl.pathname = `${proxyIpUrl.pathname}${proxyIpPath}`;
+    proxyIpUrl.pathname = `${proxyIpUrl.pathname === '/' ? '' : proxyIpUrl.pathname}${proxyIpPath}`;
     proxyIpUrl.search = new URLSearchParams({
       api_password: mediaFlowConfig.apiPassword,
     }).toString();
