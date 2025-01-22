@@ -821,7 +821,7 @@ export const serviceDetails = [
     name: 'Orion',
     id: 'orion',
     shortName: 'OR',
-    knownNames: [],
+    knownNames: ['dontmatchme'],
     signUpLink:
       'https://orionoid.com/referral/AD3JGNJRJFMRDNP9SEKHQKS9MGSAJDJN',
     credentials: [
