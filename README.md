@@ -78,6 +78,10 @@ It currently supports:
 - Comet
 - Torbox Addon
 - Debridio
+- Jackettio
+- Peerflix
+- DMM Cast
+- Orion Stremio Addon
 - Easynews
 - Easynews+
 - [Stremio GDrive](https://github.com/Viren070/stremio-gdrive-addon)
