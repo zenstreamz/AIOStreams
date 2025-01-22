@@ -422,6 +422,12 @@ export const addonDetails: AddonDetail[] = [
     ],
     options: [
       {
+        id: 'orionApiKey',
+        label: 'Orion API Key',
+        type: 'deprecated',
+        secret: true,
+      },
+      {
         id: 'linkLimit',
         required: false,
         label: 'Link Limit',

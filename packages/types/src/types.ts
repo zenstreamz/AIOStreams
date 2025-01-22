@@ -177,6 +177,10 @@ interface BaseOptionDetail {
   description?: string;
 }
 
+export interface DeprecatedOptionDetail extends BaseOptionDetail {
+  type: 'deprecated';
+}
+
 export interface TextOptionDetail extends BaseOptionDetail {
   type: 'text';
 }
@@ -208,7 +212,8 @@ export type AddonOptionDetail =
   | SelectOptionDetail
   | MultiSelectOptionDetail
   | CheckboxOptionDetail
-  | NumberOptionDetail;
+  | NumberOptionDetail
+  | DeprecatedOptionDetail;
 
 export interface AddonDetail {
   name: string;

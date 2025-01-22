@@ -8,6 +8,7 @@ import manifest from './manifest';
 import { errorResponse } from './responses';
 import {
   Settings,
+  addonDetails,
   compressAndEncrypt,
   parseAndDecryptString,
 } from '@aiostreams/utils';
@@ -312,7 +313,13 @@ function decryptEncryptedInfoFromConfig(config: Config): Config {
           addon.options,
           `addon ${addon.id}`,
           true,
-          (key, value) => isValueEncrypted(value) && /url/i.test(key)
+          (key, value) =>
+            isValueEncrypted(value) &&
+            // Decrypt only if the option is secret
+            (
+              addonDetails.find((addonDetail) => addonDetail.id === addon.id)
+                ?.options ?? []
+            ).some((option) => option.id === key && option.secret)
         );
       }
     });
@@ -355,8 +362,21 @@ function encryptInfoInConfig(config: Config): Config {
   if (config.addons) {
     config.addons.forEach((addon) => {
       if (addon.options) {
-        processObjectValues(addon.options, `addon ${addon.id}`, false, (key) =>
-          /url/i.test(key)
+        processObjectValues(
+          addon.options,
+          `addon ${addon.id}`,
+          false,
+          (key) => {
+            const addonDetail = addonDetails.find(
+              (addonDetail) => addonDetail.id === addon.id
+            );
+            if (!addonDetail) return false;
+            const optionDetail = addonDetail.options?.find(
+              (option) => option.id === key
+            );
+            // Encrypt only if the option is secret
+            return optionDetail?.secret ?? false;
+          }
         );
       }
     });
@@ -387,6 +407,7 @@ function processObjectValues(
   Object.keys(obj).forEach((key) => {
     const value = obj[key];
     if (condition(key, value)) {
+      console.log(`|DBG| Processing ${labelPrefix} ${key}`);
       obj[key] = decrypt
         ? decryptValue(value, `${labelPrefix} ${key}`)
         : encryptValue(value, `${labelPrefix} ${key}`);

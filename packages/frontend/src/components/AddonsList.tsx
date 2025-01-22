@@ -156,49 +156,85 @@ const AddonsList: React.FC<AddonsListProps> = ({
               </div>
             </div>
             <div className={styles.cardBody}>
-              {details?.options?.map((option) => (
-                <div key={option.id} className={styles.option}>
-                  <label>
-                    {option.label}
-                    {option.required && (
-                      <span className={styles.required}>
-                        <small>
-                          <em>*Required Field</em>
-                        </small>
-                      </span>
-                    )}
-                    {option.type === 'checkbox' && (
-                      <input
-                        type="checkbox"
-                        checked={addon.options[option.id] === 'true'}
+              {details?.options
+                ?.filter((option) => option.type !== 'deprecated')
+                ?.map((option) => (
+                  <div key={option.id} className={styles.option}>
+                    <label>
+                      {option.label}
+                      {option.required && (
+                        <span className={styles.required}>
+                          <small>
+                            <em>*Required Field</em>
+                          </small>
+                        </span>
+                      )}
+                      {option.type === 'checkbox' && (
+                        <input
+                          type="checkbox"
+                          checked={addon.options[option.id] === 'true'}
+                          onChange={(e) =>
+                            updateOption(
+                              index,
+                              option.id,
+                              e.target.checked ? 'true' : undefined
+                            )
+                          }
+                          className={styles.checkbox}
+                        />
+                      )}
+                    </label>
+                    {option.description && <small>{option.description}</small>}
+                    {option.type === 'text' &&
+                      (option.secret ? (
+                        <CredentialInput
+                          credential={addon.options[option.id] || ''}
+                          setCredential={(value) =>
+                            updateOption(
+                              index,
+                              option.id,
+                              value ? value : undefined
+                            )
+                          }
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          value={(addon.options[option.id] as string) || ''}
+                          onChange={(e) =>
+                            updateOption(
+                              index,
+                              option.id,
+                              e.target.value ? e.target.value : undefined
+                            )
+                          }
+                          className={styles.textInput}
+                        />
+                      ))}
+                    {option.type === 'select' && (
+                      <select
+                        value={addon.options[option.id] || ''}
                         onChange={(e) =>
                           updateOption(
                             index,
                             option.id,
-                            e.target.checked ? 'true' : undefined
+                            e.target.value ? e.target.value : undefined
                           )
                         }
-                        className={styles.checkbox}
-                      />
+                        className={styles.textInput}
+                      >
+                        <option value="">None</option>
+                        {option.options.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
                     )}
-                  </label>
-                  {option.description && <small>{option.description}</small>}
-                  {option.type === 'text' &&
-                    (option.secret ? (
-                      <CredentialInput
-                        credential={addon.options[option.id] || ''}
-                        setCredential={(value) =>
-                          updateOption(
-                            index,
-                            option.id,
-                            value ? value : undefined
-                          )
-                        }
-                      />
-                    ) : (
+                    {option.type === 'number' && (
                       <input
-                        type="text"
-                        value={(addon.options[option.id] as string) || ''}
+                        type="number"
+                        value={addon.options[option.id] || ''}
                         onChange={(e) =>
                           updateOption(
                             index,
@@ -208,52 +244,18 @@ const AddonsList: React.FC<AddonsListProps> = ({
                         }
                         className={styles.textInput}
                       />
-                    ))}
-                  {option.type === 'select' && (
-                    <select
-                      value={addon.options[option.id] || ''}
-                      onChange={(e) =>
-                        updateOption(
-                          index,
-                          option.id,
-                          e.target.value ? e.target.value : undefined
-                        )
-                      }
-                      className={styles.textInput}
-                    >
-                      <option value="">None</option>
-                      {option.options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  {option.type === 'number' && (
-                    <input
-                      type="number"
-                      value={addon.options[option.id] || ''}
-                      onChange={(e) =>
-                        updateOption(
-                          index,
-                          option.id,
-                          e.target.value ? e.target.value : undefined
-                        )
-                      }
-                      className={styles.textInput}
-                    />
-                  )}
-                  {option.type === 'multiSelect' && (
-                    <MultiSelect
-                      options={option.options}
-                      setValues={(values) =>
-                        updateOption(index, option.id, values.join(','))
-                      }
-                      values={addon.options[option.id]?.split(',') || []}
-                    />
-                  )}
-                </div>
-              ))}
+                    )}
+                    {option.type === 'multiSelect' && (
+                      <MultiSelect
+                        options={option.options}
+                        setValues={(values) =>
+                          updateOption(index, option.id, values.join(','))
+                        }
+                        values={addon.options[option.id]?.split(',') || []}
+                      />
+                    )}
+                  </div>
+                ))}
             </div>
           </div>
         );
