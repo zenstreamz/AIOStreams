@@ -26,7 +26,9 @@ export class OrionStremioAddon extends BaseWrapper {
 
   protected parseStream(stream: Stream): ParsedStream {
     const filename = stream.title
-      ? stream.title.split('\n')[0]
+      ? stream.title.includes('ERROR')
+        ? `Error: ${stream.title.split('\n')[1]} - ${stream.title.split('\n')[2]}`
+        : stream.title.split('\n')[0]
       : stream.behaviorHints?.filename?.trim();
 
     const parsedFilename: ParsedNameData = parseFilename(filename || '');
