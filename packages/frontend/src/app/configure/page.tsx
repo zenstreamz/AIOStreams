@@ -525,15 +525,35 @@ export default function Configure() {
     if (!services) {
       return defaultServices;
     }
-    return services.filter((service) =>
-      serviceDetails.some((detail) => detail.id === service.id)
-    );
-    /*
-    return defaultServices.map((defaultService) => {
-      const service = services.find((s) => s.id === defaultService.id);
-      return service || defaultService;
+
+    const mergedServices = services
+      // filter out services that are not in serviceDetails
+      .filter((service) => defaultServices.some((ds) => ds.id === service.id))
+      .map((service) => {
+        const defaultService = defaultServices.find(
+          (ds) => ds.id === service.id
+        );
+        if (!defaultService) {
+          return null;
+        }
+
+        // only load enabled and credentials from the previous config
+        return {
+          ...defaultService,
+          enabled: service.enabled,
+          credentials: service.credentials,
+        };
+      })
+      .filter((service) => service !== null);
+
+    // add any services that are in defaultServices but not in services
+    defaultServices.forEach((defaultService) => {
+      if (!mergedServices.some((service) => service.id === defaultService.id)) {
+        mergedServices.push(defaultService);
+      }
     });
-    */
+
+    return mergedServices;
   };
 
   const loadValidAddons = (addons: Config['addons']) => {
