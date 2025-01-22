@@ -100,9 +100,29 @@ export async function getOrionStreams(
   streamRequest: StreamRequest,
   addonId: string
 ): Promise<ParsedStream[]> {
-  if (!orionOptions.orionApiKey) {
-    throw new Error('orionApiKey is required to use orion');
+  const orionServiceConfig = config.services.find(
+    (service) => service.id === 'orion'
+  );
+
+  // orion api key can either be in deprecated orionApiKey or in the new orionServiceConfig
+  let orionApiKey = orionOptions.orionApiKey;
+  if (!orionApiKey) {
+    if (!orionServiceConfig) {
+      console.log(
+        '|DBG| wrappers > orion > orionApiKey not provided and orion service not found in config'
+      );
+      throw new Error('Orion API key not provided');
+    }
+    orionApiKey = orionServiceConfig.credentials.apiKey;
   }
+
+  if (!orionApiKey) {
+    console.log(
+      '|DBG| wrappers > orion > orionApiKey not provided and was also not provided in orion service config'
+    );
+    throw new Error('Orion API key not provided');
+  }
+
   const supportedServices: string[] =
     addonDetails.find(
       (addon: AddonDetail) => addon.id === 'orion-stremio-addon'
@@ -132,7 +152,7 @@ export async function getOrionStreams(
   // if no usable services found, use orion without any configuration
   if (usableServices.length < 1) {
     const configString = getOrionConfigString(
-      orionOptions.orionApiKey || '',
+      orionApiKey,
       orionOptions.linkLimit,
       []
     );
@@ -153,7 +173,7 @@ export async function getOrionStreams(
     `|DBG| wrappers > orion > using debrid services: ${debridServices}`
   );
   const configString = getOrionConfigString(
-    orionOptions.orionApiKey || '',
+    orionApiKey,
     orionOptions.linkLimit,
     debridServices
   );

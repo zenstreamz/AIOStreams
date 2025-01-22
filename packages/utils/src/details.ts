@@ -422,15 +422,6 @@ export const addonDetails: AddonDetail[] = [
     ],
     options: [
       {
-        id: 'orionApiKey',
-        required: true,
-        label: 'Orion API Key',
-        description:
-          'The API key for the Orion addon. You can get your API key from the Orion website',
-        type: 'text',
-        secret: true,
-      },
-      {
         id: 'linkLimit',
         required: false,
         label: 'Link Limit',
@@ -817,6 +808,21 @@ export const serviceDetails = [
         label:
           'Encoded Token. Please authorise at MediaFusion and copy the token into here.',
         id: 'apiKey',
+      },
+    ],
+  },
+  {
+    name: 'Orion',
+    id: 'orion',
+    shortName: 'OR',
+    knownNames: [],
+    signUpLink:
+      'https://orionoid.com/referral/AD3JGNJRJFMRDNP9SEKHQKS9MGSAJDJN',
+    credentials: [
+      {
+        label: 'API Key',
+        id: 'apiKey',
+        link: 'https://panel.orionoid.com/',
       },
     ],
   },
