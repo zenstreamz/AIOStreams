@@ -379,7 +379,8 @@ export default function Configure() {
       } catch (error) {
         console.error('Failed to open Stremio', error);
         toast.update(id, {
-          render: 'Failed to open Stremio with manifest URL',
+          render:
+            'Failed to open Stremio with manifest URL. The link can be opened manually at the bottom of this page.',
           type: 'error',
           autoClose: 5000,
           isLoading: false,
@@ -428,7 +429,8 @@ export default function Configure() {
       } catch (error) {
         console.error('Failed to open Stremio web', error);
         toast.update(id, {
-          render: 'Failed to open Stremio web with manifest URL',
+          render:
+            'Failed to open Stremio web with manifest URL. The link can be opened manually at the bottom of this page.',
           type: 'error',
           autoClose: 5000,
           isLoading: false,
@@ -456,6 +458,18 @@ export default function Configure() {
         setDisableButtons(false);
         return;
       }
+      if (!navigator.clipboard) {
+        toast.update(id, {
+          render:
+            'Clipboard not available. The link can be copied manually at the bottom of this page.',
+          type: 'error',
+          autoClose: 3000,
+          isLoading: false,
+        });
+        setManualManifestUrl(manifestUrl.manifest);
+        setDisableButtons(false);
+        return;
+      }
       navigator.clipboard
         .writeText(manifestUrl.manifest)
         .then(() => {
@@ -471,7 +485,8 @@ export default function Configure() {
         .catch((err: any) => {
           console.error('Failed to copy manifest URL to clipboard', err);
           toast.update(id, {
-            render: 'Failed to copy manifest URL to clipboard.',
+            render:
+              'Failed to copy manifest URL to clipboard. The link can be copied manually at the bottom of this page.',
             type: 'error',
             autoClose: 3000,
             isLoading: false,
@@ -1346,6 +1361,7 @@ export default function Configure() {
                   manifest URL to install the addon.
                 </p>
                 <input
+                  id="manualManifestUrl"
                   type="text"
                   value={manualManifestUrl}
                   readOnly
