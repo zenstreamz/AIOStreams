@@ -70,6 +70,7 @@ export class OrionStremioAddon extends BaseWrapper {
 function getOrionConfigString(
   orionApiKey: string,
   linkLimit: string = '10',
+  showTorrents: string = 'false',
   debridServices: string[]
 ) {
   return Buffer.from(
@@ -80,7 +81,12 @@ function getOrionConfigString(
       audiochannels: '1,2,6,8',
       videoquality:
         'hd8k,hd6k,hd4k,hd2k,hd1080,hd720,sd,scr1080,scr720,scr,cam1080,cam720,cam',
-      listOpt: 'both',
+      listOpt:
+        debridServices.length > 0
+          ? showTorrents === 'true'
+            ? 'both'
+            : 'debrid'
+          : 'torrent',
       debridservices: debridServices,
       audiolanguages: [],
       additionalParameters: '',
@@ -92,6 +98,7 @@ export async function getOrionStreams(
   config: Config,
   orionOptions: {
     orionApiKey?: string;
+    showTorrents?: string;
     linkLimit?: string;
     overrideUrl?: string;
     indexerTimeout?: string;
@@ -142,6 +149,7 @@ export async function getOrionStreams(
     const configString = getOrionConfigString(
       orionApiKey,
       orionOptions.linkLimit,
+      'true',
       []
     );
     const orion = new OrionStremioAddon(
@@ -163,6 +171,7 @@ export async function getOrionStreams(
   const configString = getOrionConfigString(
     orionApiKey,
     orionOptions.linkLimit,
+    orionOptions.showTorrents,
     debridServices
   );
   const orion = new OrionStremioAddon(

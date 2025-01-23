@@ -428,6 +428,15 @@ export const addonDetails: AddonDetail[] = [
         secret: true,
       },
       {
+        id: 'showTorrents',
+        required: false,
+        label: 'Show Torrents',
+        description:
+          'If you have not provided any debrid services, this option does not apply to you, it will show torrent streams regardless.\
+          Show torrents along with debrid streams. By default, the addon will only show debrid streams. Enable this option to show torrents as well.',
+        type: 'checkbox',
+      },
+      {
         id: 'linkLimit',
         required: false,
         label: 'Link Limit',
