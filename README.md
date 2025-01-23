@@ -122,6 +122,9 @@ Read my [Stremio guide](https://guides.viren070.me/stremio).
 
 ### Public Instance
 
+> [!IMPORTANT]
+> Torrentio is disabled on the public instance!
+
 [ElfHosted](https://elfhosted.com/) have been kind enough to host a [community instance of AIOStreams](https://aiostreams.elfhosted.com/configure).
 
 This community instance does have a ratelimit in place, but it is unlikely you will reach it. It also avoids the ratelimits of ElfHosted addons like Comet and MediaFusion as AIOStreams' requests to these addons are routed internally.
