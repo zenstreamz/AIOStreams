@@ -504,29 +504,62 @@ export default function Configure() {
     if (!object) {
       return validValues;
     }
-    return validValues.map((validValue) => {
-      const value = object.find(
-        (v) => Object.keys(v)[0] === Object.keys(validValue)[0]
-      );
-      return value || validValue;
-    });
+
+    const mergedValues = object.filter((value) =>
+      validValues.some((validValue) =>
+        Object.keys(validValue).includes(Object.keys(value)[0])
+      )
+    );
+
+    for (const validValue of validValues) {
+      if (
+        !mergedValues.some(
+          (value) => Object.keys(value)[0] === Object.keys(validValue)[0]
+        )
+      ) {
+        mergedValues.push(validValue);
+      }
+    }
+
+    return mergedValues;
   };
 
   const loadValidSortCriteria = (sortCriteria: Config['sortBy']) => {
     if (!sortCriteria) {
       return defaultSortCriteria;
     }
-    return defaultSortCriteria.map((defaultSort) => {
-      // we find the one with the same key in the first index.
-      // and we only load direction if it exists in the defaultSort
-      const sort = sortCriteria.find(
-        (s) => Object.keys(s)[0] === Object.keys(defaultSort)[0]
-      );
-      if (sort && defaultSort.direction) {
-        return { ...sort, direction: sort.direction || defaultSort.direction };
+
+    const mergedValues = sortCriteria
+      .map((sort) => {
+        const defaultSort = defaultSortCriteria.find(
+          (defaultSort) => Object.keys(defaultSort)[0] === Object.keys(sort)[0]
+        );
+        if (!defaultSort) {
+          return null;
+        }
+        return {
+          ...sort,
+          direction: defaultSort?.direction // only load direction if it exists in the defaultSort
+            ? sort.direction || defaultSort.direction
+            : undefined,
+        };
+      })
+      .filter((sort) => sort !== null);
+
+    defaultSortCriteria.forEach((defaultSort) => {
+      if (
+        !mergedValues.some(
+          (sort) => Object.keys(sort)[0] === Object.keys(defaultSort)[0]
+        )
+      ) {
+        mergedValues.push({
+          ...defaultSort,
+          direction: defaultSort.direction || undefined,
+        });
       }
-      return sort || defaultSort;
     });
+
+    return mergedValues;
   };
 
   const validateValue = (value: string | null, validValues: string[]) => {

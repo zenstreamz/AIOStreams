@@ -93,7 +93,7 @@ export type Quality = { [key: string]: boolean };
 export type VisualTag = { [key: string]: boolean };
 export type AudioTag = { [key: string]: boolean };
 export type Encode = { [key: string]: boolean };
-export type SortBy = { [key: string]: boolean | string };
+export type SortBy = { [key: string]: boolean | string | undefined };
 
 export interface Config {
   requestingIp?: string;

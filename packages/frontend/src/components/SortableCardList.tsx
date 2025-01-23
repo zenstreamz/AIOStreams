@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styles from './SortableCardList.module.css';
 
 interface SortableCardListProps {
-  items: { [key: string]: boolean | string }[];
+  items: { [key: string]: boolean | string | undefined }[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setItems: (items: { [key: string]: any }[]) => void;
 }
