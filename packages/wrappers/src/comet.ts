@@ -41,7 +41,7 @@ export class Comet extends BaseWrapper {
         ? extractSizeInBytes(stream.description, 1024)
         : undefined;
 
-    const debrid = this.parseServiceData(stream);
+    const debrid = this.parseServiceData(stream.name || '');
 
     const indexerMatch = RegExp(/🔎 ([a-zA-Z0-9]+)/).exec(
       stream.description || ''

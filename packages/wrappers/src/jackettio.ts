@@ -38,7 +38,7 @@ export class Jackettio extends BaseWrapper {
       ? extractSizeInBytes(stream.title, 1024)
       : undefined;
 
-    const debrid = this.parseServiceData(stream);
+    const debrid = this.parseServiceData(stream.name || '');
     if (debrid?.id && debrid.cached === undefined) {
       debrid.cached = false;
     }

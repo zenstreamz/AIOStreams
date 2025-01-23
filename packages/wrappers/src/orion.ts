@@ -36,7 +36,7 @@ export class OrionStremioAddon extends BaseWrapper {
       ? extractSizeInBytes(stream.title, 1024)
       : 0;
 
-    const debrid = this.parseServiceData(stream);
+    const debrid = this.parseServiceData(stream.name?.split('\n')?.[1] || '');
     if (debrid?.id && !debrid.cached) {
       debrid.cached = true;
     }

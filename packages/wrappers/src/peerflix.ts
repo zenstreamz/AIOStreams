@@ -39,7 +39,7 @@ export class Peerflix extends BaseWrapper {
       stream.sizeBytes ||
       (stream.title ? extractSizeInBytes(stream.title, 1024) : 0);
 
-    const debrid = this.parseServiceData(stream);
+    const debrid = this.parseServiceData(stream.name || '');
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.title!);
     const seeders =
       parseInt(stream.seed || seedersMatch?.[1] || '0') || undefined;

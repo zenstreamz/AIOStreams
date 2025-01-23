@@ -211,13 +211,13 @@ export class BaseWrapper {
   }
 
   protected parseServiceData(
-    stream: Stream
+    string: string
   ): ParsedStream['provider'] | undefined {
+    const cleanString = string.replace(/web-?dl/i, '');
     const services = serviceDetails;
     const cachedSymbols = ['+', '⚡', '🚀', 'cached'];
     const uncachedSymbols = ['⏳', 'download', 'UNCACHED'];
     let provider: ParsedStream['provider'] | undefined;
-    const string = stream.name || '';
     services.forEach((service) => {
       // for each service, generate a regexp which creates a regex with all known names separated by |
       const regex = new RegExp(
@@ -225,7 +225,7 @@ export class BaseWrapper {
         'i'
       );
       // check if the string contains the regex
-      if (regex.test(string)) {
+      if (regex.test(cleanString)) {
         let cached: boolean | undefined = undefined;
         // check if any of the uncachedSymbols are in the string
         if (uncachedSymbols.some((symbol) => string.includes(symbol))) {
@@ -240,6 +240,9 @@ export class BaseWrapper {
           id: service.id,
           cached: cached,
         };
+        console.log(
+          `|DBG| wrappers > base > parseServiceData: ${string.replace('\n', ' ')} matched ${service.id} using regex: ${regex}`
+        );
       }
     });
     if (!provider) {
@@ -249,9 +252,11 @@ export class BaseWrapper {
     }
     return provider;
   }
-  protected parseStream(stream: any): ParsedStream | undefined {
+  protected parseStream(stream: {
+    [key: string]: any;
+  }): ParsedStream | undefined {
     // attempt to look for filename in behaviorHints.filename, return undefined if not found
-    let filename = stream.behaviorHints?.filename;
+    let filename = stream?.behaviorHints?.filename;
 
     // if filename behaviorHint is not present, attempt to look for a filename in the stream description or title
     let description = stream.description || stream.title;
@@ -305,8 +310,9 @@ export class BaseWrapper {
     }
 
     // look for providers
-    let provider: ParsedStream['provider'] | undefined;
-    provider = this.parseServiceData(stream);
+    let provider: ParsedStream['provider'] = this.parseServiceData(
+      stream.name || ''
+    );
 
     if (stream.infoHash && provider) {
       // if its a p2p result, it is not from a debrid service

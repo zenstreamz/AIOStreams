@@ -43,11 +43,7 @@ export class MediaFusion extends BaseWrapper {
         ? extractSizeInBytes(stream.description, 1024)
         : undefined;
 
-    const nameParts = stream.name!.split(' ');
-    const provider = nameParts[nameParts.length - 3];
-    const emoji = nameParts[nameParts.length - 1];
-
-    const debrid = this.parseServiceData(stream);
+    const debrid = this.parseServiceData(stream.name || '');
 
     const indexerMatch = RegExp(
       /🔗 ([^\s\p{Emoji_Presentation}]+(?:\s[^\s\p{Emoji_Presentation}]+)*)/u

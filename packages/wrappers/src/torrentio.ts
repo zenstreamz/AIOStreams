@@ -32,7 +32,7 @@ export class Torrentio extends BaseWrapper {
       ? extractSizeInBytes(stream.title, 1024)
       : 0;
 
-    const debrid = this.parseServiceData(stream);
+    const debrid = this.parseServiceData(stream.name?.split('\n')?.[0] || '');
     const seedersMatch = RegExp(/👤 (\d+)/).exec(stream.title!);
     const seeders = seedersMatch ? parseInt(seedersMatch[1]) : undefined;
 
