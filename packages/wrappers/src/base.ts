@@ -240,9 +240,6 @@ export class BaseWrapper {
           id: service.id,
           cached: cached,
         };
-        console.log(
-          `|DBG| wrappers > base > parseServiceData: ${string.replace('\n', ' ')} matched ${service.id} using regex: ${regex}`
-        );
       }
     });
     if (!provider) {
