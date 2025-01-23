@@ -74,6 +74,22 @@ export function validateConfig(config: Config): {
     return { valid, errorCode, errorMessage };
   };
 
+  if (config.addons.length < 1) {
+    return createResponse(
+      false,
+      'noAddons',
+      'At least one addon must be selected'
+    );
+  }
+
+  if (config.addons.length > Settings.MAX_ADDONS) {
+    return createResponse(
+      false,
+      'tooManyAddons',
+      `You can only select a maximum of ${Settings.MAX_ADDONS} addons`
+    );
+  }
+
   // check for any duplicate addons where both the ID and options are the same
   const duplicateAddons = config.addons.filter(
     (addon, index) =>
@@ -294,22 +310,6 @@ export function validateConfig(config: Config): {
         );
       }
     }
-  }
-
-  if (config.addons.length < 1) {
-    return createResponse(
-      false,
-      'noAddons',
-      'At least one addon must be selected'
-    );
-  }
-
-  if (config.addons.length > Settings.MAX_ADDONS) {
-    return createResponse(
-      false,
-      'tooManyAddons',
-      `You can only select a maximum of ${Settings.MAX_ADDONS} addons`
-    );
   }
 
   if (config.maxResultsPerResolution && config.maxResultsPerResolution < 1) {
