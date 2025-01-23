@@ -13,6 +13,7 @@
     - [Cloudflare Workers](#cloudflare-workers)
     - [Render](#render)
     - [ElfHosted](#elfhosted-paid)
+    - [Heroku](#heroku-paid)
   - [Self Hosting](#self-hosting)
     - [Docker](#docker)
     - [From Source](#from-source)
