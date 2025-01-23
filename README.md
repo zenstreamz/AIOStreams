@@ -100,6 +100,9 @@ The addon can display your results in different formats. The formats available a
 
   ![image](https://github.com/user-attachments/assets/9d9c74ab-afde-41f9-ba94-eaf8904b580b)
 
+- minimalistic-gdrive
+  A modified version of the `gdrive` format where the filename is not shown. Emojis are used for languages, and seeders are not shown for cached results.
+
 - torrentio:
   Uses the format from the Torrentio addon.
 
@@ -222,7 +225,8 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 > Cloudflare Workers cannot make requests to other Cloudflare Workers from the same account. If you have deployed the Stremio GDrive addon already on a Cloudflare account, the AIOStreams worker on the same account will not be able to fetch streams from your Stremio GDrive worker.
 
 > [!WARNING]
-> Cloudflare Workers tend to get blocked by Torrentio quickly. It is also not possible to use the ADDON_PROXY environment variable with Cloudflare Workers. You must also edit the code for it to be possible to run on a cloudflare worker due to an [issue](https://github.com/Viren070/AIOStreams/issues/32). 
+> A Cloudflare Worker may get blocked by Torrentio. You may also encounter a build error, in which case you will have to edit the code slightly and lose the functionality of the `ADDON_PROXY` environment variable
+
 1. Sign up for a [Cloudflare Account](https://dash.cloudflare.com/sign-up/workers-and-pages)
 2. Install Node.js (I would recommend using package managers e.g. fnm on Windows)
 3. Install Git
@@ -243,10 +247,10 @@ If you get an error about the `node:sqlite` module, follow [these instructions](
 ##### Updating
 
 To update the addon, you can simply run the following commands to pull the latest changes, build the project, and deploy the worker.
-This will update the worker with the latest changes, which may not be stable. You must also repeat step 6. You may get some sort of merge conflict, in this case, just delete the `AIOStreams` folder and start over. 
+This will update the worker with the latest changes, which may not be stable. In case, you get the build error about `node:sqlite` again, follow the instructions linked above again. 
 
 ```
-git pull
+git pull --rebase
 npm run build
 npm run deploy:cloudflare-worker
 ```
@@ -263,6 +267,9 @@ https://render.com/
 3. Enter `https://github.com/Viren070/AIOStreams`
 4. Deploy
 
+> [!TIP]
+> Use a service to automatically ping the instance to keep it alive. 
+
 ##### Updating
 
 When you deploy with Render, it automatically builds the addon every time a commit is pushed to this repository. You can also manually trigger a build by clicking the `Deploy` button.
@@ -271,7 +278,14 @@ It is recommend to disable the `Auto Deploy` feature as the latest changes may n
 
 #### ElfHosted (paid)
 
-AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle setup where everything is done for you.
+AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle experience where you can expect things to "just work". 
+
+#### Heroku (paid) 
+
+> [!TIP]
+> Heroku have a [student offer](https://www.heroku.com/github-students/) which gives you $13 worth of credit each month to spend for 24 months. 
+
+To deploy AIOStreams on [Heroku](https://heroku.com/), you can fork this repository, and create a new app on the [Heroku Dashboard](https://dashboard.heroku.com/), using `GitHub` as the deployment method in the `Deploy` tab, and choosing the `Node.js` buildpack in the `Settings` tab. 
 
 ### Self-Hosting
 
