@@ -105,22 +105,10 @@ export async function getOrionStreams(
   );
 
   // orion api key can either be in deprecated orionApiKey or in the new orionServiceConfig
-  let orionApiKey = orionOptions.orionApiKey;
-  if (!orionApiKey) {
-    if (!orionServiceConfig) {
-      console.log(
-        '|DBG| wrappers > orion > orionApiKey not provided and orion service not found in config'
-      );
-      throw new Error('Orion API key not provided');
-    }
-    orionApiKey = orionServiceConfig.credentials.apiKey;
-  }
-
-  if (!orionApiKey) {
-    console.log(
-      '|DBG| wrappers > orion > orionApiKey not provided and was also not provided in orion service config'
-    );
-    throw new Error('Orion API key not provided');
+  let orionApiKey =
+    orionOptions.orionApiKey || orionServiceConfig?.credentials.apiKey || '';
+  if (!orionApiKey && !orionOptions.overrideUrl) {
+    throw new Error('Missing Orion API key or override URL');
   }
 
   const supportedServices: string[] =
