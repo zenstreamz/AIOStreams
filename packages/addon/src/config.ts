@@ -116,26 +116,7 @@ export function validateConfig(config: Config): {
         Settings.DISABLE_TORRENTIO_MESSAGE
       );
     }
-    // if torbox addon is enabled, torbox service must be enabled and torbox api key must be set
-    if (addon.id === 'torbox') {
-      const torboxService = config.services.find(
-        (service) => service.id === 'torbox'
-      );
-      if (!torboxService || !torboxService.enabled) {
-        return createResponse(
-          false,
-          'torboxServiceNotEnabled',
-          'Torbox service must be enabled to use the Torbox addon'
-        );
-      }
-      if (!torboxService.credentials.apiKey) {
-        return createResponse(
-          false,
-          'torboxApiKeyNotSet',
-          'Torbox API Key must be set to use the Torbox addon'
-        );
-      }
-    }
+
     const details = addonDetails.find(
       (detail: AddonDetail) => detail.id === addon.id
     );
@@ -145,6 +126,26 @@ export function validateConfig(config: Config): {
         'invalidAddon',
         `Invalid addon: ${addon.id}`
       );
+    }
+    if (details.requiresService) {
+      const supportedServices = details.supportedServices;
+      const isAtLeastOneServiceEnabled = config.services.some(
+        (service) => supportedServices.includes(service.id) && service.enabled
+      );
+      const isOverrideUrlSet = addon.options?.overrideUrl;
+      if (!isAtLeastOneServiceEnabled && !isOverrideUrlSet) {
+        return createResponse(
+          false,
+          'missingService',
+          `${addon.options?.name || details.name} requires at least one of the following services to be enabled: ${supportedServices
+            .map(
+              (service) =>
+                serviceDetails.find((detail) => detail.id === service)?.name ||
+                service
+            )
+            .join(', ')}`
+        );
+      }
     }
     if (details.options) {
       for (const option of details.options) {

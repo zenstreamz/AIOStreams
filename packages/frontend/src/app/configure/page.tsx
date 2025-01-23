@@ -190,26 +190,7 @@ export default function Configure() {
   );
 
   const getChoosableAddons = () => {
-    // only if torbox service is enabled we can use torbox addon
-    const choosableAddons: string[] = [];
-    for (const addon of addonDetails) {
-      if (addon.requiresService) {
-        // look through services and see if the ID of any service is in addon.supportedServices
-        if (
-          services.some(
-            (service) =>
-              addon.supportedServices.includes(service.id) &&
-              service.enabled &&
-              Object.keys(service.credentials).length > 0
-          )
-        ) {
-          choosableAddons.push(addon.id);
-        }
-      } else {
-        choosableAddons.push(addon.id);
-      }
-    }
-    return choosableAddons;
+    return addonDetails.map((addon) => addon.id);
   };
 
   const createConfig = (): Config => {
