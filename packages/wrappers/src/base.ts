@@ -24,15 +24,15 @@ export class BaseWrapper {
   constructor(
     addonName: string,
     addonUrl: string,
-    indexerTimeout: number = Settings.DEFAULT_TIMEOUT,
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     this.addonName = addonName;
     this.addonUrl = this.standardizeManifestUrl(addonUrl);
     this.addonId = addonId;
-    this.indexerTimeout = indexerTimeout || 3000;
-    this.userConfig = userConfig;
+    (this.indexerTimeout = indexerTimeout || Settings.DEFAULT_TIMEOUT),
+      (this.userConfig = userConfig);
   }
 
   protected standardizeManifestUrl(url: string): string {
@@ -98,7 +98,7 @@ export class BaseWrapper {
       const urlParts = url.split('/');
       const sanitisedUrl = `${urlParts[0]}//${urlParts[2]}/*************/${urlParts.slice(-3).join('/')}`;
       console.log(
-        `|INF| wrappers > base > ${this.addonName}: GET ${sanitisedUrl}`
+        `|INF| wrappers > base > ${this.addonName}: Fetching with timeout ${this.indexerTimeout}ms from ${sanitisedUrl}`
       );
       let response;
       try {

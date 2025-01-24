@@ -30,17 +30,17 @@ interface TorboxStream extends Stream {
 export class Torbox extends BaseWrapper {
   constructor(
     apiKey: string,
-    indexerTimeout: number = Settings.DEFAULT_TORBOX_TIMEOUT,
     addonName: string = 'Torbox',
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     super(
       addonName,
       Settings.TORBOX_STREMIO_URL + apiKey + '/',
-      indexerTimeout,
       addonId,
-      userConfig
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_TORBOX_TIMEOUT
     );
   }
 
@@ -172,12 +172,12 @@ export async function getTorboxStreams(
 
   const torbox = new Torbox(
     torboxApiKey,
-    torboxOptions.indexerTimeout
-      ? parseInt(torboxOptions.indexerTimeout)
-      : undefined,
     torboxOptions.overrideName,
     addonId,
-    config
+    config,
+    torboxOptions.indexerTimeout
+      ? parseInt(torboxOptions.indexerTimeout)
+      : undefined
   );
   return await torbox.getParsedStreams(streamRequest);
 }

@@ -71,47 +71,51 @@ export class Settings {
   public static readonly DEFAULT_TORRENTIO_TIMEOUT = process.env
     .DEFAULT_TORRENTIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_TORRENTIO_TIMEOUT)
-    : 5000;
+    : undefined;
   public static readonly DEFAULT_TORBOX_TIMEOUT = process.env
     .DEFAULT_TORBOX_TIMEOUT
     ? parseInt(process.env.DEFAULT_TORBOX_TIMEOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_COMET_TIMEOUT = process.env
     .DEFAULT_COMET_TIMEOUT
     ? parseInt(process.env.DEFAULT_COMET_TIMEOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_MEDIAFUSION_TIMEOUT = process.env
     .DEFAULT_MEDIAFUSION_TIMEOUT
     ? parseInt(process.env.DEFAULT_MEDIAFUSION_TIMEOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_JACKETTIO_TIMEOUT = process.env
     .DEFAULT_JACKETTIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_JACKETTIO_TIMEOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_ORION_TIMEOUT = process.env
     .DEFAULT_ORION_TIMEOUT
     ? parseInt(process.env.DEFAULT_ORION_TIMEOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_PEERFLIX_TIMEOUT = process.env
     .DEFAULT_PEERFLIX_TIMEOUT
     ? parseInt(process.env.DEFAULT_PEERFLIX_TIMEOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_EASYNEWS_TIMEMOUT = process.env
     .DEFAULT_EASYNEWS_TIMEMOUT
     ? parseInt(process.env.DEFAULT_EASYNEWS_TIMEMOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_EASYNEWS_PLUS_TIMEMOUT = process.env
     .DEFAULT_EASYNEWS_PLUS_TIMEMOUT
     ? parseInt(process.env.DEFAULT_EASYNEWS_PLUS_TIMEMOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_DEBRIDIO_TIMEOUT = process.env
     .DEFAULT_DEBRIDIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_DEBRIDIO_TIMEOUT)
-    : 15000;
+    : undefined;
   public static readonly DEFAULT_DMM_CAST_TIMEOUT = process.env
     .DEFAULT_DMM_CAST_TIMEOUT
     ? parseInt(process.env.DEFAULT_DMM_CAST_TIMEOUT)
-    : 15000;
+    : undefined;
+  public static readonly DEFAULT_GDRIVE_TIMEOUT = process.env
+    .DEFAULT_GDRIVE_TIMEOUT
+    ? parseInt(process.env.DEFAULT_GDRIVE_TIMEOUT)
+    : undefined;
   public static readonly SHOW_DIE = process.env.SHOW_DIE
     ? process.env.SHOW_DIE === 'true'
     : false;

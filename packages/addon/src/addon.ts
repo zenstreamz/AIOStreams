@@ -917,11 +917,11 @@ export class AIOStreams {
         const wrapper = new BaseWrapper(
           addon.options.overrideName || 'GDrive',
           addon.options.addonUrl,
+          addonId,
+          this.config,
           addon.options.indexerTimeout
             ? parseInt(addon.options.indexerTimeout)
-            : undefined,
-          addonId,
-          this.config
+            : Settings.DEFAULT_GDRIVE_TIMEOUT
         );
         return await wrapper.getParsedStreams(streamRequest);
       }
@@ -934,11 +934,11 @@ export class AIOStreams {
         const wrapper = new BaseWrapper(
           addon.options.name || 'Custom',
           addon.options.url.trim(),
+          addonId,
+          this.config,
           addon.options.indexerTimeout
             ? parseInt(addon.options.indexerTimeout)
-            : undefined,
-          addonId,
-          this.config
+            : undefined
         );
         return await wrapper.getParsedStreams(streamRequest);
       }

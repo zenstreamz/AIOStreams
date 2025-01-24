@@ -13,16 +13,22 @@ export class Jackettio extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = Settings.DEFAULT_JACKETTIO_TIMEOUT,
     addonName: string = 'Jackettio',
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.JACKETTIO_URL + (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId, userConfig);
+    super(
+      addonName,
+      url,
+      addonId,
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_JACKETTIO_TIMEOUT
+    );
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -142,10 +148,10 @@ export async function getJackettioStreams(
     const jackettio = new Jackettio(
       null,
       jackettioOptions.overrideUrl as string,
-      indexerTimeout,
       jackettioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return jackettio.getParsedStreams(streamRequest);
   }
@@ -194,10 +200,10 @@ export async function getJackettioStreams(
     const jackettio = new Jackettio(
       configString,
       null,
-      indexerTimeout,
       jackettioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
 
     return jackettio.getParsedStreams(streamRequest);
@@ -217,10 +223,10 @@ export async function getJackettioStreams(
     const jackettio = new Jackettio(
       configString,
       null,
-      indexerTimeout,
       jackettioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return jackettio.getParsedStreams(streamRequest);
   });

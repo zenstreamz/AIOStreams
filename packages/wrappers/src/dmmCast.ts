@@ -16,10 +16,16 @@ export class DMMCast extends BaseWrapper {
     installationUrl: string,
     addonId: string,
     userConfig: Config,
-    indexerTimeout: number = Settings.DEFAULT_DMM_CAST_TIMEOUT,
-    addonName: string = 'DMM Cast'
+    addonName: string = 'DMM Cast',
+    indexerTimeout?: number
   ) {
-    super(addonName, installationUrl, indexerTimeout, addonId, userConfig);
+    super(
+      addonName,
+      installationUrl,
+      addonId,
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_DMM_CAST_TIMEOUT
+    );
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -74,8 +80,10 @@ export async function getDMMCastStreams(
     dmmCastOptions.installationUrl,
     addonId,
     config,
-    parseInt(dmmCastOptions.indexerTimeout || '0'),
-    dmmCastOptions.overrideName
+    dmmCastOptions.overrideName,
+    dmmCastOptions.indexerTimeout
+      ? parseInt(dmmCastOptions.indexerTimeout)
+      : undefined
   );
   return dmmCast.getParsedStreams(streamRequest);
 }

@@ -17,16 +17,22 @@ export class Peerflix extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = Settings.DEFAULT_PEERFLIX_TIMEOUT,
     addonName: string = 'Peerflix',
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.PEERFLIX_URL + (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId, userConfig);
+    super(
+      addonName,
+      url,
+      addonId,
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_PEERFLIX_TIMEOUT
+    );
   }
 
   protected parseStream(stream: PeerflixStream): ParsedStream {
@@ -103,10 +109,10 @@ export async function getPeerflixStreams(
     const peerflix = new Peerflix(
       null,
       peerflixOptions.overrideUrl as string,
-      indexerTimeout,
       peerflixOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return peerflix.getParsedStreams(streamRequest);
   }
@@ -124,10 +130,10 @@ export async function getPeerflixStreams(
     const peerflix = new Peerflix(
       null,
       null,
-      indexerTimeout,
       peerflixOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return await peerflix.getParsedStreams(streamRequest);
   }
@@ -161,10 +167,10 @@ export async function getPeerflixStreams(
       const peerflix = new Peerflix(
         configString,
         null,
-        indexerTimeout,
         peerflixOptions.overrideName,
         addonId,
-        config
+        config,
+        indexerTimeout
       );
       return await peerflix.getParsedStreams(streamRequest);
     });
@@ -186,10 +192,10 @@ export async function getPeerflixStreams(
     const peerflix = new Peerflix(
       configString,
       null,
-      indexerTimeout,
       peerflixOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return await peerflix.getParsedStreams(streamRequest);
   }

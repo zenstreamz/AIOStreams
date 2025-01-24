@@ -9,16 +9,22 @@ export class MediaFusion extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = Settings.DEFAULT_MEDIAFUSION_TIMEOUT,
     addonName: string = 'MediaFusion',
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.MEDIAFUSION_URL + (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId, userConfig);
+    super(
+      addonName,
+      url,
+      addonId,
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_MEDIAFUSION_TIMEOUT
+    );
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -116,10 +122,10 @@ export async function getMediafusionStreams(
     const mediafusion = new MediaFusion(
       null,
       mediafusionOptions.overrideUrl as string,
-      indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -140,10 +146,10 @@ export async function getMediafusionStreams(
     const mediafusion = new MediaFusion(
       configString,
       null,
-      indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return mediafusion.getParsedStreams(streamRequest);
   }
@@ -184,10 +190,10 @@ export async function getMediafusionStreams(
     const mediafusion = new MediaFusion(
       encryptedStr,
       null,
-      indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
 
     return mediafusion.getParsedStreams(streamRequest);
@@ -209,10 +215,10 @@ export async function getMediafusionStreams(
     const mediafusion = new MediaFusion(
       encryptedStr,
       null,
-      indexerTimeout,
       mediafusionOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return mediafusion.getParsedStreams(streamRequest);
   });

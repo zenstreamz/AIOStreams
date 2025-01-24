@@ -10,16 +10,22 @@ export class Torrentio extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = Settings.DEFAULT_TORRENTIO_TIMEOUT,
     addonName: string = 'Torrentio',
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.TORRENTIO_URL + (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId, userConfig);
+    super(
+      addonName,
+      url,
+      addonId,
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_TORRENTIO_TIMEOUT
+    );
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -112,10 +118,10 @@ export async function getTorrentioStreams(
     const torrentio = new Torrentio(
       null,
       torrentioOptions.overrideUrl as string,
-      indexerTimeout,
       torrentioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return torrentio.getParsedStreams(streamRequest);
   }
@@ -130,10 +136,10 @@ export async function getTorrentioStreams(
     const torrentio = new Torrentio(
       null,
       null,
-      indexerTimeout,
       torrentioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return await torrentio.getParsedStreams(streamRequest);
   }
@@ -159,10 +165,10 @@ export async function getTorrentioStreams(
       const torrentio = new Torrentio(
         configString,
         null,
-        indexerTimeout,
         torrentioOptions.overrideName,
         addonId,
-        config
+        config,
+        indexerTimeout
       );
       return await torrentio.getParsedStreams(streamRequest);
     });
@@ -180,10 +186,10 @@ export async function getTorrentioStreams(
     const torrentio = new Torrentio(
       configString,
       null,
-      indexerTimeout,
       torrentioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return await torrentio.getParsedStreams(streamRequest);
   }

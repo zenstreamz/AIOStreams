@@ -11,17 +11,23 @@ export class OrionStremioAddon extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = Settings.DEFAULT_ORION_TIMEOUT,
     addonName: string = 'Orion',
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.ORION_STREMIO_ADDON_URL +
         (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId, userConfig);
+    super(
+      addonName,
+      url,
+      addonId,
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_ORION_TIMEOUT
+    );
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -130,11 +136,11 @@ export async function getOrionStreams(
   if (orionOptions.overrideUrl) {
     const orion = new OrionStremioAddon(
       null,
-      orionOptions.overrideUrl as string,
-      indexerTimeout,
+      orionOptions.overrideUrl,
       orionOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return orion.getParsedStreams(streamRequest);
   }
@@ -155,10 +161,10 @@ export async function getOrionStreams(
     const orion = new OrionStremioAddon(
       configString,
       null,
-      indexerTimeout,
       orionOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return await orion.getParsedStreams(streamRequest);
   }
@@ -177,10 +183,10 @@ export async function getOrionStreams(
   const orion = new OrionStremioAddon(
     configString,
     null,
-    indexerTimeout,
     orionOptions.overrideName,
     addonId,
-    config
+    config,
+    indexerTimeout
   );
   return await orion.getParsedStreams(streamRequest);
 }

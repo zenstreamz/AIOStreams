@@ -10,16 +10,22 @@ export class Debridio extends BaseWrapper {
   constructor(
     configString: string | null,
     overrideUrl: string | null,
-    indexerTimeout: number = Settings.DEFAULT_DEBRIDIO_TIMEOUT,
     addonName: string = 'Debridio',
     addonId: string,
-    userConfig: Config
+    userConfig: Config,
+    indexerTimeout?: number
   ) {
     let url = overrideUrl
       ? overrideUrl
       : Settings.DEBRIDIO_URL + (configString ? configString + '/' : '');
 
-    super(addonName, url, indexerTimeout, addonId, userConfig);
+    super(
+      addonName,
+      url,
+      addonId,
+      userConfig,
+      indexerTimeout || Settings.DEFAULT_DEBRIDIO_TIMEOUT
+    );
   }
 
   protected parseStream(stream: Stream): ParsedStream {
@@ -118,10 +124,10 @@ export async function getDebridioStreams(
     const debridio = new Debridio(
       null,
       debridioOptions.overrideUrl as string,
-      indexerTimeout,
       debridioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return debridio.getParsedStreams(streamRequest);
   }
@@ -170,10 +176,10 @@ export async function getDebridioStreams(
     const debridio = new Debridio(
       debridioConfigString,
       null,
-      indexerTimeout,
       debridioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
 
     return debridio.getParsedStreams(streamRequest);
@@ -193,10 +199,10 @@ export async function getDebridioStreams(
     const debridio = new Debridio(
       debridioConfigString,
       null,
-      indexerTimeout,
       debridioOptions.overrideName,
       addonId,
-      config
+      config,
+      indexerTimeout
     );
     return debridio.getParsedStreams(streamRequest);
   });
