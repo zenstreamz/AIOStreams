@@ -140,6 +140,9 @@ I would recommend using Hugging Face over the other options, it is fast and is s
 
 This addon can be deployed as a [Hugging Face](https://huggingface.co/) space.
 
+> [!IMPORTANT]
+> Hugging Face may have begun blocking deployments of this addon which cause it to get stuck on building. 
+
 > [!WARNING]
 > Hugging Face is centered around AI and as this addon is not related to AI, they may take it down.
 
