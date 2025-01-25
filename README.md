@@ -285,7 +285,10 @@ It is recommend to disable the `Auto Deploy` feature as the latest changes may n
 
 #### ElfHosted (paid)
 
-AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle experience where you can expect things to "just work". 
+> [!INFO] 
+> Use the link below to support me, 33% of your AIOStreams subscription will go to me ❤️ 
+
+AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/elf/viren070/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle experience where you can expect things to "just work". 
 
 #### Heroku (paid) 
 
