@@ -96,6 +96,7 @@ export type Encode = { [key: string]: boolean };
 export type SortBy = { [key: string]: boolean | string | undefined };
 
 export interface Config {
+  instanceCache?: any;
   requestingIp?: string;
   resolutions: Resolution[];
   qualities: Quality[];

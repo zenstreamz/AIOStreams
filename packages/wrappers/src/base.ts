@@ -9,6 +9,7 @@ import { parseFilename } from '@aiostreams/parser';
 import {
   getMediaFlowConfig,
   getMediaFlowPublicIp,
+  getTextHash,
   serviceDetails,
   Settings,
 } from '@aiostreams/utils';
@@ -67,7 +68,10 @@ export class BaseWrapper {
     let userIp = this.userConfig.requestingIp;
     const mediaFlowConfig = getMediaFlowConfig(this.userConfig);
     if (mediaFlowConfig.mediaFlowEnabled) {
-      const mediaFlowIp = await getMediaFlowPublicIp(mediaFlowConfig);
+      const mediaFlowIp = await getMediaFlowPublicIp(
+        mediaFlowConfig,
+        this.userConfig.instanceCache
+      );
       if (!mediaFlowIp) {
         throw new Error('Failed to get public IP from MediaFlow');
       }
@@ -83,6 +87,17 @@ export class BaseWrapper {
     }, this.indexerTimeout);
 
     const url = this.getStreamUrl(streamRequest);
+    const cache = this.userConfig.instanceCache;
+    const requestCacheKey = getTextHash(url);
+    const cachedStreams = cache.get(requestCacheKey);
+    const sanitisedUrl =
+      new URL(url).hostname + '/****/' + new URL(url).pathname.split('/').pop();
+    if (cachedStreams) {
+      console.debug(
+        `|DBG| wrappers > base > ${this.addonName}: Returning cached streams for ${sanitisedUrl}`
+      );
+      return cachedStreams;
+    }
     try {
       // Add requesting IP to headers
       const headers = new Headers();
@@ -97,7 +112,6 @@ export class BaseWrapper {
         headers.set('X-Real-IP', userIp);
       }
       const urlParts = url.split('/');
-      const sanitisedUrl = `${urlParts[0]}//${urlParts[2]}/*************/${urlParts.slice(-3).join('/')}`;
       console.log(
         `|INF| wrappers > base > ${this.addonName}: Fetching with timeout ${this.indexerTimeout}ms from ${sanitisedUrl}`
       );
@@ -143,6 +157,7 @@ export class BaseWrapper {
       if (!results.streams) {
         throw new Error('Failed to respond with streams');
       }
+      cache.set(requestCacheKey, results.streams, 300); // cache for 5 minutes
       return results.streams;
     } catch (error: any) {
       clearTimeout(timeout);
@@ -215,9 +230,6 @@ export class BaseWrapper {
     let description = stream.description || stream.title;
 
     if (!filename && description) {
-      console.log(
-        `|DBG| wrappers > base > parseStream: No filename found in behaviorHints, attempting to parse from description`
-      );
       const lines = description.split('\n');
       filename =
         lines.find(
@@ -226,13 +238,6 @@ export class BaseWrapper {
               /(?<![^ [_(\-.]])(?:s(?:eason)?[ .\-_]?(\d+)[ .\-_]?(?:e(?:pisode)?[ .\-_]?(\d+))?|(\d+)[xX](\d+))(?![^ \])_.-])/
             ) || line.match(/(?<![^ [_(\-.])(\d{4})(?=[ \])_.-]|$)/i)
         ) || lines[0];
-      console.log(
-        `|DBG| wrappers > base > parseStream: With description: ${description.replace(/\n/g, ' ').trim()}, chose filename as: ${filename.replace(/\n/g, ' ').trim()}`
-      );
-    } else if (!description) {
-      console.log(
-        `|WRN| wrappers > base > parseStream: No description found, filename could not be determined`
-      );
     }
 
     let stringToParse: string = filename || description || '';
@@ -358,11 +363,6 @@ export class BaseWrapper {
         };
       }
     });
-    if (!provider) {
-      console.log(
-        `|WRN| wrappers > base > parseServiceData: No provider found for ${string}`
-      );
-    }
     return provider;
   }
   protected extractSizeInBytes(string: string, k: number): number {

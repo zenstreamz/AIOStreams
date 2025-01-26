@@ -50,6 +50,9 @@ export class Settings {
     process.env.DEFAULT_MEDIAFLOW_API_PASSWORD ?? '';
   public static readonly DEFAULT_MEDIAFLOW_PUBLIC_IP =
     process.env.DEFAULT_MEDIAFLOW_PUBLIC_IP ?? '';
+  public static readonly MAX_CACHE_SIZE = process.env.MAX_CACHE_SIZE
+    ? parseInt(process.env.MAX_CACHE_SIZE)
+    : 1024;
   public static readonly MAX_ADDONS = process.env.MAX_ADDONS
     ? parseInt(process.env.MAX_ADDONS)
     : 15;
