@@ -18,7 +18,8 @@ import {
 import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
-import { Slide, ToastContainer, ToastOptions, toast } from 'react-toastify';
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import showToast, { toastOptions } from '@/components/Toasts';
 import addonPackage from '../../../package.json';
 import { formatSize } from '@aiostreams/formatters';
 import {
@@ -30,9 +31,15 @@ import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
 
 import Slider from '@/components/Slider';
 import CredentialInput from '@/components/CredentialInput';
+import CreateableSelect from '@/components/CreateableSelect';
 import MultiSelect from '@/components/MutliSelect';
 
 const version = addonPackage.version;
+
+interface Option {
+  label: string;
+  value: string;
+}
 
 const defaultQualities: Quality[] = [
   { 'BluRay REMUX': true },
@@ -98,30 +105,6 @@ const defaultSortCriteria: SortBy[] = [
   { addon: false },
 ];
 
-const toastOptions: ToastOptions = {
-  autoClose: 5000,
-  hideProgressBar: true,
-  closeOnClick: false,
-  pauseOnHover: true,
-  draggable: 'touch',
-  style: {
-    borderRadius: '8px',
-    backgroundColor: '#ededed',
-    color: 'black',
-  },
-};
-
-function showToast(
-  message: string,
-  type: 'success' | 'error' | 'info' | 'warning',
-  id?: string
-) {
-  toast[type](message, {
-    ...toastOptions,
-    toastId: id,
-  });
-}
-
 const defaultResolutions: Resolution[] = [
   { '2160p': true },
   { '1080p': true },
@@ -174,6 +157,15 @@ export default function Configure() {
   const [maxResultsPerResolution, setMaxResultsPerResolution] = useState<
     number | null
   >(null);
+  const [excludeFilters, setExcludeFilters] = useState<readonly Option[]>([]);
+  const [strictIncludeFilters, setStrictIncludeFilters] = useState<
+    readonly Option[]
+  >([]);
+  /*
+  const [prioritiseIncludeFilters, setPrioritiseIncludeFilters] = useState<
+    readonly Option[]
+  >([]);
+  */
   const [mediaFlowEnabled, setMediaFlowEnabled] = useState<boolean>(false);
   const [mediaFlowProxyUrl, setMediaFlowProxyUrl] = useState<string>('');
   const [mediaFlowApiPassword, setMediaFlowApiPassword] = useState<string>('');
@@ -211,6 +203,14 @@ export default function Configure() {
       addonNameInDescription,
       cleanResults,
       maxResultsPerResolution,
+      strictIncludeFilters:
+        strictIncludeFilters.length > 0
+          ? strictIncludeFilters.map((filter) => filter.value)
+          : null,
+      excludeFilters:
+        excludeFilters.length > 0
+          ? excludeFilters.map((filter) => filter.value)
+          : null,
       formatter: formatter || 'gdrive',
       mediaFlowConfig: {
         mediaFlowEnabled,
@@ -995,6 +995,43 @@ export default function Configure() {
                 setValues={setExcludedLanguages}
                 values={excludedLanguages || []}
               />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <div>
+            <div>
+              <h2 style={{ padding: '5px', margin: '0px ' }}>Keyword Filter</h2>
+              <p style={{ margin: '5px 0 12px 5px' }}>
+                Filter streams by keywords. You can exclude streams that contain
+                specific keywords or only include streams that contain specific
+                keywords.
+              </p>
+            </div>
+            <div style={{ marginBottom: '0px' }}>
+              <div className={styles.section}>
+                <h3 style={{ margin: '2px 0 2px 0' }}>Exclude Filter</h3>
+                <p style={{ margin: '10px 0 10px 0' }}>
+                  Enter keywords to filter streams by. Streams that contain any
+                  of the keywords will be excluded.
+                </p>
+                <CreateableSelect
+                  value={excludeFilters}
+                  setValue={setExcludeFilters}
+                />
+              </div>
+              <div className={styles.section} style={{ marginBottom: '0px' }}>
+                <h3 style={{ margin: '2px 0 2px 0' }}>Include Filter</h3>
+                <p style={{ margin: '10px 0 10px 0' }}>
+                  Enter keywords to filter streams by. Streams that do not
+                  contain any of the keywords will be excluded.
+                </p>
+                <CreateableSelect
+                  value={strictIncludeFilters}
+                  setValue={setStrictIncludeFilters}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -149,6 +149,8 @@ export interface Config {
   addonNameInDescription?: boolean;
   cleanResults: boolean;
   maxResultsPerResolution: number | null;
+  excludeFilters: string[] | null;
+  strictIncludeFilters: string[] | null;
   mediaFlowConfig?: {
     mediaFlowEnabled: boolean;
     proxyUrl: string;
