@@ -121,8 +121,8 @@ export default {
 
         decodedConfig.requestingIp =
           request.headers.get('X-Forwarded-For') ||
-          request.headers.get('CF-Connecting-IP') ||
           request.headers.get('X-Real-IP') ||
+          request.headers.get('CF-Connecting-IP') ||
           request.headers.get('X-Client-IP') ||
           undefined;
         decodedConfig.instanceCache = cache;

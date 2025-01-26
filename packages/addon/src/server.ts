@@ -191,7 +191,11 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
       );
       return;
     }
-    configJson.requestingIp = req.get('CF-Connecting-IP') || req.ip;
+    configJson.requestingIp =
+      req.get('X-Forwarded-For') ||
+      req.get('X-Real-IP') ||
+      req.get('CF-Connecting-IP') ||
+      req.ip;
     configJson.instanceCache = cache;
     const aioStreams = new AIOStreams(configJson);
     aioStreams.getStreams(streamRequest).then((streams) => {
