@@ -28,9 +28,6 @@ export class Debridio extends BaseWrapper {
 
   protected parseStream(stream: Stream): ParsedStream {
     const superParsedStream = super.parseStream(stream);
-    if (!superParsedStream) {
-      return superParsedStream;
-    }
 
     if (!superParsedStream.provider) {
       superParsedStream.provider = {
