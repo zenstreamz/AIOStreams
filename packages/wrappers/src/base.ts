@@ -111,7 +111,6 @@ export class BaseWrapper {
         headers.set('X-Forwarded-For', userIp);
         headers.set('X-Real-IP', userIp);
       }
-      const urlParts = url.split('/');
       console.log(
         `|INF| wrappers > base > ${this.addonName}: Fetching with timeout ${this.indexerTimeout}ms from ${sanitisedUrl}`
       );
@@ -157,7 +156,7 @@ export class BaseWrapper {
       if (!results.streams) {
         throw new Error('Failed to respond with streams');
       }
-      cache.set(requestCacheKey, results.streams, 300); // cache for 5 minutes
+      cache.set(requestCacheKey, results.streams, 900); // cache for 15 minutes
       return results.streams;
     } catch (error: any) {
       clearTimeout(timeout);
