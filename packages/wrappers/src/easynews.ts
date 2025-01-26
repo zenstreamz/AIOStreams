@@ -1,12 +1,8 @@
-import { AddonDetail, ParsedNameData, StreamRequest } from '@aiostreams/types';
-import {
-  parseFilename,
-  extractSizeInBytes,
-  extractDurationInMs,
-} from '@aiostreams/parser';
+import { ParsedNameData, StreamRequest } from '@aiostreams/types';
+import { parseFilename } from '@aiostreams/parser';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails, serviceDetails } from '@aiostreams/utils';
+import { serviceDetails } from '@aiostreams/utils';
 import { Settings } from '@aiostreams/utils';
 
 export class Easynews extends BaseWrapper {
@@ -39,7 +35,7 @@ export class Easynews extends BaseWrapper {
       filename || stream.description || ''
     );
     const sizeInBytes = stream.description
-      ? extractSizeInBytes(sizeString, 1024)
+      ? this.extractSizeInBytes(sizeString, 1024)
       : undefined;
 
     const provider = {
@@ -47,7 +43,7 @@ export class Easynews extends BaseWrapper {
       cached: true,
     };
 
-    const durationInMs = extractDurationInMs(durationString || '');
+    const durationInMs = this.extractDurationInMs(durationString || '');
 
     const parsedStream: ParsedStream = this.createParsedResult(
       parsedFilename,
