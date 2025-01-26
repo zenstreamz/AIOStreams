@@ -108,7 +108,7 @@ export async function getMediaFlowPublicIp(
       headers: {
         'Content-Type': 'application/json',
       },
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(Settings.MEDIAFLOW_IP_TIMEOUT),
     });
 
     if (!response.ok) {
