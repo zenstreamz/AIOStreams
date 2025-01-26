@@ -32,7 +32,7 @@ export const PARSE_REGEX = {
     DV: /(?<![^ [(_\-.])(dolby[ .\-_]?vision(?:[ .\-_]?atmos)?|dv)(?=[ \)\]_.-]|$)/i,
     '3D': /(?<![^ [(_\-.])((3|three)[ .\-_]?(d(imension)?(al)?))(?=[ \)\]_.-]|$)/i,
     IMAX: /(?<![^ [(_\-.])(imax)(?=[ \)\]_.-]|$)/i,
-    AI: /(?<![^ [(_\-.])(ai[ .\-_]?(upscale|enhanced|remaster))(?=[ \)\]_.-]|$)/i,
+    AI: /(?<![^ [(_\-.])(ai[ .\-_]?(upscale|enhanced|remaster)?)(?=[ \)\]_.-]|$)/i,
   },
   audioTags: {
     Atmos: /(?<![^ [(_\-.])(atmos)(?=[ \)\]_.-]|$)/i,
