@@ -140,6 +140,9 @@ I would recommend using Hugging Face over the other options, it is fast and is s
 
 This addon can be deployed as a [Hugging Face](https://huggingface.co/) space.
 
+> [!IMPORTANT]
+> Hugging Face may have begun blocking deployments of this addon which cause it to get stuck on building. 
+
 > [!WARNING]
 > Hugging Face is centered around AI and as this addon is not related to AI, they may take it down.
 
@@ -282,7 +285,10 @@ It is recommend to disable the `Auto Deploy` feature as the latest changes may n
 
 #### ElfHosted (paid)
 
-AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle experience where you can expect things to "just work". 
+> [!NOTE] 
+> Use the link below to support me, 33% of your AIOStreams subscription will go to me ❤️ 
+
+AIOStreams is available as a [paid product](https://store.elfhosted.com/product/aiostreams/elf/viren070/) on [ElfHosted](https://elfhosted.com). This offers you a no-hassle experience where you can expect things to "just work". 
 
 #### Heroku (paid) 
 
