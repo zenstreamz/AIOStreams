@@ -464,6 +464,6 @@ export class BaseWrapper {
   }
 
   protected extractInfoHash(url: string): string | undefined {
-    return url.match(/(?<=[-/[(;&])[a-fA-F0-9]{40}(?=[-\]\)/;&])/)?.[0];
+    return url.match(/(?<=[-/[(;:&])[a-fA-F0-9]{40}(?=[-\]\)/:;&])/)?.[0];
   }
 }

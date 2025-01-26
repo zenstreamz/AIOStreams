@@ -26,38 +26,6 @@ export class Easynews extends BaseWrapper {
       indexerTimeout || Settings.DEFAULT_EASYNEWS_TIMEMOUT
     );
   }
-
-  protected parseStream(stream: Stream): ParsedStream {
-    const [filename, sizeString, durationString] =
-      stream.description?.split('\n') || [];
-
-    const parsedFilename: ParsedNameData = parseFilename(
-      filename || stream.description || ''
-    );
-    const sizeInBytes = stream.description
-      ? this.extractSizeInBytes(sizeString, 1024)
-      : undefined;
-
-    const provider = {
-      id: 'easynews',
-      cached: true,
-    };
-
-    const durationInMs = this.extractDurationInMs(durationString || '');
-
-    const parsedStream: ParsedStream = this.createParsedResult(
-      parsedFilename,
-      stream,
-      filename,
-      sizeInBytes,
-      provider,
-      undefined,
-      undefined,
-      undefined,
-      durationInMs
-    );
-    return parsedStream;
-  }
 }
 
 const getEasynewsConfigString = (username: string, password: string) => {
