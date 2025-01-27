@@ -29,6 +29,7 @@ import {
   addonDetails,
   createProxiedMediaFlowUrl,
   getMediaFlowConfig,
+  getTimeTakenSincePoint,
   Settings,
 } from '@aiostreams/utils';
 import { errorStream } from './responses';
@@ -43,23 +44,7 @@ export class AIOStreams {
   public async getStreams(streamRequest: StreamRequest): Promise<Stream[]> {
     const streams: Stream[] = [];
     const startTime = new Date().getTime();
-    const getTimeTakenSincePoint = (point: number) => {
-      const timeNow = new Date().getTime();
-      const duration = timeNow - point;
-      // format duration and choose unit and return
-      const nanos = duration * 1_000_000; // Convert to nanoseconds
-      const micros = duration * 1_000; // Convert to microseconds
 
-      if (nanos < 1) {
-        return `${nanos.toFixed(2)}ns`;
-      } else if (micros < 1) {
-        return `${micros.toFixed(2)}µs`;
-      } else if (duration < 1000) {
-        return `${duration.toFixed(2)}ms`;
-      } else {
-        return `${(duration / 1000).toFixed(2)}s`;
-      }
-    };
     const { errorStreams, parsedStreams } =
       await this.getParsedStreams(streamRequest);
 
@@ -436,11 +421,6 @@ export class AIOStreams {
     if (!proxiedUrl) {
       throw new Error('Could not create MediaFlow proxied URL');
     }
-    if (Settings.LOG_SENSITIVE_INFO) {
-      console.log(
-        `|INF| addon > createMediaFlowStream: Proxied URL for ${name}: ${proxiedUrl}`
-      );
-    }
     const combinedTags = [
       parsedStream.resolution,
       parsedStream.quality,
@@ -471,13 +451,6 @@ export class AIOStreams {
 
   private shouldProxyStream(stream: ParsedStream): boolean {
     const mediaFlowConfig = getMediaFlowConfig(this.config);
-    if (Settings.LOG_SENSITIVE_INFO) {
-      console.debug(
-        `|DBG| addon > shouldProxyStream: MediaFlow config: ${JSON.stringify(
-          mediaFlowConfig
-        )}`
-      );
-    }
     if (!mediaFlowConfig.mediaFlowEnabled) return false;
     if (!stream.url) return false;
     // now check if mediaFlowConfig.proxiedAddons or mediaFlowConfig.proxiedServices is not null
@@ -487,11 +460,6 @@ export class AIOStreams {
       mediaFlowConfig.proxiedAddons.length > 0 &&
       !mediaFlowConfig.proxiedAddons.includes(stream.addon.id)
     ) {
-      if (Settings.LOG_SENSITIVE_INFO) {
-        console.debug(
-          `|DBG| addon > shouldProxyStream: Stream from addon ${stream.addon.id} is not proxied so skipping`
-        );
-      }
       return false;
     }
 
@@ -505,18 +473,7 @@ export class AIOStreams {
         !stream.provider &&
         !mediaFlowConfig.proxiedServices.includes('none'))
     ) {
-      if (Settings.LOG_SENSITIVE_INFO) {
-        console.debug(
-          `|DBG| addon > shouldProxyStream: Stream from provider ${stream.provider?.id} is not proxied so skipping`
-        );
-      }
       return false;
-    }
-
-    if (Settings.LOG_SENSITIVE_INFO) {
-      console.debug(
-        `|DBG| addon > shouldProxyStream: Stream from addon ${stream.addon.id} and provider ${stream.provider?.id} with URL ${stream.url} is eligible for proxying, attempting to create MediaFlow stream`
-      );
     }
 
     return true;
@@ -581,11 +538,6 @@ export class AIOStreams {
 
     let stream: Stream;
     const shouldProxy = this.shouldProxyStream(parsedStream);
-    if (Settings.LOG_SENSITIVE_INFO) {
-      console.debug(
-        `|DBG| addon > createStreamObject: Determined that stream ${name} should${shouldProxy ? '' : ' not'} be proxied`
-      );
-    }
     if (shouldProxy) {
       try {
         const mediaFlowStream = this.createMediaFlowStream(
@@ -877,6 +829,7 @@ export class AIOStreams {
         addon.id;
       const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
       try {
+        const startTime = new Date().getTime();
         const streams = await this.getStreamsFromAddon(
           addon,
           addonId,
@@ -884,7 +837,7 @@ export class AIOStreams {
         );
         parsedStreams.push(...streams);
         console.log(
-          `|INF| addon > getParsedStreams: Got ${streams.length} streams from addon ${addonName}`
+          `|INF| addon > getParsedStreams: Got ${streams.length} streams from addon ${addonName} in ${getTimeTakenSincePoint(startTime)}`
         );
       } catch (error: any) {
         console.error(
