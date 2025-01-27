@@ -232,13 +232,13 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 > [!WARNING]
 > A Cloudflare Worker may get blocked by Torrentio. You may also encounter a build error, in which case you will have to edit the code slightly and lose the functionality of the `ADDON_PROXY` environment variable
 
-There are 2 methods to do this. Method 2 requires you to have Git and Node.js installed, method 1 does not, and only requires a web browser and a Cloudflare account. 
+There are 2 methods to do this. Method 2 requires you to have Git and Node.js installed, method 1 does not, and only requires a web browser and a Cloudflare account.
 
 **Method 1**
 
 1. Fork my GitHub repository.
 2. Head to the [Cloudflare Dashboard](https://dash.cloudflare.com/sign-up/workers-and-pages), signing up for an account if needed.
-3. Click the `Create` button and call it anything you want.
+3. Click the `Create` button and call your worker `aiostreams`
 4. Click `Continue to project` after it's done creating
 5. Go to the `Settings` tab.
 6. Scroll down to the `Build` section, and click `Connect` on the Git repository option.
@@ -255,6 +255,8 @@ There are 2 methods to do this. Method 2 requires you to have Git and Node.js in
 7. Click `Connect`
 8. Trigger a redeployment by going to the `Deployments` tab, clicking `Deploy version`, and `Deploy`
 9. You can find the URL for your cloudflare worker by clicking `View version` at the `Deployments` tab under the `Active deployments` section
+
+If you get an error about the `node:sqlite` module, follow [these instructions](https://github.com/Viren070/AIOStreams/issues/32#issuecomment-2602643959), editing the code at your forked GitHub repository. 
 
 **Method 2**
 
