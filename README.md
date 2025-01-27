@@ -279,6 +279,12 @@ If you get an error about the `node:sqlite` module, follow [these instructions](
 
 ##### Updating
 
+**Method 1**
+
+Go to your forked GitHub repository and click sync fork. This should trigger a deployment, if not follow the same steps above to redeploy.
+
+**Method 2**
+
 To update the addon, you can simply run the following commands to pull the latest changes, build the project, and deploy the worker.
 This will update the worker with the latest changes, which may not be stable. In case, you get the build error about `node:sqlite` again, follow the instructions linked above again. 
 
