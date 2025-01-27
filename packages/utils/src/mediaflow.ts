@@ -142,9 +142,7 @@ export async function getMediaFlowPublicIp(
     }
     return publicIp;
   } catch (error: any) {
-    console.error(
-      `|ERR| mediaflow > getMediaFlowPublicIp > Failed to get public IP from MediaFlow - ${error.message}`
-    );
+    console.error(`|ERR| mediaflow > getMediaFlowPublicIp > ${error.message}`);
     return null;
   }
 }

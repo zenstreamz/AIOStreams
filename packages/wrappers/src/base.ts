@@ -64,22 +64,6 @@ export class BaseWrapper {
     );
   }
 
-  private async getRequestingIp() {
-    let userIp = this.userConfig.requestingIp;
-    const mediaFlowConfig = getMediaFlowConfig(this.userConfig);
-    if (mediaFlowConfig.mediaFlowEnabled) {
-      const mediaFlowIp = await getMediaFlowPublicIp(
-        mediaFlowConfig,
-        this.userConfig.instanceCache
-      );
-      if (!mediaFlowIp) {
-        throw new Error('Failed to get public IP from MediaFlow');
-      }
-      userIp = mediaFlowIp;
-    }
-    return userIp;
-  }
-
   protected async getStreams(streamRequest: StreamRequest): Promise<Stream[]> {
     const controller = new AbortController();
     const timeout = setTimeout(() => {
@@ -101,7 +85,7 @@ export class BaseWrapper {
     try {
       // Add requesting IP to headers
       const headers = new Headers();
-      const userIp = await this.getRequestingIp();
+      const userIp = this.userConfig.requestingIp;
       if (userIp) {
         if (Settings.LOG_SENSITIVE_INFO) {
           console.debug(

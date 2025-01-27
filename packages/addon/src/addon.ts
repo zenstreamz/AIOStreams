@@ -29,6 +29,7 @@ import {
   addonDetails,
   createProxiedMediaFlowUrl,
   getMediaFlowConfig,
+  getMediaFlowPublicIp,
   getTimeTakenSincePoint,
   Settings,
 } from '@aiostreams/utils';
@@ -41,10 +42,51 @@ export class AIOStreams {
     this.config = config;
   }
 
+  private async getRequestingIp() {
+    let userIp = this.config.requestingIp;
+    const mediaFlowConfig = getMediaFlowConfig(this.config);
+    if (mediaFlowConfig.mediaFlowEnabled) {
+      const mediaFlowIp = await getMediaFlowPublicIp(
+        mediaFlowConfig,
+        this.config.instanceCache
+      );
+      if (mediaFlowIp) {
+        userIp = mediaFlowIp;
+      }
+    }
+    return userIp;
+  }
+
   public async getStreams(streamRequest: StreamRequest): Promise<Stream[]> {
     const streams: Stream[] = [];
     const startTime = new Date().getTime();
 
+    let ipRequestCount = 0;
+    while (ipRequestCount < 3) {
+      try {
+        const ip = await this.getRequestingIp();
+        if (!ip && getMediaFlowConfig(this.config).mediaFlowEnabled) {
+          throw new Error('No IP was found with MediaFlow enabled');
+        }
+        this.config.requestingIp = ip;
+        break;
+      } catch (error) {
+        console.error(
+          `|ERR| addon > getStreams: Failed to get requesting IP: ${error}, retrying ${ipRequestCount + 1}/3`
+        );
+        ipRequestCount++;
+      }
+    }
+    if (ipRequestCount === 3) {
+      console.error(
+        '|ERR| addon > getStreams: Failed to get requesting IP after 3 attempts'
+      );
+      if (this.config.mediaFlowConfig?.mediaFlowEnabled) {
+        return [
+          errorStream('Aborted request after failing to get requesting IP'),
+        ];
+      }
+    }
     const { errorStreams, parsedStreams } =
       await this.getParsedStreams(streamRequest);
 
