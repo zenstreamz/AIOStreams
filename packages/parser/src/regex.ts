@@ -71,6 +71,7 @@ export const PARSE_REGEX = {
   languages: {
     Multi: createRegex('multi|multi[ .\\-_]?audio'),
     'Dual Audio': createRegex('dual[ .\\-_]?audio'),
+    Dubbed: createRegex('dub(bed)?'),
     English: createRegex('english|eng'),
     Japanese: createRegex('japanese|jap'),
     Chinese: createRegex('chinese|chi'),
