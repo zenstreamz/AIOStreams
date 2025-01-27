@@ -131,8 +131,8 @@ export async function getMediaFlowPublicIp(
 
     const data = await response.json();
     const publicIp = data.ip;
-    if (publicIp) {
-      cache.set(cacheKey, publicIp, 900);
+    if (publicIp && cache) {
+      cache.set(cacheKey, publicIp, Settings.CACHE_MEDIAFLOW_IP_TTL);
     }
     return publicIp;
   } catch (error: any) {

@@ -156,7 +156,13 @@ export class BaseWrapper {
       if (!results.streams) {
         throw new Error('Failed to respond with streams');
       }
-      cache.set(requestCacheKey, results.streams, 600); // cache for 10 minutes
+      if (Settings.CACHE_STREAM_RESULTS && cache) {
+        cache.set(
+          requestCacheKey,
+          results.streams,
+          Settings.CACHE_STREAM_RESULTS_TTL
+        );
+      }
       return results.streams;
     } catch (error: any) {
       clearTimeout(timeout);
