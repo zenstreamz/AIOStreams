@@ -646,6 +646,18 @@ export default function Configure() {
           allowedLanguages.includes(lang)
         ) || null
       );
+      setStrictIncludeFilters(
+        decodedConfig.strictIncludeFilters?.map((filter) => ({
+          label: filter,
+          value: filter,
+        })) || []
+      );
+      setExcludeFilters(
+        decodedConfig.excludeFilters?.map((filter) => ({
+          label: filter,
+          value: filter,
+        })) || []
+      );
       setFormatter(
         validateValue(decodedConfig.formatter, allowedFormatters) || 'gdrive'
       );
