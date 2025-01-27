@@ -63,7 +63,7 @@ export class Settings {
     : 900;
   public static readonly MAX_CACHE_SIZE = process.env.MAX_CACHE_SIZE
     ? parseInt(process.env.MAX_CACHE_SIZE)
-    : 1024;
+    : 10240;
   public static readonly MAX_ADDONS = process.env.MAX_ADDONS
     ? parseInt(process.env.MAX_ADDONS)
     : 15;
