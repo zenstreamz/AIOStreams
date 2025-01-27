@@ -60,9 +60,10 @@ const defaultQualities: Quality[] = [
 const defaultVisualTags: VisualTag[] = [
   { 'HDR+DV': true },
   { 'HDR10+': true },
+  { DV: true },
   { HDR10: true },
   { HDR: true },
-  { DV: true },
+  { '10bit': true },
   { '3D': true },
   { IMAX: true },
   { AI: true },
@@ -78,7 +79,9 @@ const defaultAudioTags: AudioTag[] = [
   { TrueHD: true },
   { '5.1': true },
   { '7.1': true },
+  { FLAC: true },
   { AC3: true },
+  { 'E-AC3': true },
   { AAC: true },
 ];
 
@@ -86,6 +89,8 @@ const defaultEncodes: Encode[] = [
   { AV1: true },
   { HEVC: true },
   { AVC: true },
+  { Xvid: true },
+  { DivX: true },
   { 'H-OU': true },
   { 'H-SBS': true },
   { Unknown: true },

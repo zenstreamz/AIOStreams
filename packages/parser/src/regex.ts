@@ -27,11 +27,12 @@ export const PARSE_REGEX = {
     SCR: createRegex('((dvd|bd|web)?[ .\\-_]?)?(scr(eener)?)'),
   },
   visualTags: {
+    '10bit': createRegex('10[ .\\-_]?bit'),
     'HDR10+': createRegex('hdr[ .\\-_]?10[ .\\-_]?(plus|[+])'),
     HDR10: createRegex('hdr[ .\\-_]?10(?![ .\\-_]?(?:\\+|plus))'),
     HDR: createRegex('hdr(?![ .\\-_]?10)(?![ .\\-_]?(?:\\+|plus))'),
     DV: createRegex('dolby[ .\\-_]?vision(?:[ .\\-_]?atmos)?|dv'),
-    '3D': createRegex('(3|three)[ .\\-_]?(d(imension)?(al)?)'),
+    '3D': createRegex('(bd)?(3|three)[ .\\-_]?(d(imension)?(al)?)'),
     IMAX: createRegex('imax'),
     AI: createRegex('ai[ .\\-_]?(upscale|enhanced|remaster)?'),
   },
@@ -48,18 +49,22 @@ export const PARSE_REGEX = {
     DTS: createRegex('dts(?![ .\\-_]?hd[ .\\-_]?ma|[ .\\-_]?hd)'),
     TrueHD: createRegex('true[ .\\-_]?hd'),
     5.1: createRegex(
-      'd(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?[ .\\-_]?5[ .\\-_]?1'
+      'd(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?[ .\\-_]?5[ .\\-_]?1(ch)?'
     ),
     7.1: createRegex(
       'd(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?[ .\\-_]?7[ .\\-_]?1'
     ),
-    AC3: createRegex('ac[ .\\-_]?3'),
-    AAC: createRegex('aac'),
+    AC3: createRegex('(?<!e[ .\\-_]?)ac[ .\\-_]?3'),
+    'E-AC3': createRegex('e[ .\\-_]?ac[ .\\-_]?3'),
+    AAC: createRegex('q?aac'),
+    FLAC: createRegex('flac(?:[ .\\-_]?(lossless|2\\.0|x[2-4]))?'),
   },
   encodes: {
-    HEVC: createRegex('hevc|x265|h265|h\\.265'),
-    AVC: createRegex('avc|x264|h264|h\\.264'),
+    HEVC: createRegex('hevc[ .\\-_]?(10)?|[xh][ .\\-_]?265'),
+    AVC: createRegex('avc|[xh][ .\\-_]?264'),
     AV1: createRegex('av1'),
+    Xvid: createRegex('xvid'),
+    DivX: createRegex('divx|dvix'),
     'H-OU': createRegex('h?(alf)?[ .\\-_]?(ou|over[ .\\-_]?under)'),
     'H-SBS': createRegex('h?(alf)?[ .\\-_]?(sbs|side[ .\\-_]?by[ .\\-_]?side)'),
   },
