@@ -39,10 +39,10 @@ export const PARSE_REGEX = {
   audioTags: {
     Atmos: createRegex('atmos'),
     'DD+': createRegex(
-      'd(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)(?:[ .\\-_]?(5[ .\\-_]?1|7[ .\\-_]?1))?'
+      '(d(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)(?:[ .\\-_]?(5[ .\\-_]?1|7[ .\\-_]?1))?)|e[ .\\-_]?ac[ .\\-_]?3'
     ),
     DD: createRegex(
-      'd(olby)?[ .\\-_]?d(igital)?(?:[ .\\-_]?(5[ .\\-_]?1|7[ .\\-_]?1))?'
+      '(d(olby)?[ .\\-_]?d(igital)?(?:[ .\\-_]?(5[ .\\-_]?1|7[ .\\-_]?1))?)|(?<!e[ .\\-_]?)ac[ .\\-_]?3'
     ),
     'DTS-HD MA': createRegex('dts[ .\\-_]?hd[ .\\-_]?ma'),
     'DTS-HD': createRegex('dts[ .\\-_]?hd(?![ .\\-_]?ma)'),
@@ -54,8 +54,6 @@ export const PARSE_REGEX = {
     7.1: createRegex(
       'd(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?[ .\\-_]?7[ .\\-_]?1'
     ),
-    AC3: createRegex('(?<!e[ .\\-_]?)ac[ .\\-_]?3'),
-    'E-AC3': createRegex('e[ .\\-_]?ac[ .\\-_]?3'),
     AAC: createRegex('q?aac'),
     FLAC: createRegex('flac(?:[ .\\-_]?(lossless|2\\.0|x[2-4]))?'),
   },

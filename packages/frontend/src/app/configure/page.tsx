@@ -81,8 +81,6 @@ const defaultAudioTags: AudioTag[] = [
   { '5.1': true },
   { '7.1': true },
   { FLAC: true },
-  { AC3: true },
-  { 'E-AC3': true },
   { AAC: true },
 ];
 
