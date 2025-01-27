@@ -89,7 +89,7 @@ export class BaseWrapper {
     const url = this.getStreamUrl(streamRequest);
     const cache = this.userConfig.instanceCache;
     const requestCacheKey = getTextHash(url);
-    const cachedStreams = cache.get(requestCacheKey);
+    const cachedStreams = cache ? cache.get(requestCacheKey) : undefined;
     const sanitisedUrl =
       new URL(url).hostname + '/****/' + new URL(url).pathname.split('/').pop();
     if (cachedStreams) {
