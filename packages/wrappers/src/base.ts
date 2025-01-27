@@ -202,6 +202,15 @@ export class BaseWrapper {
       indexers: indexer,
       duration: duration,
       personal: personal,
+      type: stream.infoHash
+        ? 'p2p'
+        : usenetAge
+          ? 'usenet'
+          : provider
+            ? 'debrid'
+            : stream.url?.endsWith('.m3u8')
+              ? 'live'
+              : 'unknown',
       stream: {
         subtitles: stream.subtitles,
         behaviorHints: {

@@ -14,6 +14,7 @@ import {
   Encode,
   ServiceDetail,
   ServiceCredential,
+  StreamType,
 } from '@aiostreams/types';
 import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
@@ -101,6 +102,7 @@ const defaultSortCriteria: SortBy[] = [
   { resolution: true },
   { language: true },
   { size: true, direction: 'desc' },
+  { streamType: false },
   { visualTag: false },
   { service: false },
   { audioTag: false },
@@ -125,10 +127,20 @@ const defaultServices = serviceDetails.map((service) => ({
   credentials: {},
 }));
 
+const defaultStreamTypes: StreamType[] = [
+  { usenet: true },
+  { debrid: true },
+  { unknown: true },
+  { p2p: true },
+  { live: true },
+];
+
 export default function Configure() {
   const [formatterOptions, setFormatterOptions] = useState<string[]>(
     allowedFormatters.filter((f) => f !== 'imposter')
   );
+  const [streamTypes, setStreamTypes] =
+    useState<StreamType[]>(defaultStreamTypes);
   const [resolutions, setResolutions] =
     useState<Resolution[]>(defaultResolutions);
   const [qualities, setQualities] = useState<Quality[]>(defaultQualities);
@@ -192,6 +204,7 @@ export default function Configure() {
 
   const createConfig = (): Config => {
     return {
+      streamTypes,
       resolutions,
       qualities,
       visualTags,
@@ -484,7 +497,7 @@ export default function Configure() {
   };
 
   const loadValidValuesFromObject = (
-    object: { [key: string]: boolean }[],
+    object: { [key: string]: boolean }[] | undefined,
     validValues: { [key: string]: boolean }[]
   ) => {
     if (!object) {
@@ -613,6 +626,9 @@ export default function Configure() {
 
     function loadFromConfig(decodedConfig: Config) {
       console.log('Loaded config', decodedConfig);
+      setStreamTypes(
+        loadValidValuesFromObject(decodedConfig.streamTypes, defaultStreamTypes)
+      );
       setResolutions(
         loadValidValuesFromObject(decodedConfig.resolutions, defaultResolutions)
       );
@@ -928,6 +944,16 @@ export default function Configure() {
             addons={addons}
             setAddons={setAddons}
           />
+        </div>
+
+        <div className={styles.section}>
+          <h2 style={{ padding: '5px' }}>Stream Types</h2>
+          <p style={{ padding: '5px' }}>
+            Choose which stream types you want to see and reorder their priority
+            if needed. You can uncheck P2P to remove P2P streams from the
+            results.
+          </p>
+          <SortableCardList items={streamTypes} setItems={setStreamTypes} />
         </div>
 
         <div className={styles.section}>

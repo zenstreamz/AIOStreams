@@ -95,6 +95,11 @@ export class AIOStreams {
       : null;
 
     let filteredResults = parsedStreams.filter((parsedStream) => {
+      const streamTypeFilter = this.config.streamTypes?.find(
+        (streamType) => streamType[parsedStream.type]
+      );
+      if (!streamTypeFilter) return false;
+
       const resolutionFilter = this.config.resolutions.find(
         (resolution) => resolution[parsedStream.resolution]
       );
@@ -720,6 +725,15 @@ export class AIOStreams {
       ) {
         return 1;
       }
+    } else if (field === 'streamType') {
+      return (
+        (this.config.streamTypes?.findIndex(
+          (streamType) => streamType[a.type]
+        ) ?? -1) -
+        (this.config.streamTypes?.findIndex(
+          (streamType) => streamType[b.type]
+        ) ?? -1)
+      );
     } else if (field === 'quality') {
       return (
         this.config.qualities.findIndex((quality) => quality[a.quality]) -
