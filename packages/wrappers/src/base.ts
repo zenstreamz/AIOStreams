@@ -451,7 +451,7 @@ export class BaseWrapper {
   }
 
   protected extractCountryFlags(string: string): string[] {
-    const countryFlagPattern = /[\p{Regional_Indicator}]/u;
+    const countryFlagPattern = /[\u{1F1E6}-\u{1F1FF}]{2}/gu;
     const matches = string.match(countryFlagPattern);
     return matches ? [...new Set(matches)] : [];
   }
