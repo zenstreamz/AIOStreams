@@ -301,13 +301,14 @@ https://render.com/
 > [!WARNING]
 > Free instances 'spin down' after 15 minutes of inactivity. In this suspended state, it can take around a minute to start back up again when you make a request to it.
 
+> [!TIP]
+> Use a service (like [cron-job.org](https://cron-job.org/en/) or [UptimeRobot](https://uptimerobot.com/)) to automatically ping the URL of your instance + /health to keep it alive (e.g. if your instance was at https://aiostreams.onrender.com, create a job to ping https://aiostreams.onrender.com/health every 10 minutes) 
+
 1. Deploy a new web service
 2. Select `Public Git Repository` as the source
 3. Enter `https://github.com/Viren070/AIOStreams`
 4. Deploy
 
-> [!TIP]
-> Use a service to automatically ping the instance to keep it alive. 
 
 ##### Updating
 
