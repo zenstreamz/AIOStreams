@@ -125,7 +125,7 @@ export class AIOStreams {
       const streamTypeFilter = this.config.streamTypes?.find(
         (streamType) => streamType[parsedStream.type]
       );
-      if (!streamTypeFilter) return false;
+      if (this.config.streamTypes && !streamTypeFilter) return false;
 
       const resolutionFilter = this.config.resolutions.find(
         (resolution) => resolution[parsedStream.resolution]
