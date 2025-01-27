@@ -49,6 +49,14 @@ export interface ParsedStream extends ParsedNameData {
   };
 }
 
+export interface ErrorStream {
+  error: string;
+  addon: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface CollectedParsedStreams {
   [key: string]: ParsedStream[];
 }

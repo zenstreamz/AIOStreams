@@ -12,7 +12,13 @@ import {
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
-import { Stream, ParsedStream, StreamRequest, Config } from '@aiostreams/types';
+import {
+  Stream,
+  ParsedStream,
+  StreamRequest,
+  Config,
+  ErrorStream,
+} from '@aiostreams/types';
 import {
   gdriveFormat,
   torrentioFormat,
@@ -20,10 +26,12 @@ import {
   imposterFormat,
 } from '@aiostreams/formatters';
 import {
+  addonDetails,
   createProxiedMediaFlowUrl,
   getMediaFlowConfig,
   Settings,
 } from '@aiostreams/utils';
+import { errorStream } from './responses';
 
 export class AIOStreams {
   private config: Config;
@@ -52,7 +60,9 @@ export class AIOStreams {
         return `${(duration / 1000).toFixed(2)}s`;
       }
     };
-    const parsedStreams = await this.getParsedStreams(streamRequest);
+    const { errorStreams, parsedStreams } =
+      await this.getParsedStreams(streamRequest);
+
     console.log(
       `|INF| addon > getStreams: Got ${parsedStreams.length} total parsed streams in ${getTimeTakenSincePoint(startTime)}`
     );
@@ -385,6 +395,11 @@ export class AIOStreams {
       filteredResults.map(this.createStreamObject.bind(this))
     );
     streams.push(...streamObjects.filter((s) => s !== null));
+
+    // Add error streams to the end
+    streams.push(
+      ...errorStreams.map((e) => errorStream(e.error, e.addon.name))
+    );
 
     console.log(
       `|INF| addon > getStreams: Created ${streams.length} stream objects in ${getTimeTakenSincePoint(streamsStartTime)}`
@@ -837,13 +852,17 @@ export class AIOStreams {
 
   private async getParsedStreams(
     streamRequest: StreamRequest
-  ): Promise<ParsedStream[]> {
+  ): Promise<{ errorStreams: ErrorStream[]; parsedStreams: ParsedStream[] }> {
     const parsedStreams: ParsedStream[] = [];
+    const errorStreams: ErrorStream[] = [];
     const addonPromises = this.config.addons.map(async (addon) => {
       const addonName =
-        addon.options.name || addon.options.overrideName || addon.id;
+        addon.options.name ||
+        addon.options.overrideName ||
+        addonDetails.find((addonDetail) => addonDetail.id === addon.id)?.name ||
+        addon.id;
+      const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
       try {
-        const addonId = `${addon.id}-${JSON.stringify(addon.options)}`;
         const streams = await this.getStreamsFromAddon(
           addon,
           addonId,
@@ -853,15 +872,22 @@ export class AIOStreams {
         console.log(
           `|INF| addon > getParsedStreams: Got ${streams.length} streams from addon ${addonName}`
         );
-      } catch (error) {
+      } catch (error: any) {
         console.error(
           `|ERR| addon > getParsedStreams: Failed to get streams from ${addonName}: ${error}`
         );
+        errorStreams.push({
+          error: `${error.message.replace('-', '\n').replace(':', '\n')}`,
+          addon: {
+            id: addonId,
+            name: addonName,
+          },
+        });
       }
     });
 
     await Promise.all(addonPromises);
-    return parsedStreams;
+    return { errorStreams, parsedStreams };
   }
 
   private async getStreamsFromAddon(
