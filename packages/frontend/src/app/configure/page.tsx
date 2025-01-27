@@ -777,7 +777,15 @@ export default function Configure() {
             to retrieve streams from any addons you enable.
           </p>
           <p style={{ textAlign: 'center', padding: '15px' }}>
-            Made by Viren070. Source code on{' '}
+            <a
+              href="https://guides.viren070.me/stremio/addons/aiostreams"
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: 'underline' }}
+            >
+              Configuration Guide
+            </a>
+            {' | '}
             <a
               href="https://github.com/Viren070/AIOStreams"
               target="_blank"
@@ -785,6 +793,16 @@ export default function Configure() {
               style={{ textDecoration: 'underline' }}
             >
               GitHub
+            </a>
+
+            {' | '}
+            <a
+              href="https://guides.viren070.me/stremio"
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: 'underline' }}
+            >
+              Stremio Guide
             </a>
           </p>
         </div>
