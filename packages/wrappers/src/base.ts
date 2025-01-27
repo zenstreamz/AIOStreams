@@ -346,7 +346,7 @@ export class BaseWrapper {
       );
       // check if the string contains the regex
       if (regex.test(cleanString)) {
-        let cached: boolean | undefined = undefined;
+        let cached: boolean = false;
         // check if any of the uncachedSymbols are in the string
         if (uncachedSymbols.some((symbol) => string.includes(symbol))) {
           cached = false;
