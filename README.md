@@ -392,6 +392,8 @@ You can change the PORT environment variable to change the port that the addon w
 
 ## Configuring
 
+If you would like an explanation on the configuration options at the /configure page, have a look at this [guide for aiostreams](https://guides.viren070.me/stremio/addons/aiostreams) that I made. 
+
 Outside of the configuration page, the behaviour of this addon can also be changed with environment variables.  
 Most users don't need to set any environment variables. However, if you do, the SECRET_KEY is the one you might want to configure. This key enables encrypted manifest URLs, which help protect your API keys.
 
