@@ -234,6 +234,32 @@ This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.c
 > [!WARNING]
 > A Cloudflare Worker may get blocked by Torrentio. You may also encounter a build error, in which case you will have to edit the code slightly and lose the functionality of the `ADDON_PROXY` environment variable
 
+There are 2 methods to do this. Method 2 requires you to have Git and Node.js installed, method 1 does not, and only requires a web browser and a Cloudflare account. 
+
+**Method 1**
+
+1. Fork my GitHub repository.
+2. Head to the [Cloudflare Dashboard](https://dash.cloudflare.com/sign-up/workers-and-pages), signing up for an account if needed.
+3. Click the `Create` button and call it anything you want.
+4. Click `Continue to project` after it's done creating
+5. Go to the `Settings` tab.
+6. Scroll down to the `Build` section, and click `Connect` on the Git repository option.
+   - Choose your GitHub account, and the repository you created earlier when forking my repository
+   - Leave the branch as main
+   - Build command:
+        ```bash
+        npm install | npm run build
+        ```
+   - Deploy command:
+       ```bash
+       npm run deploy:cloudflare-worker
+       ```
+7. Click `Connect`
+8. Trigger a redeployment by going to the `Deployments` tab, clicking `Deploy version`, and `Deploy`
+9. You can find the URL for your cloudflare worker by clicking `View version` at the `Deployments` tab under the `Active deployments` section
+
+**Method 2**
+
 1. Sign up for a [Cloudflare Account](https://dash.cloudflare.com/sign-up/workers-and-pages)
 2. Install Node.js (I would recommend using package managers e.g. fnm on Windows)
 3. Install Git
