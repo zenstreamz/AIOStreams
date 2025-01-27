@@ -141,13 +141,11 @@ I would recommend using Hugging Face over the other options, it is fast and is s
 This addon can be deployed as a [Hugging Face](https://huggingface.co/) space.
 
 > [!IMPORTANT]
-> Hugging Face may have begun blocking deployments of this addon which cause it to get stuck on building. 
+> Hugging Face is centered around AI and as this addon is not related to AI, they may have begun blocking deployments of this addon which cause it to get stuck on building.
+>
+> To workaround this, you can create a fork of this repository, and after step 4, before clicking `Commit to main`, simply edit the file where it says Viren070/AIOStreams to use your forked repository instead. 
 
-> [!WARNING]
-> Hugging Face is centered around AI and as this addon is not related to AI, they may take it down.
 
-> [!NOTE]
-> GDrive doesn't seem to work on Hugging Face Spaces. I'm not sure why.
 
 1. Create a Hugging Face account and on the [home page](https://huggingface.co) create a new space.
 
