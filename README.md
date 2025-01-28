@@ -7,16 +7,14 @@
 - [FAQ](#faq)
   - [How does it work?](#how-does-it-work)
 - [Usage](#usage)
-  - [Public Instance](#public-instance)
-  - [Personal Instance](#deploying-your-own-instance)
-    - [Hugging Face](#hugging-face)
-    - [Cloudflare Workers](#cloudflare-workers)
-    - [Render](#render)
-    - [ElfHosted](#elfhosted-paid)
-    - [Heroku](#heroku-paid)
-  - [Self Hosting](#self-hosting)
-    - [Docker](#docker)
-    - [From Source](#from-source)
+  - [Public Instace](#public-instance)
+  - [Hugging Face](#hugging-face)
+  - [Cloudflare Workers](#cloudflare-workers)
+  - [ElfHosted](#elfhosted-paid)
+  - [Heroku](#heroku-paid)
+  - [VPS](#vps)
+  - [Docker](#docker)
+  - [From Source](#from-source)
 - [Configuring](#configuring)
   - [Environment Variables](#environment-variables)
   - [Cloudflare Workers](#cloudflare-workers-1)
@@ -130,13 +128,7 @@ Read my [Stremio guide](https://guides.viren070.me/stremio).
 This community instance does have a ratelimit in place, but it is unlikely you will reach it. It also avoids the ratelimits of ElfHosted addons like Comet and MediaFusion as AIOStreams' requests to these addons are routed internally.
 However, other non-ElfHosted addons may rate limit the community instance.
 
-### Deploying your own instance
-
-Rather than hosting the addon locally, you can make use of some services to deploy the addon for you. This would be your own instance. However, if anyone has the URL to it, they can also use it.
-
-I would recommend using Hugging Face over the other options, it is fast and is still easy to set up.
-
-#### Hugging Face
+### Hugging Face
 
 This addon can be deployed as a [Hugging Face](https://huggingface.co/) space.
 
@@ -219,11 +211,11 @@ ENTRYPOINT ["npm", "run", "start:addon"]
 >[!WARNING]
 > The build process generally takes around 5 minutes. However, it can sometimes get stuck sometimes or fail. In this case, go to `Settings`, and click `Factory Rebuild`. If it fails after factory rebuilding more than 3 times, you can create an issue.
 
-##### Updating
+#### Updating
 
 To update the addon, you can simply go to the `Settings` tab and click `Factory rebuild`. This will rebuild the addon with the latest changes.
 
-#### Cloudflare Workers
+### Cloudflare Workers
 
 This addon can be deployed as a [Cloudflare Worker](https://workers.cloudflare.com/).
 
@@ -254,7 +246,7 @@ There are 2 methods to do this. Method 2 requires you to have Git and Node.js in
        npm run deploy:cloudflare-worker
        ```
 7. Click `Connect`
-8. Trigger a redeployment by editing the README file at your fork (you can just add a letter and click commit changes) 
+8. Trigger a redeployment by editing the README file at your fork (you can just add a letter and click commit changes)
 9. You can find the URL for your cloudflare worker by clicking `View version` at the `Deployments` tab under the `Active deployments` section
 
 If you get an error about the `node:sqlite` module, follow [these instructions](https://github.com/Viren070/AIOStreams/issues/32#issuecomment-2602643959), editing the code at your forked GitHub repository. 
@@ -278,7 +270,7 @@ npm run deploy:cloudflare-worker
 
 If you get an error about the `node:sqlite` module, follow [these instructions](https://github.com/Viren070/AIOStreams/issues/32#issuecomment-2602643959)
 
-##### Updating
+#### Updating
 
 **Method 1**
 
@@ -295,7 +287,7 @@ npm run build
 npm run deploy:cloudflare-worker
 ```
 
-#### Render
+### Render
 
 > [!IMPORTANT]
 > Render have begun blocking AIOStreams from being deployed on their service. There is currently no workaround
@@ -314,29 +306,42 @@ https://render.com/
 4. Deploy
 
 
-##### Updating
+#### Updating
 
 When you deploy with Render, it automatically builds the addon every time a commit is pushed to this repository. You can also manually trigger a build by clicking the `Deploy` button.
 
 It is recommend to disable the `Auto Deploy` feature as the latest changes may not be stable. You can do this by going to the `Settings` tab and scrolling down to the `Auto Deploy` setting near the bottom of the `Build & Deploy` section.
 
-#### ElfHosted (paid)
+### ElfHosted (paid)
 
 > [!NOTE] 
 > Use the link below to support me, 33% of your AIOStreams subscription will go to me ❤️ 
 
 AIOStreams is available as a [paid product on ElfHosted](https://store.elfhosted.com/product/aiostreams/elf/viren070/). This offers you a no-hassle experience where you can expect things to "just work". 
 
-#### Heroku (paid) 
+### Heroku (paid) 
 
 > [!TIP]
 > Heroku have a [student offer](https://www.heroku.com/github-students/) which gives you $13 worth of credit each month to spend for 24 months. 
 
 To deploy AIOStreams on [Heroku](https://heroku.com/), you can fork this repository, and create a new app on the [Heroku Dashboard](https://dashboard.heroku.com/), using `GitHub` as the deployment method in the `Deploy` tab, and choosing the `Node.js` buildpack in the `Settings` tab. 
 
-### Self-Hosting
+### VPS
 
-#### Docker
+A VPS (Virtual Private Server) can be used to host many applications, not just AIOStreams. 
+
+You can use the Free tier on [Oracle](https://www.oracle.com/). You can also look at the following posts for some cheap providers: 
+
+https://lowendbox.com/blog/1-vps-1-usd-vps-per-month/
+https://lowendbox.com/blog/2-usd-vps-cheap-vps-under-2-month/
+
+You need a domain, and you can set AIOStreams up on your VPS by installing Docker and then using a docker compose file. 
+
+> [!NOTE]
+> Torrentio may block requests from your VPS. In this case, you can setup a VPN.
+
+
+### Docker
 
 [Docker](https://docs.docker.com/get-docker/) is a quick and convenient way to run this. Official images are available at the [ghcr.io](https://github.com/Viren070/AIOStreams/pkgs/container/aiostreams) and [docker.io](https://hub.docker.com/r/viren070/aiostreams) registries
 
@@ -367,7 +372,7 @@ docker build -t aiostreams .
 docker run -p 8080:3000 aiostreams
 ```
 
-#### From source
+### From source
 
 You need Node.js and git installed. Node v22 and npm v10.9 were used in the development of this project. I can not guarantee earlier versions will work.
 
