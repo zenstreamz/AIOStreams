@@ -254,7 +254,7 @@ There are 2 methods to do this. Method 2 requires you to have Git and Node.js in
        npm run deploy:cloudflare-worker
        ```
 7. Click `Connect`
-8. Trigger a redeployment by going to the `Deployments` tab, clicking `Deploy version`, and `Deploy`
+8. Trigger a redeployment by editing the README file at your fork (you can just add a letter and click commit changes) 
 9. You can find the URL for your cloudflare worker by clicking `View version` at the `Deployments` tab under the `Active deployments` section
 
 If you get an error about the `node:sqlite` module, follow [these instructions](https://github.com/Viren070/AIOStreams/issues/32#issuecomment-2602643959), editing the code at your forked GitHub repository. 
