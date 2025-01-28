@@ -332,8 +332,8 @@ A VPS (Virtual Private Server) can be used to host many applications, not just A
 
 You can use the Free tier on [Oracle](https://www.oracle.com/). You can also look at the following posts for some cheap providers: 
 
-https://lowendbox.com/blog/1-vps-1-usd-vps-per-month/
-https://lowendbox.com/blog/2-usd-vps-cheap-vps-under-2-month/
+- https://lowendbox.com/blog/1-vps-1-usd-vps-per-month/
+- https://lowendbox.com/blog/2-usd-vps-cheap-vps-under-2-month/
 
 You need a domain, and you can set AIOStreams up on your VPS by installing Docker and then using a docker compose file. 
 
