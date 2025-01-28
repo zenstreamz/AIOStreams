@@ -297,6 +297,9 @@ npm run deploy:cloudflare-worker
 
 #### Render
 
+> [!IMPORTANT]
+> Render have begun blocking AIOStreams from being deployed on their service. There is currently no workaround
+
 https://render.com/
 
 > [!WARNING]
