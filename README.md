@@ -223,11 +223,7 @@ You can use the Free tier on [Oracle](https://www.oracle.com/cloud/free/). You c
 - https://lowendbox.com/blog/1-vps-1-usd-vps-per-month/
 - https://lowendbox.com/blog/2-usd-vps-cheap-vps-under-2-month/
 
-You need a domain, and you can set AIOStreams up on your VPS by installing Docker and then using a docker compose file. 
-
-> [!NOTE]
-> Torrentio may block requests from your VPS. In this case, you can setup a VPN.
-
+You need a domain, and you can set AIOStreams up on your VPS by installing Docker and then using a [docker compose file](#docker-compose). 
 
 ### Docker
 
@@ -266,6 +262,13 @@ Have a look at this post which contains a docker compose file with MediaFlow Pro
  
 - https://www.reddit.com/r/StremioAddons/comments/1icdnos/thinking_of_selfhosting_aiostreams_dont_bother/
 
+### Other
+
+This addon can be deployed using some free solutions, but these should not be considered permanent solutions and can stop working at any point. 
+
+- [Hugging Face](https://huggingface.co)
+- [Koyeb](https://koyeb.com/)
+- [Render](https://render.com)
 
 ### From source
 
