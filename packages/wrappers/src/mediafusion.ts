@@ -231,6 +231,7 @@ const getMediaFusionConfig = (
       { key: 'created_at', direction: 'desc' },
     ],
     show_full_torrent_name: true,
+    show_language_country_flag: true,
     nudity_filter: nudityFilter,
     certification_filter: certificationFilter,
     language_sorting: [
@@ -277,6 +278,7 @@ const getMediaFusionConfig = (
     rpdb_config: null,
     live_search_streams: false,
     contribution_streams: false,
+    mdblist_config: null,
   };
 };
 
