@@ -17,8 +17,6 @@
 - [Configuring](#configuring)
   - [Environment Variables](#environment-variables)
   - [Cloudflare Workers](#cloudflare-workers-1)
-  - [Render](#render-1)
-  - [Hugging Face](#hugging-face-1)
   - [Local](#local)
 - [Development](#development)
 - [Credits](#credits)
@@ -120,7 +118,7 @@ Read my [Stremio guide](https://guides.viren070.me/stremio).
 ### Public Instance
 
 > [!IMPORTANT]
-> Torrentio is disabled on the public instance!
+> Torrentio is disabled on the public instance! However, most users don't need Torrentio and MediaFusion also provides streams from Torrentio, so try the public instance first, you may not need to self-host. 
 
 [ElfHosted](https://elfhosted.com/) have been kind enough to host a [community instance of AIOStreams](https://aiostreams.elfhosted.com/configure).
 
