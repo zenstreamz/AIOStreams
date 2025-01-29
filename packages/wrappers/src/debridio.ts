@@ -44,6 +44,10 @@ const getDebridioConfigString = (provider: string, apiKey: string) => {
   const config = {
     provider,
     apiKey,
+    disableUncached: false,
+    qualityOrder: [],
+    excludeSize: '',
+    maxReturnPerQuality: '',
   };
   return Buffer.from(JSON.stringify(config)).toString('base64');
 };
