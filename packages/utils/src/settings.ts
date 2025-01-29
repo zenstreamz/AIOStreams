@@ -48,6 +48,9 @@ export class Settings {
   public static readonly DEBRIDIO_URL =
     process.env.DEBRIDIO_URL ?? 'https://debridio.adobotec.com/';
   public static readonly ADDON_PROXY = process.env.ADDON_PROXY ?? '';
+  public static readonly ADDON_PROXY_CONFIG = process.env.ADDON_PROXY_CONFIG
+    ? process.env.ADDON_PROXY_CONFIG
+    : '';
   public static readonly DEFAULT_MEDIAFLOW_URL =
     process.env.DEFAULT_MEDIAFLOW_URL ?? '';
   public static readonly DEFAULT_MEDIAFLOW_API_PASSWORD =

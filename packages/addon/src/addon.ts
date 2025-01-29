@@ -44,6 +44,9 @@ export class AIOStreams {
 
   private async getRequestingIp() {
     let userIp = this.config.requestingIp;
+    if (userIp === '::1') {
+      userIp = undefined;
+    }
     const mediaFlowConfig = getMediaFlowConfig(this.config);
     if (mediaFlowConfig.mediaFlowEnabled) {
       const mediaFlowIp = await getMediaFlowPublicIp(
