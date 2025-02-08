@@ -114,6 +114,10 @@ export class Settings {
     .DEFAULT_MEDIAFUSION_TIMEOUT
     ? parseInt(process.env.DEFAULT_MEDIAFUSION_TIMEOUT)
     : undefined;
+  public static readonly MEDIAFUSION_CONFIG_TIMEOUT = process.env
+    .MEDIAFUSION_CONFIG_TIMEOUT
+    ? parseInt(process.env.MEDIAFUSION_CONFIG_TIMEOUT)
+    : 15000;
   public static readonly DEFAULT_JACKETTIO_TIMEOUT = process.env
     .DEFAULT_JACKETTIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_JACKETTIO_TIMEOUT)
