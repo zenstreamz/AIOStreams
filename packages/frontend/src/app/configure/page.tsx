@@ -112,6 +112,7 @@ const defaultSortCriteria: SortBy[] = [
 
 const defaultResolutions: Resolution[] = [
   { '2160p': true },
+  { '1440p': true },
   { '1080p': true },
   { '720p': true },
   { '480p': true },
