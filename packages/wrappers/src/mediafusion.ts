@@ -45,6 +45,7 @@ export async function getMediafusionStreams(
     overrideName?: string;
     filterCertificationLevels?: string;
     filterNudity?: string;
+    liveSearchStreams?: string;
   },
   streamRequest: StreamRequest,
   addonId: string
@@ -59,6 +60,8 @@ export async function getMediafusionStreams(
   const indexerTimeout = mediafusionOptions.indexerTimeout
     ? parseInt(mediafusionOptions.indexerTimeout)
     : undefined;
+  const liveSearchStreams =
+    mediafusionOptions.liveSearchStreams === 'true' ? true : false;
 
   // If overrideUrl is provided, use it to get streams and skip all other steps
   if (mediafusionOptions.overrideUrl) {
@@ -83,7 +86,8 @@ export async function getMediafusionStreams(
     const configString = await getConfigString(
       getMediaFusionConfig(
         mediafusionOptions.filterCertificationLevels,
-        mediafusionOptions.filterNudity
+        mediafusionOptions.filterNudity,
+        liveSearchStreams
       )
     );
     const mediafusion = new MediaFusion(
@@ -127,6 +131,7 @@ export async function getMediafusionStreams(
     const mediafusionConfig = getMediaFusionConfig(
       mediafusionOptions.filterCertificationLevels,
       mediafusionOptions.filterNudity,
+      liveSearchStreams,
       debridService.id,
       debridService.credentials
     );
@@ -153,6 +158,7 @@ export async function getMediafusionStreams(
     const mediafusionConfig = getMediaFusionConfig(
       mediafusionOptions.filterCertificationLevels,
       mediafusionOptions.filterNudity,
+      liveSearchStreams,
       service.id,
       service.credentials
     );
@@ -187,6 +193,7 @@ export async function getMediafusionStreams(
 const getMediaFusionConfig = (
   filterCertificationLevels?: string,
   filterNudity?: string,
+  liveSearchStreams: boolean = false,
   service?: string,
   credentials: { [key: string]: string } = {}
 ): any => {
@@ -287,7 +294,7 @@ const getMediaFusionConfig = (
     api_password: Settings.MEDIAFUSION_API_PASSWORD || null,
     mediaflow_config: null,
     rpdb_config: null,
-    live_search_streams: false,
+    live_search_streams: liveSearchStreams,
     contribution_streams: false,
     mdblist_config: null,
   };

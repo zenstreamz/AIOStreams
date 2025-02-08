@@ -178,6 +178,14 @@ export const addonDetails: AddonDetail[] = [
         },
       },
       {
+        id: 'liveSearchStreams',
+        required: false,
+        label: 'Live Search Streams',
+        description:
+          'Enable this option to show live search streams. By default, the addon will show only cached streams. Enable this option to show live search streams as well.',
+        type: 'checkbox',
+      },
+      {
         id: 'filterCertificationLevels',
         required: false,
         label: 'Filter Certification Levels',
