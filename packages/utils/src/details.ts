@@ -146,6 +146,8 @@ export const addonDetails: AddonDetail[] = [
           { value: 'torbox', label: 'Torbox' },
           { value: 'offcloud', label: 'Offcloud' },
           { value: 'easydebrid', label: 'EasyDebrid' },
+          { value: 'pikpak', label: 'PikPak' },
+          { value: 'seedr', label: 'Seedr' },
         ],
       },
       {
