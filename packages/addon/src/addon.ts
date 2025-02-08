@@ -9,6 +9,7 @@ import {
   getMediafusionStreams,
   getOrionStreams,
   getPeerflixStreams,
+  getStremioJackettStreams,
   getTorboxStreams,
   getTorrentioStreams,
 } from '@aiostreams/wrappers';
@@ -949,6 +950,14 @@ export class AIOStreams {
       }
       case 'mediafusion': {
         return await getMediafusionStreams(
+          this.config,
+          addon.options,
+          streamRequest,
+          addonId
+        );
+      }
+      case 'stremio-jackett': {
+        return await getStremioJackettStreams(
           this.config,
           addon.options,
           streamRequest,

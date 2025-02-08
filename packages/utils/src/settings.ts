@@ -122,6 +122,21 @@ export class Settings {
     .DEFAULT_JACKETTIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_JACKETTIO_TIMEOUT)
     : undefined;
+
+  // Stremio Jackett settings
+  public static readonly STREMIO_JACKETT_URL =
+    process.env.STREMIO_JACKETT_URL ?? 'https://stremio-jackett.elfhosted.com/';
+  public static readonly JACKETT_URL = process.env.JACKETT_URL ?? null;
+  public static readonly JACKETT_API_KEY = process.env.JACKETT_API_KEY ?? null;
+  public static readonly STREMIO_JACKETT_CACHE_ENABLED = process.env
+    .STREMIO_JACKETT_CACHE_ENABLED
+    ? process.env.STREMIO_JACKETT_CACHE_ENABLED !== 'false'
+    : true;
+  public static readonly DEFAULT_STREMIO_JACKETT_TIMEOUT = process.env
+    .DEFAULT_STREMIO_JACKETT_TIMEOUT
+    ? parseInt(process.env.DEFAULT_STREMIO_JACKETT_TIMEOUT)
+    : undefined;
+
   public static readonly DEFAULT_ORION_TIMEOUT = process.env
     .DEFAULT_ORION_TIMEOUT
     ? parseInt(process.env.DEFAULT_ORION_TIMEOUT)
