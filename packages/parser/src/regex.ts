@@ -56,10 +56,10 @@ export const PARSE_REGEX = {
     DTS: createRegex('dts(?![ .\\-_]?hd[ .\\-_]?ma|[ .\\-_]?hd)'),
     TrueHD: createRegex('true[ .\\-_]?hd'),
     5.1: createRegex(
-      'd(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?[ .\\-_]?5[ .\\-_]?1(ch)?'
+      '(d(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?)?5[ .\\-_]?1(ch)?'
     ),
     7.1: createRegex(
-      'd(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?[ .\\-_]?7[ .\\-_]?1'
+      '(d(olby)?[ .\\-_]?d(igital)?[ .\\-_]?(p(lus)?|\\+)?)?7[ .\\-_]?1(ch)?'
     ),
     AAC: createRegex('q?aac(?:[ .\\-_]?2)?'),
     FLAC: createRegex('flac(?:[ .\\-_]?(lossless|2\\.0|x[2-4]))?'),
