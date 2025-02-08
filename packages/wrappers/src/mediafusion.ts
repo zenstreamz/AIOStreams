@@ -85,7 +85,7 @@ export async function getMediafusionStreams(
       console.log(
         `|INF| wrappers > mediafusion: Config encryption took ${getTimeTakenSincePoint(startTime)}`
       );
-      cache?.set(cacheKey, encryptedStr);
+      cache?.set(cacheKey, encryptedStr, Settings.CACHE_MEDIAFUSION_CONFIG_TTL);
       return encryptedStr;
     } catch (error: any) {
       if (error.name === 'TimeoutError') {

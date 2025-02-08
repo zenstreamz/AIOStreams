@@ -71,6 +71,10 @@ export class Settings {
     .CACHE_MEDIAFLOW_IP_TTL
     ? parseInt(process.env.CACHE_MEDIAFLOW_IP_TTL)
     : 900;
+  public static readonly CACHE_MEDIAFUSION_CONFIG_TTL = process.env
+    .CACHE_MEDIAFUSION_CONFIG_TTL
+    ? parseInt(process.env.CACHE_MEDIAFUSION_CONFIG_TTL)
+    : 30 * 24 * 60 * 60; // 30 days
   public static readonly MAX_CACHE_SIZE = process.env.MAX_CACHE_SIZE
     ? parseInt(process.env.MAX_CACHE_SIZE)
     : 10240;
