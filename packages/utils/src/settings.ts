@@ -101,6 +101,9 @@ export class Settings {
   public static readonly COMET_INDEXERS = process.env.COMET_INDEXERS
     ? process.env.COMET_INDEXERS.split(',').map((indexer) => indexer.trim())
     : ['dmm_public_hash_shares_only'];
+  public static readonly FORCE_COMET_HOSTNAME = process.env.FORCE_COMET_HOSTNAME
+    ? process.env.FORCE_COMET_HOSTNAME
+    : 'comet.elfhosted.com';
   public static readonly DEFAULT_COMET_TIMEOUT = process.env
     .DEFAULT_COMET_TIMEOUT
     ? parseInt(process.env.DEFAULT_COMET_TIMEOUT)

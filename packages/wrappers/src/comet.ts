@@ -1,4 +1,4 @@
-import { AddonDetail, StreamRequest } from '@aiostreams/types';
+import { AddonDetail, ParseResult, StreamRequest } from '@aiostreams/types';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
 import { addonDetails } from '@aiostreams/utils';
@@ -24,6 +24,20 @@ export class Comet extends BaseWrapper {
       userConfig,
       indexerTimeout || Settings.DEFAULT_COMET_TIMEOUT
     );
+  }
+
+  protected parseStream(stream: Stream): ParseResult {
+    const parsedStream = super.parseStream(stream);
+    if (stream.url && parsedStream.type === 'stream') {
+      // force COMET_FORCE_HOSTNAME if provided
+      if (Settings.FORCE_COMET_HOSTNAME) {
+        parsedStream.result.url = stream.url.replace(
+          new URL(stream.url).hostname,
+          Settings.FORCE_COMET_HOSTNAME
+        );
+      }
+    }
+    return parsedStream;
   }
 }
 
