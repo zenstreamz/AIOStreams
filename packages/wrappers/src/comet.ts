@@ -29,7 +29,7 @@ export class Comet extends BaseWrapper {
 
 const getCometConfig = (debridService: string, debridApiKey: string) => {
   return {
-    indexers: ['bitsearch', 'eztv', 'thepiratebay', 'therarbg', 'yts'],
+    indexers: Settings.COMET_INDEXERS,
     maxResults: 0,
     maxResultsPerResolution: 0,
     maxSize: 0,

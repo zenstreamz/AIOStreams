@@ -24,6 +24,9 @@ export class Settings {
     : false;
   public static readonly COMET_URL =
     process.env.COMET_URL ?? 'https://comet.elfhosted.com/';
+  public static readonly COMET_INDEXERS = process.env.COMET_INDEXERS
+    ? process.env.COMET_INDEXERS.split(',').map((indexer) => indexer.trim())
+    : ['dmm_public_hash_shares_only'];
   public static readonly MEDIAFUSION_URL =
     process.env.MEDIAFUSION_URL ?? 'https://mediafusion.elfhosted.com/';
   public static readonly MEDIAFUSION_API_PASSWORD =
