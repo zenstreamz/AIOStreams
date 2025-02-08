@@ -61,8 +61,8 @@ export class Settings {
   public static readonly DEFAULT_MEDIAFLOW_PUBLIC_IP =
     process.env.DEFAULT_MEDIAFLOW_PUBLIC_IP ?? '';
   public static readonly CACHE_STREAM_RESULTS = process.env.CACHE_STREAM_RESULTS
-    ? process.env.CACHE_STREAM_RESULTS !== 'false'
-    : true;
+    ? process.env.CACHE_STREAM_RESULTS === 'true'
+    : false;
   public static readonly CACHE_STREAM_RESULTS_TTL = process.env
     .CACHE_STREAM_RESULTS_TTL
     ? parseInt(process.env.CACHE_STREAM_RESULTS_TTL)
