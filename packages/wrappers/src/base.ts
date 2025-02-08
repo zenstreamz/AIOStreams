@@ -317,7 +317,6 @@ export class BaseWrapper {
       stream.size ||
       stream.sizebytes ||
       stream.sizeBytes ||
-      stream.torrentSize ||
       (description && this.extractSizeInBytes(description, 1024)) ||
       (stream.name && this.extractSizeInBytes(stream.name, 1024)) ||
       undefined;
