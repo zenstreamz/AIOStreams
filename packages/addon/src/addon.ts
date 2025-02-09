@@ -613,7 +613,7 @@ export class AIOStreams {
           ? `🎲 ${name}`
           : name,
       description: this.config.addonNameInDescription
-        ? `🎲 ${name}\n${description}`
+        ? `🎲 ${name.split('\n').join(' ')}\n${description}`
         : description,
       subtitles: parsedStream.stream?.subtitles,
       sources: parsedStream.torrent?.sources,
