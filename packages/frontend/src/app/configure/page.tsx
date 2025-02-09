@@ -28,7 +28,12 @@ import {
   allowedLanguages,
   validateConfig,
 } from '@aiostreams/config';
-import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
+import {
+  addonDetails,
+  minifyConfig,
+  serviceDetails,
+  Settings,
+} from '@aiostreams/utils';
 
 import Slider from '@/components/Slider';
 import CredentialInput from '@/components/CredentialInput';
@@ -227,7 +232,7 @@ export default function Configure() {
   }, []);
 
   const createConfig = (): Config => {
-    return {
+    const config = {
       streamTypes,
       resolutions,
       qualities,
@@ -265,6 +270,7 @@ export default function Configure() {
       addons,
       services,
     };
+    return minifyConfig(config);
   };
 
   const fetchWithTimeout = async (

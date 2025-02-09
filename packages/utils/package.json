@@ -6,5 +6,8 @@
     "test": "vitest run --passWithNoTests",
     "build": "tsc"
   },
-  "description": "Library to parse a torrent filename "
+  "description": "Library to parse a torrent filename ",
+  "dependencies": {
+    "jsoncrush": "^1.1.8"
+  }
 }
