@@ -182,9 +182,9 @@ export const addonDetails: AddonDetail[] = [
       {
         id: 'liveSearchStreams',
         required: false,
-        label: 'Live Search Streams',
+        label: 'Search streams on-demand',
         description:
-          'Enable this option to show live search streams. By default, the addon will show only cached streams. Enable this option to show live search streams as well.',
+          'Enable this option to live search movies & TV streams. By default, results will only be based on cached data. Enable this option to show live search streams as well.',
         type: 'checkbox',
       },
       {
