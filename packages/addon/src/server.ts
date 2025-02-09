@@ -110,8 +110,8 @@ app.get('/:config/configure', (req, res) => {
     );
   }
   try {
-    const configJson = unminifyConfig(
-      encryptInfoInConfig(extractJsonConfig(config))
+    const configJson = encryptInfoInConfig(
+      unminifyConfig(extractJsonConfig(config))
     );
     const base64Config = Buffer.from(JSON.stringify(configJson)).toString(
       'base64'
