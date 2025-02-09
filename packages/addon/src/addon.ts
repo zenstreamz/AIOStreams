@@ -869,12 +869,14 @@ export class AIOStreams {
     const parsedStreams: ParsedStream[] = [];
     const errorStreams: ErrorStream[] = [];
     const formatError = (error: string) =>
-      error
-        .replace(/- |: /g, '\n')
-        .split('\n')
-        .map((line: string) => line.trim())
-        .join('\n')
-        .trim();
+      typeof error === 'string'
+        ? error
+            .replace(/- |: /g, '\n')
+            .split('\n')
+            .map((line: string) => line.trim())
+            .join('\n')
+            .trim()
+        : error;
 
     const addonPromises = this.config.addons.map(async (addon) => {
       const addonName =
@@ -905,7 +907,7 @@ export class AIOStreams {
           `|ERR| addon > getParsedStreams: Failed to get streams from ${addonName}: ${error}`
         );
         errorStreams.push({
-          error: formatError(error.message),
+          error: formatError(error.message ?? error ?? 'Unknown error'),
           addon: {
             id: addonId,
             name: addonName,
