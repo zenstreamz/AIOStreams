@@ -49,13 +49,6 @@ if (!Settings.SECRET_KEY) {
   );
 }
 
-if (Settings.SECRET_KEY && Settings.SECRET_KEY.length !== 32) {
-  console.error(
-    '|ERR| server > init: SECRET_KEY must be 32 characters long, exiting...'
-  );
-  throw new Error('SECRET_KEY must be 32 characters long');
-}
-
 let CUSTOM_CONFIGS: Record<string, string> = {};
 if (Settings.CUSTOM_CONFIGS) {
   try {
