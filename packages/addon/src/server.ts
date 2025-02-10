@@ -13,6 +13,7 @@ import {
   parseAndDecryptString,
   Cache,
   unminifyConfig,
+  minifyConfig,
 } from '@aiostreams/utils';
 
 const app = express();
@@ -104,14 +105,16 @@ app.get('/configure', (req, res) => {
 
 app.get('/:config/configure', (req, res) => {
   const config = req.params.config;
-  if (config.startsWith('eyJ')) {
+  if (config.startsWith('eyJ') || config.startsWith('eyI')) {
     return res.sendFile(
       path.join(__dirname, '../../frontend/out/configure.html')
     );
   }
   try {
-    const configJson = encryptInfoInConfig(
-      unminifyConfig(extractJsonConfig(config))
+    // unminify so we can encrypt the sensitive info
+    // and then minify it again before sending it to the frontend
+    const configJson = minifyConfig(
+      encryptInfoInConfig(unminifyConfig(extractJsonConfig(config)))
     );
     const base64Config = Buffer.from(JSON.stringify(configJson)).toString(
       'base64'

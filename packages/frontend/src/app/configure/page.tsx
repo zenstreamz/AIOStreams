@@ -493,7 +493,10 @@ export default function Configure() {
       if (config.startsWith('E-')) {
         throw new Error('Encrypted Config Not Supported');
       } else {
-        decodedConfig = unminifyConfig(JSON.parse(atob(config)));
+        decodedConfig = JSON.parse(atob(decodeURIComponent(config)));
+        console.log('Decoded config', decodedConfig);
+        decodedConfig = unminifyConfig(decodedConfig);
+        console.log('Unminified config', decodedConfig);
       }
       return decodedConfig;
     }
