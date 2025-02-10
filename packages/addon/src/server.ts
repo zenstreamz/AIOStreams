@@ -572,7 +572,7 @@ function processObjectValues(
 }
 
 function encryptValue(value: any, label: string): any {
-  if (!isValueEncrypted(value)) {
+  if (value && !isValueEncrypted(value)) {
     try {
       const { iv, data } = encryptData(compressData(value));
       return `E2-${iv}-${data}`;
