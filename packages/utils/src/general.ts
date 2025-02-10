@@ -27,9 +27,6 @@ export function minifyConfig(obj: any, depth: number = 0): any {
   }
   if (typeof obj !== 'object' || obj === null) {
     let valueToCheck = obj;
-    if (typeof obj === 'number') {
-      valueToCheck = obj.toString();
-    }
     if (Object.values(compressedConfigMap).includes(valueToCheck)) {
       return `${obj}${MINIFY_SUFFIX}`;
     }
