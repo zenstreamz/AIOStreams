@@ -123,7 +123,13 @@ app.get('/:config/configure', (req, res) => {
     );
   }
   try {
-    const configJson = encryptInfoInConfig(extractJsonConfig(config));
+    let configJson = extractJsonConfig(config);
+    if (config.startsWith('E-') || config.startsWith('E2-')) {
+      console.log(
+        `|DBG| server > Encrypted config detected, encrypting credentials`
+      );
+      configJson = encryptInfoInConfig(configJson);
+    }
     const base64Config = Buffer.from(JSON.stringify(configJson)).toString(
       'base64'
     );
