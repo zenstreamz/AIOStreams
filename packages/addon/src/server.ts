@@ -119,7 +119,7 @@ app.get('/:config/configure', (req, res) => {
     const base64Config = Buffer.from(JSON.stringify(configJson)).toString(
       'base64'
     );
-    res.redirect(`/${base64Config}/configure`);
+    res.redirect(`/${encodeURIComponent(base64Config)}/configure`);
   } catch (error: any) {
     console.error(`|ERR| server > Failed to extract config: ${error.message}`);
     res.status(400).send('Invalid config');
