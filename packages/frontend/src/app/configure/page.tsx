@@ -33,6 +33,7 @@ import {
   minifyConfig,
   serviceDetails,
   Settings,
+  unminifyConfig,
 } from '@aiostreams/utils';
 
 import Slider from '@/components/Slider';
