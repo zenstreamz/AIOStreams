@@ -33,8 +33,8 @@ export class Comet extends BaseWrapper {
       if (Settings.FORCE_COMET_HOSTNAME) {
         const url = new URL(stream.url);
         url.hostname = Settings.FORCE_COMET_HOSTNAME;
-        url.port = '';
-        url.protocol = 'https';
+        url.port = Settings.FORCE_COMET_PORT;
+        url.protocol = Settings.FORCE_COMET_PROTOCOL;
         parsedStream.result.url = url.toString();
       }
     }

@@ -104,6 +104,12 @@ export class Settings {
   public static readonly FORCE_COMET_HOSTNAME = process.env.FORCE_COMET_HOSTNAME
     ? process.env.FORCE_COMET_HOSTNAME
     : 'comet.elfhosted.com';
+  public static readonly FORCE_COMET_PORT = process.env.FORCE_COMET_PORT
+    ? process.env.FORCE_COMET_PORT
+    : '';
+  public static readonly FORCE_COMET_PROTOCOL = process.env.FORCE_COMET_PROTOCOL
+    ? process.env.FORCE_COMET_PROTOCOL
+    : 'https';
   public static readonly DEFAULT_COMET_TIMEOUT = process.env
     .DEFAULT_COMET_TIMEOUT
     ? parseInt(process.env.DEFAULT_COMET_TIMEOUT)
