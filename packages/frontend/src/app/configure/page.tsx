@@ -356,7 +356,7 @@ export default function Configure() {
         const base64Config = btoa(JSON.stringify(config));
         return {
           success: true,
-          manifest: `${protocol}//${root}/${base64Config}/manifest.json`,
+          manifest: `${protocol}//${root}/${encodeURIComponent(base64Config)}/manifest.json`,
           message: null,
         };
       } catch (base64Error: any) {

@@ -128,7 +128,7 @@ app.get('/manifest.json', (req, res) => {
 });
 
 app.get('/:config/manifest.json', (req, res) => {
-  const config = req.params.config;
+  const config = decodeURIComponent(req.params.config);
   let configJson: Config;
   try {
     configJson = extractJsonConfig(config);
@@ -317,6 +317,7 @@ function extractJsonConfig(config: string): Config {
   if (
     config.startsWith('E-') ||
     config.startsWith('eyJ') ||
+    config.startsWith('eyI') ||
     config.startsWith('E2-')
   ) {
     return extractEncryptedOrEncodedConfig(config, 'Config');
