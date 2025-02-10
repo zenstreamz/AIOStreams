@@ -921,7 +921,6 @@ export const serviceDetails = [
     ],
   },
 ];
-
 export const compressedConfigMap: Record<string, string> = {
   streamTypes: 'a',
   usenet: 'b',
