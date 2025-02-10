@@ -39,7 +39,6 @@ export function minifyConfig(obj: any, depth: number = 0): any {
     }
     return obj.map((item) => minifyConfig(item, depth + 1));
   }
-  console.log('Object.keys(obj).length', Object.keys(obj).length);
   if (Object.keys(obj).length > MAX_KEYS) {
     throw new Error('Max keys reached');
   }
