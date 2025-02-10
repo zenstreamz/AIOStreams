@@ -31,10 +31,11 @@ export class Comet extends BaseWrapper {
     if (stream.url && parsedStream.type === 'stream') {
       // force COMET_FORCE_HOSTNAME if provided
       if (Settings.FORCE_COMET_HOSTNAME) {
-        parsedStream.result.url = stream.url.replace(
-          new URL(stream.url).hostname,
-          Settings.FORCE_COMET_HOSTNAME
-        );
+        const url = new URL(stream.url);
+        url.hostname = Settings.FORCE_COMET_HOSTNAME;
+        url.port = '';
+        url.protocol = 'https';
+        parsedStream.result.url = url.toString();
       }
     }
     return parsedStream;
