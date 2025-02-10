@@ -568,7 +568,8 @@ function processObjectValues(
 function encryptValue(value: any, label: string): any {
   if (!isValueEncrypted(value)) {
     try {
-      return encryptData(compressData(value));
+      const { iv, data } = encryptData(compressData(value));
+      return `E2-${iv}-${data}`;
     } catch (error: any) {
       console.error(`Failed to encrypt ${label}`);
       return '';
