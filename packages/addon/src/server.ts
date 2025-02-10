@@ -175,7 +175,7 @@ app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
   try {
     configJson = extractJsonConfig(config);
     console.log(`|DBG| server > Extracted config for stream request`);
-    configJson = unminifyConfig(decryptEncryptedInfoFromConfig(configJson));
+    configJson = decryptEncryptedInfoFromConfig(unminifyConfig(configJson));
     if (Settings.LOG_SENSITIVE_INFO) {
       console.log(`|DBG| server > Final config: ${JSON.stringify(configJson)}`);
     }
