@@ -193,6 +193,8 @@ export default function Configure() {
   const [mediaFlowProxiedServices, setMediaFlowProxiedServices] = useState<
     string[] | null
   >(null);
+  const [overrideName, setOverrideName] = useState<string>('');
+
   const [disableButtons, setDisableButtons] = useState<boolean>(false);
   const [maxMovieSizeSlider, setMaxMovieSizeSlider] = useState<number>(
     Settings.MAX_MOVIE_SIZE
@@ -227,6 +229,7 @@ export default function Configure() {
 
   const createConfig = (): Config => {
     const config = {
+      overrideName,
       streamTypes,
       resolutions,
       qualities,
@@ -629,7 +632,26 @@ export default function Configure() {
             style={{ display: 'block', margin: '0 auto' }}
           />
           <div style={{ position: 'relative', display: 'inline-block' }}>
-            <h1 style={{ textAlign: 'center' }}>AIOStreams</h1>
+            <input
+              type="text"
+              value={overrideName || 'AIOStreams'}
+              onChange={(e) => setOverrideName(e.target.value)}
+              style={{
+                border: 'none',
+                backgroundColor: 'black',
+                color: 'white',
+                fontWeight: 'bold',
+                background: 'black',
+                height: '30px',
+                textAlign: 'center',
+                fontSize: '30px',
+                padding: '0',
+                maxWidth: '300px',
+                width: 'auto',
+                margin: '0 auto',
+              }}
+              size={overrideName?.length < 8 ? 8 : overrideName?.length || 8}
+            ></input>
             <span
               className={styles.version}
               title={`See what's new in v${version}`}
