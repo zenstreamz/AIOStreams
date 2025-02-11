@@ -283,8 +283,7 @@ export class BaseWrapper {
       };
     }
     // attempt to look for filename in behaviorHints.filename
-    let filename =
-      stream?.behaviorHints?.filename || stream.torrentTitle || stream.filename;
+    let filename = stream?.behaviorHints?.filename || stream.filename;
 
     // if filename behaviorHint is not present, attempt to look for a filename in the stream description or title
     let description = stream.description || stream.title;
