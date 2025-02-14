@@ -287,12 +287,6 @@ export class AIOStreams {
         ) {
           return false;
         }
-        if (
-          parsedStream.indexers &&
-          !strictIncludeRegex.test(parsedStream.indexers)
-        ) {
-          return false;
-        }
       }
       return true;
     });
