@@ -5,7 +5,7 @@ labels:
   - bug
 body:
   - type: dropdown
-    id: '9'
+    id: 'deployment'
     attributes:
       label: Deployment Method
       description: How are you hosting the addon?
@@ -18,7 +18,7 @@ body:
     validations:
       required: true
   - type: input
-    id: '10'
+    id: 'addonVersion'
     attributes:
       label: Addon Version
       description: What version of the addon are you using, or what was the commit that your deployment was built off of?
@@ -26,7 +26,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: '3'
+    id: 'bugArea'
     attributes:
       label: Bug Area
       description: Select what area of the addon this issue affects
@@ -39,32 +39,32 @@ body:
     validations:
       required: true
   - type: input
-    id: '2'
+    id: 'deviceInfo'
     attributes: 
       label: Device/Browser/OS/Stremio Version
       description: Details about the device this issue occurs on. Leave blank if not applicable (e.g. error within addon)
       placeholder: Windows on Stremio 5 Beta
   - type: textarea
-    id: '4'
+    id: 'bugDescription'
     attributes:
       label: Bug Description / Steps to Reproduce
       description: Precisely describe the bug you encountered and the steps to reproduce it. Avoid vague descriptions. Include relevant details - such as if you were using MediaFlow. 
     validations:
       required: true
   - type: textarea
-    id: '5'
+    id: 'expectedBehaviour'
     attributes:
       label: Expected Behavior
       description: Describe what you expected to happen.
     validations:
       required: true
   - type: textarea
-    id: '6'
+    id: 'screenshots'
     attributes:
       label: Screenshots
       description: If applicable, add screenshots of the bug and your configuration.
   - type: checkboxes
-    id: '8'
+    id: 'debuggingChecklist'
     attributes:
       label: Debugging Checklist
       description: Confirm you have included at least some of the following debugging information. If you haven't, please do so before submitting the issue.
@@ -76,7 +76,7 @@ body:
             If applicable, I have included MediaFlow logs
           required: false
   - type: checkboxes
-    id: '9'
+    id: 'issueChecklist'
     attributes:
       label: Issue Checklist
       description: Confirm that you have understood and followed these requirements
