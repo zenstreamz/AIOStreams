@@ -79,7 +79,7 @@ body:
     id: '9'
     attributes:
       label: Issue Checklist
-      description: Confirm that you have understood and followed these requirements: 
+      description: Confirm that you have understood and followed these requirements
       options:
         - label: >-
             I have written a short but informative title that clearly describes the issue.
