@@ -397,7 +397,7 @@ export class BaseWrapper {
     services.forEach((service) => {
       // for each service, generate a regexp which creates a regex with all known names separated by |
       const regex = new RegExp(
-        `(^|(?<![^ |[(_\\/\\-.]))(${service.knownNames.join('|')})(?=[ ⏳⚡+/|\\)\\]_.-]|$)`,
+        `(^|(?<![^ |[(_\\/\\-.]))(${service.knownNames.join('|')})(?=[ ⬇️⏳⚡+/|\\)\\]_.-]|$)`,
         'i'
       );
       // check if the string contains the regex
