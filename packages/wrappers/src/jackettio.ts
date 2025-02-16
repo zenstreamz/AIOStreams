@@ -53,7 +53,7 @@ const getJackettioConfigString = (
       mediaflowApiPassword: '',
       mediaflowPublicIp: '',
       qualities: [0, 360, 480, 720, 1080, 2160],
-      indexers: ['bitsearch', 'eztv', 'thepiratebay', 'therarbg', 'yts'],
+      indexers: Settings.JACKETT_INDEXERS,
       debridApiKey: debridApiKey,
     })
   ).toString('base64');
