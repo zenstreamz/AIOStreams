@@ -320,7 +320,7 @@ app.post('/encrypt-user-data', (req, res) => {
       `| Ratio:            ${((finalString.length / data.length) * 100).toFixed(2)}%`
     );
     console.log(
-      `| Reduction:        ${data.length - compressed.length} bytes (${(((data.length - compressed.length) / data.length) * 100).toFixed(2)}%)`
+      `| Reduction:        ${data.length - finalString.length} bytes (${(((data.length - finalString.length) / data.length) * 100).toFixed(2)}%)`
     );
     console.log(`+--------------------------------------------+`);
 
