@@ -45,18 +45,13 @@ export class Comet extends BaseWrapper {
 
 const getCometConfig = (debridService: string, debridApiKey: string) => {
   return {
-    indexers: Settings.COMET_INDEXERS,
-    maxResults: 0,
     maxResultsPerResolution: 0,
     maxSize: 0,
-    reverseResultOrder: false,
+    cachedOnly: false,
     removeTrash: true,
     resultFormat: ['All'],
-    resolutions: ['All'],
-    languages: ['All'],
     debridService: debridService,
     debridApiKey: debridApiKey,
-    stremthruUrl: '',
     debridStreamProxyPassword: '',
   };
 };
