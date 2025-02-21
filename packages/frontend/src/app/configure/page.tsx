@@ -69,6 +69,7 @@ const defaultVisualTags: VisualTag[] = [
   { '3D': true },
   { IMAX: true },
   { AI: true },
+  { SDR: true },
 ];
 
 const defaultAudioTags: AudioTag[] = [
