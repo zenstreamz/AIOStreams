@@ -8,9 +8,16 @@ import {
   ParseResult,
 } from '@aiostreams/types';
 import { parseFilename } from '@aiostreams/parser';
-import { getTextHash, serviceDetails, Settings } from '@aiostreams/utils';
-import { fetch as uFetch, ProxyAgent } from 'undici';
+import {
+  getTextHash,
+  serviceDetails,
+  Settings,
+  createLogger,
+} from '@aiostreams/utils';
+// import { fetch as uFetch, ProxyAgent } from 'undici';
 import { emojiToLanguage, codeToLanguage } from '@aiostreams/formatters';
+
+const logger = createLogger('wrappers');
 
 export class BaseWrapper {
   private readonly streamPath: string = 'stream/{type}/{id}.json';
@@ -78,8 +85,10 @@ export class BaseWrapper {
     let hostname: string;
     try {
       hostname = new URL(url).hostname;
-    } catch (e) {
-      console.error(`|ERR| utils > shouldProxyRequest Error parsing URL`);
+    } catch (e: any) {
+      logger.error(`Error parsing URL: ${this.getLoggableUrl(url)}`, {
+        func: 'shouldProxyRequest',
+      });
       return false;
     }
     if (!Settings.ADDON_PROXY) {
@@ -90,8 +99,11 @@ export class BaseWrapper {
         for (const rule of Settings.ADDON_PROXY_CONFIG.split(',')) {
           const [ruleHost, enabled] = rule.split(':');
           if (['true', 'false'].includes(enabled) === false) {
-            console.error(
-              `|ERR| utils > shouldProxyRequest > Invalid rule: ${rule}`
+            logger.error(
+              `Invalid rule: ${rule}. Rule must be in the format host:enabled`,
+              {
+                func: 'shouldProxyRequest',
+              }
             );
             continue;
           }
@@ -111,7 +123,7 @@ export class BaseWrapper {
     return useProxy;
   }
 
-  private getLoggableUrl(url: string): string {
+  protected getLoggableUrl(url: string): string {
     let urlObj = new URL(url);
     return `${urlObj.protocol}//${urlObj.hostname}/${urlObj.pathname
       .split('/')
@@ -132,8 +144,8 @@ export class BaseWrapper {
     let sanitisedUrl = this.getLoggableUrl(url);
     let useProxy = this.shouldProxyRequest(url);
 
-    console.log(
-      `|DBG| wrappers > base > ${this.addonName}: Making a ${useProxy ? 'proxied' : 'direct'} request to ${sanitisedUrl} with user IP ${
+    logger.info(
+      `Making a ${useProxy ? 'proxied' : 'direct'} request to ${this.addonName} (${sanitisedUrl}) with user IP ${
         userIp
           ? Settings.LOG_SENSITIVE_INFO
             ? userIp
@@ -143,8 +155,8 @@ export class BaseWrapper {
     );
 
     let response = useProxy
-      ? uFetch(url, {
-          dispatcher: new ProxyAgent(Settings.ADDON_PROXY),
+      ? fetch(url, {
+          // dispatcher: new ProxyAgent(Settings.ADDON_PROXY),
           method: 'GET',
           headers: headers,
           signal: AbortSignal.timeout(this.indexerTimeout),
@@ -163,8 +175,8 @@ export class BaseWrapper {
     const requestCacheKey = getTextHash(url);
     const cachedStreams = cache ? cache.get(requestCacheKey) : undefined;
     if (cachedStreams) {
-      console.debug(
-        `|DBG| wrappers > base > ${this.addonName}: Returning cached streams for ${this.getLoggableUrl(url)}`
+      logger.info(
+        `Returning cached streams for ${this.addonName} (${this.getLoggableUrl(url)})`
       );
       return cachedStreams;
     }
@@ -195,10 +207,10 @@ export class BaseWrapper {
       let message = error.message;
       if (error.name === 'TimeoutError') {
         message = `The stream request to ${this.addonName} timed out after ${this.indexerTimeout}ms`;
-        return Promise.reject(new Error(message));
+        return Promise.reject(message);
       }
-      console.error(`|ERR| wrappers > base > ${this.addonName}: ${message}`);
-      console.error(error);
+      logger.error(`Error during fetch for ${this.addonName}: ${message}`);
+      logger.error(error);
       return Promise.reject(error.message);
     }
   }
@@ -274,8 +286,8 @@ export class BaseWrapper {
       errorRegex.test(stream.title || '') ||
       errorRegex.test(stream.description || '')
     ) {
-      console.log(
-        `|ERR| wrappers > base > ${this.addonName}: ${stream.title || stream.description} was detected as an error`
+      logger.debug(
+        `Result from ${this.addonName} (${(stream.title || stream.description).split('\n').join(' ')}) was detected as an error`
       );
       return {
         type: 'error',

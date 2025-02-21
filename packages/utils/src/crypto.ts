@@ -7,6 +7,10 @@ import {
 import { deflateSync, inflateSync } from 'zlib';
 import { Settings } from './settings';
 import JSONCrush from 'jsoncrush';
+import { createLogger } from './logger';
+
+const logger = createLogger('crypto');
+
 export const loadSecretKey = (): Buffer => {
   const secretKey = Settings.SECRET_KEY;
   if (!secretKey) {
@@ -106,9 +110,7 @@ export function parseAndDecryptString(data: string): string | null {
     }
     return data;
   } catch (error: any) {
-    console.error(
-      `|ERR| crypto > parseAndDecryptString > Failed to decrypt data: ${error.message}`
-    );
+    logger.error(`Failed to decrypt data: ${error.message}`);
     return null;
   }
 }

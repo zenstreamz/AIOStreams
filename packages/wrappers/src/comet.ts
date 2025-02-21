@@ -1,8 +1,10 @@
 import { AddonDetail, ParseResult, StreamRequest } from '@aiostreams/types';
 import { ParsedStream, Stream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails } from '@aiostreams/utils';
+import { addonDetails, createLogger } from '@aiostreams/utils';
 import { Settings } from '@aiostreams/utils';
+
+const logger = createLogger('wrappers');
 
 export class Comet extends BaseWrapper {
   constructor(
@@ -157,9 +159,7 @@ export async function getCometStreams(
   }
   const errorMessages: string[] = [];
   const streamPromises = servicesToUse.map(async (service) => {
-    console.log(
-      `|INF| wrappers > comet: Getting Comet streams for service: ${service.id}`
-    );
+    logger.info(`Getting Comet streams for ${service.id}`, { func: 'comet' });
     const cometConfig = getCometConfig(service.id, service.credentials.apiKey);
     const configString = Buffer.from(JSON.stringify(cometConfig)).toString(
       'base64'
