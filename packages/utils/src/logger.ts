@@ -75,6 +75,16 @@ export const createLogger = (module: string) => {
             const coloredLevel = winston.format
               .colorize()
               .colorize(level, `${level}`);
+            if (typeof message === 'string') {
+              return message
+                .split('\n')
+                .map((line) => {
+                  return `${emoji} [${timestamp}] | ${coloredLevel} | ${formattedModule}${
+                    func ? ' (' + func + ')' : ''
+                  } | ${line}`;
+                })
+                .join('\n');
+            }
             return `${emoji} [${timestamp}] | ${coloredLevel} | ${formattedModule}${func ? ' (' + func + ')' : ''} | ${message}`;
           })
         ),
