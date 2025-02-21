@@ -7,6 +7,22 @@ import {
 import { deflateSync, inflateSync } from 'zlib';
 import { Settings } from './settings';
 import JSONCrush from 'jsoncrush';
+export const loadSecretKey = (): Buffer => {
+  const secretKey = Settings.SECRET_KEY;
+  if (!secretKey) {
+    throw new Error('No secret key provided');
+  }
+  // must be 64 characters long and hex
+  if (secretKey.length !== 64) {
+    throw new Error('Secret key must be 64 characters long');
+  }
+
+  if (!/^[0-9a-fA-F]+$/.test(secretKey)) {
+    throw new Error('Secret key must be a hex string (0-9, a-f)');
+  }
+
+  return Buffer.from(secretKey, 'hex');
+};
 
 const pad = (data: Buffer, blockSize: number): Buffer => {
   const padding = blockSize - (data.length % blockSize);
@@ -37,11 +53,7 @@ export const decompressData = (data: Buffer): string => {
 };
 
 export const encryptData = (data: Buffer): { iv: string; data: string } => {
-  const secretKey = Settings.SECRET_KEY;
-  if (!secretKey) {
-    console.error('|ERR| crypto > compressAndEncrypt > No secret key provided');
-    throw new Error('No secret key provided');
-  }
+  const secretKey = loadSecretKey();
 
   // Then encrypt the compressed data
   const iv = randomBytes(16);
@@ -61,13 +73,7 @@ export const encryptData = (data: Buffer): { iv: string; data: string } => {
 };
 
 export const decryptData = (encryptedData: Buffer, iv: Buffer): Buffer => {
-  const secretKey = Settings.SECRET_KEY;
-  if (!secretKey) {
-    console.error(
-      '|ERR| crypto > decryptAndDecompress > No secret key provided'
-    );
-    throw new Error('No secret key provided');
-  }
+  const secretKey = loadSecretKey();
   const decipher = createDecipheriv('aes-256-cbc', secretKey, iv);
 
   // Decrypt the data
