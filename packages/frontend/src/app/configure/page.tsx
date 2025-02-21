@@ -488,6 +488,7 @@ export default function Configure() {
 
     function loadFromConfig(decodedConfig: Config) {
       console.log('Loaded config', decodedConfig);
+      setOverrideName(decodedConfig.overrideName || '');
       setStreamTypes(
         loadValidValuesFromObject(decodedConfig.streamTypes, defaultStreamTypes)
       );
