@@ -45,16 +45,19 @@ export class Comet extends BaseWrapper {
   }
 }
 
-const getCometConfig = (debridService: string, debridApiKey: string) => {
+const getCometConfig = (debridService?: string, debridApiKey?: string) => {
   return {
     maxResultsPerResolution: 0,
     maxSize: 0,
     cachedOnly: false,
-    removeTrash: true,
-    resultFormat: ['All'],
-    debridService: debridService,
-    debridApiKey: debridApiKey,
+    removeTrash: false,
+    resultFormat: ['all'],
+    debridService: debridService || 'torrent',
+    debridApiKey: debridApiKey || '',
     debridStreamProxyPassword: '',
+    languages: { required: [], exclude: [], preferred: [] },
+    resolutions: {},
+    options: { remove_ranks_under: -10000000000 },
   };
 };
 
@@ -98,9 +101,20 @@ export async function getCometStreams(
     (service) => supportedServices.includes(service.id) && service.enabled
   );
 
-  // if no usable services found, throw an error
+  // if no usable services found, use comet with default config
   if (usableServices.length < 1) {
-    throw new Error('No supported service(s) enabled');
+    const configString = Buffer.from(JSON.stringify(getCometConfig())).toString(
+      'base64'
+    );
+    const comet = new Comet(
+      configString,
+      null,
+      cometOptions.overrideName,
+      addonId,
+      config,
+      indexerTimeout
+    );
+    return await comet.getParsedStreams(streamRequest);
   }
 
   // otherwise, depending on the configuration, create multiple instances of comet or use a single instance with the prioritised service
