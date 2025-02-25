@@ -63,7 +63,14 @@ if (Settings.CUSTOM_CONFIGS) {
 try {
   if (Settings.SECRET_KEY) loadSecretKey();
 } catch (error: any) {
-  logger.error(`Invalid SECRET_KEY - ${error.message}`);
+  // determine command to run based on system OS
+  const command =
+    process.platform === 'win32'
+      ? '[System.Guid]::NewGuid().ToString("N").Substring(0, 32) + [System.Guid]::NewGuid().ToString("N").Substring(0, 32)'
+      : 'openssl rand -hex 32';
+  logger.error(
+    `The secret key is invalid. You will not be able to generate configurations. You can generate a new secret key by running the following command\n${command}`
+  );
 }
 
 const cache = new Cache(Settings.MAX_CACHE_SIZE);
