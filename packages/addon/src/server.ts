@@ -92,7 +92,7 @@ app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     logger.info(
-      `${req.method} ${req.path.replace(/\/eyJ[\w\=]+/g, '/*******').replace(/\/(E2?|B)?-[\w-\%]+/g, '/*******')} - ${res.statusCode} - ${getTimeTakenSincePoint(start)}`
+      `${req.method} ${req.path.replace(/\/ey[JI][\w\=]+/g, '/*******').replace(/\/(E2?|B)?-[\w-\%]+/g, '/*******')} - ${res.statusCode} - ${getTimeTakenSincePoint(start)}`
     );
   });
   next();
