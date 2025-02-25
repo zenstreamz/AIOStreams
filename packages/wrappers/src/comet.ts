@@ -45,20 +45,25 @@ export class Comet extends BaseWrapper {
   }
 }
 
-const getCometConfig = (debridService?: string, debridApiKey?: string) => {
-  return {
-    maxResultsPerResolution: 0,
-    maxSize: 0,
-    cachedOnly: false,
-    removeTrash: false,
-    resultFormat: ['all'],
-    debridService: debridService || 'torrent',
-    debridApiKey: debridApiKey || '',
-    debridStreamProxyPassword: '',
-    languages: { required: [], exclude: [], preferred: [] },
-    resolutions: {},
-    options: { remove_ranks_under: -10000000000 },
-  };
+const getCometConfig = (
+  debridService?: string,
+  debridApiKey?: string
+): string => {
+  return Buffer.from(
+    JSON.stringify({
+      maxResultsPerResolution: 0,
+      maxSize: 0,
+      cachedOnly: false,
+      removeTrash: false,
+      resultFormat: ['all'],
+      debridService: debridService || 'torrent',
+      debridApiKey: debridApiKey || '',
+      debridStreamProxyPassword: '',
+      languages: { required: [], exclude: [], preferred: [] },
+      resolutions: {},
+      options: { remove_ranks_under: -10000000000 },
+    })
+  ).toString('base64');
 };
 
 export async function getCometStreams(
@@ -103,11 +108,8 @@ export async function getCometStreams(
 
   // if no usable services found, use comet with default config
   if (usableServices.length < 1) {
-    const configString = Buffer.from(JSON.stringify(getCometConfig())).toString(
-      'base64'
-    );
     const comet = new Comet(
-      configString,
+      getCometConfig(),
       null,
       cometOptions.overrideName,
       addonId,
@@ -141,16 +143,11 @@ export async function getCometStreams(
       );
     }
 
-    // get the comet config and b64 encode it
-    const cometConfig = getCometConfig(
-      cometOptions.prioritiseDebrid,
-      debridService.credentials.apiKey
-    );
-    const configString = Buffer.from(JSON.stringify(cometConfig)).toString(
-      'base64'
-    );
     const comet = new Comet(
-      configString,
+      getCometConfig(
+        cometOptions.prioritiseDebrid,
+        debridService.credentials.apiKey
+      ),
       null,
       cometOptions.overrideName,
       addonId,
@@ -169,12 +166,8 @@ export async function getCometStreams(
   const errorMessages: string[] = [];
   const streamPromises = servicesToUse.map(async (service) => {
     logger.info(`Getting Comet streams for ${service.id}`, { func: 'comet' });
-    const cometConfig = getCometConfig(service.id, service.credentials.apiKey);
-    const configString = Buffer.from(JSON.stringify(cometConfig)).toString(
-      'base64'
-    );
     const comet = new Comet(
-      configString,
+      getCometConfig(service.id, service.credentials.apiKey),
       null,
       cometOptions.overrideName,
       addonId,
