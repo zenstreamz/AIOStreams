@@ -825,6 +825,14 @@ export const serviceDetails = [
         id: 'apiKey',
         link: 'https://offcloud.com/#/account',
       },
+      {
+        label: 'Email',
+        id: 'email',
+      },
+      {
+        label: 'Password',
+        id: 'password',
+      },
     ],
   },
   {

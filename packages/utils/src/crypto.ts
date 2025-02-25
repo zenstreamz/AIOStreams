@@ -130,3 +130,11 @@ export function getTextHash(text: string): string {
   hash.update(text);
   return hash.digest('hex');
 }
+
+export function isValueEncrypted(value?: string): boolean {
+  if (!value) return false;
+  const tests =
+    /^E2-[^-]+-[^-]+$/.test(value) ||
+    /^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/.test(value);
+  return tests;
+}
