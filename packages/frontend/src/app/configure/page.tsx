@@ -307,7 +307,7 @@ export default function Configure() {
     message: string | null;
   }> => {
     const config = createConfig();
-    const { valid, errorMessage } = validateConfig(config);
+    const { valid, errorMessage } = validateConfig(config, 'client');
     if (!valid) {
       return {
         success: false,

@@ -70,7 +70,10 @@ export const allowedLanguages = [
   'Dubbed',
 ];
 
-export function validateConfig(config: Config): {
+export function validateConfig(
+  config: Config,
+  environment: 'client' | 'server' = 'server'
+): {
   valid: boolean;
   errorCode: string | null;
   errorMessage: string | null;
@@ -100,7 +103,7 @@ export function validateConfig(config: Config): {
     );
   }
   // check for apiKey if Settings.API_KEY is set
-  if (Settings.API_KEY) {
+  if (environment === 'server' && Settings.API_KEY) {
     const { apiKey } = config;
     if (!apiKey) {
       return createResponse(
@@ -203,7 +206,10 @@ export function validateConfig(config: Config): {
 
         if (
           option.id.toLowerCase().includes('url') &&
-          addon.options[option.id]
+          addon.options[option.id] &&
+          ((isValueEncrypted(addon.options[option.id]) &&
+            environment === 'server') ||
+            !isValueEncrypted(addon.options[option.id]))
         ) {
           const url = parseAndDecryptString(addon.options[option.id] ?? '');
           if (url === null) {
