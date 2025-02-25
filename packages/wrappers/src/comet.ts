@@ -59,8 +59,10 @@ const getCometConfig = (
       debridService: debridService || 'torrent',
       debridApiKey: debridService
         ? ['offcloud', 'pikpak'].includes(debridService)
-          ? `${credentials?.email}:${credentials?.password}`
-          : `${credentials?.apiKey}`
+          ? credentials?.email && credentials?.password
+            ? `${credentials?.email}:${credentials?.password}`
+            : ''
+          : credentials?.apiKey || ''
         : '',
       debridStreamProxyPassword: '',
       languages: { required: [], exclude: [], preferred: [] },
