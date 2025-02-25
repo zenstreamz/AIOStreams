@@ -47,8 +47,21 @@ export class Comet extends BaseWrapper {
 
 const getCometConfig = (
   debridService?: string,
-  debridApiKey?: string
+  credentials?: { [key: string]: string }
 ): string => {
+  const apiKey = () => {
+    if (!debridService) return '';
+    if (debridService === 'offcloud' || debridService === 'pikpak') {
+      if (!credentials?.email || !credentials?.password) {
+        throw new Error('Missing email or password for ' + debridService);
+      }
+      return `${credentials.email}:${credentials.password}`;
+    }
+    if (!credentials?.apiKey) {
+      throw new Error('Missing API key for ' + debridService);
+    }
+    return credentials.apiKey;
+  };
   return Buffer.from(
     JSON.stringify({
       maxResultsPerResolution: 0,
@@ -57,7 +70,7 @@ const getCometConfig = (
       removeTrash: false,
       resultFormat: ['all'],
       debridService: debridService || 'torrent',
-      debridApiKey: debridApiKey || '',
+      debridApiKey: apiKey(),
       debridStreamProxyPassword: '',
       languages: { required: [], exclude: [], preferred: [] },
       resolutions: {},
@@ -137,17 +150,14 @@ export async function getCometStreams(
         'Debrid service not found for ' + cometOptions.prioritiseDebrid
       );
     }
-    if (!debridService.credentials.apiKey) {
+    if (!debridService.credentials) {
       throw new Error(
         'Debrid service API key not found for ' + cometOptions.prioritiseDebrid
       );
     }
 
     const comet = new Comet(
-      getCometConfig(
-        cometOptions.prioritiseDebrid,
-        debridService.credentials.apiKey
-      ),
+      getCometConfig(cometOptions.prioritiseDebrid, debridService.credentials),
       null,
       cometOptions.overrideName,
       addonId,
@@ -167,7 +177,7 @@ export async function getCometStreams(
   const streamPromises = servicesToUse.map(async (service) => {
     logger.info(`Getting Comet streams for ${service.id}`, { func: 'comet' });
     const comet = new Comet(
-      getCometConfig(service.id, service.credentials.apiKey),
+      getCometConfig(service.id, service.credentials),
       null,
       cometOptions.overrideName,
       addonId,
