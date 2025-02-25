@@ -48,21 +48,8 @@ export class Comet extends BaseWrapper {
 const getCometConfig = (
   debridService?: string,
   credentials?: { [key: string]: string }
-): string => {
-  const apiKey = () => {
-    if (!debridService) return '';
-    if (debridService === 'offcloud' || debridService === 'pikpak') {
-      if (!credentials?.email || !credentials?.password) {
-        throw new Error('Missing email or password for ' + debridService);
-      }
-      return `${credentials.email}:${credentials.password}`;
-    }
-    if (!credentials?.apiKey) {
-      throw new Error('Missing API key for ' + debridService);
-    }
-    return credentials.apiKey;
-  };
-  return Buffer.from(
+): string =>
+  Buffer.from(
     JSON.stringify({
       maxResultsPerResolution: 0,
       maxSize: 0,
@@ -70,14 +57,17 @@ const getCometConfig = (
       removeTrash: false,
       resultFormat: ['all'],
       debridService: debridService || 'torrent',
-      debridApiKey: apiKey(),
+      debridApiKey: debridService
+        ? ['offcloud', 'pikpak'].includes(debridService)
+          ? `${credentials?.email}:${credentials?.password}`
+          : `${credentials?.apiKey}`
+        : '',
       debridStreamProxyPassword: '',
       languages: { required: [], exclude: [], preferred: [] },
       resolutions: {},
       options: { remove_ranks_under: -10000000000 },
     })
   ).toString('base64');
-};
 
 export async function getCometStreams(
   config: Config,
