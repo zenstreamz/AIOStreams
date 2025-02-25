@@ -28,7 +28,12 @@ import {
   allowedLanguages,
   validateConfig,
 } from '@aiostreams/config';
-import { addonDetails, serviceDetails, Settings } from '@aiostreams/utils';
+import {
+  addonDetails,
+  isValueEncrypted,
+  serviceDetails,
+  Settings,
+} from '@aiostreams/utils';
 
 import Slider from '@/components/Slider';
 import CredentialInput from '@/components/CredentialInput';
@@ -478,11 +483,7 @@ export default function Configure() {
   useEffect(() => {
     async function decodeConfig(config: string) {
       let decodedConfig: Config;
-      if (
-        config.startsWith('E-') ||
-        config.startsWith('E2-') ||
-        config.startsWith('B-')
-      ) {
+      if (isValueEncrypted(config) || config.startsWith('B-')) {
         throw new Error('Encrypted Config Not Supported');
       } else {
         decodedConfig = JSON.parse(atob(decodeURIComponent(config)));
@@ -573,6 +574,7 @@ export default function Configure() {
       setMediaFlowProxiedServices(
         decodedConfig.mediaFlowConfig?.proxiedServices || null
       );
+      setApiKey(decodedConfig.apiKey || '');
     }
 
     const path = window.location.pathname;

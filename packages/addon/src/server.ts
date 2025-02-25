@@ -22,6 +22,7 @@ import {
   loadSecretKey,
   createLogger,
   getTimeTakenSincePoint,
+  isValueEncrypted,
 } from '@aiostreams/utils';
 
 const logger = createLogger('server');
@@ -130,7 +131,7 @@ app.get('/:config/configure', (req, res) => {
   }
   try {
     let configJson = extractJsonConfig(config);
-    if (config.startsWith('E-') || config.startsWith('E2-')) {
+    if (isValueEncrypted(config)) {
       logger.info(`Encrypted config detected, encrypting credentials`);
       configJson = encryptInfoInConfig(configJson);
     }
@@ -360,11 +361,10 @@ app.listen(Settings.PORT, () => {
 
 function extractJsonConfig(config: string): Config {
   if (
-    config.startsWith('E-') ||
     config.startsWith('eyJ') ||
     config.startsWith('eyI') ||
-    config.startsWith('E2-') ||
-    config.startsWith('B-')
+    config.startsWith('B-') ||
+    isValueEncrypted(config)
   ) {
     return extractEncryptedOrEncodedConfig(config, 'Config');
   }
@@ -459,6 +459,10 @@ function decryptEncryptedInfoFromConfig(config: Config): Config {
     decryptMediaFlowConfig(config.mediaFlowConfig);
   }
 
+  if (config.apiKey) {
+    config.apiKey = decryptValue(config.apiKey, 'aioStreams apiKey');
+  }
+
   if (config.addons) {
     config.addons.forEach((addon) => {
       if (addon.options) {
@@ -510,6 +514,10 @@ function encryptInfoInConfig(config: Config): Config {
 
   if (config.mediaFlowConfig) {
     encryptMediaFlowConfig(config.mediaFlowConfig);
+  }
+
+  if (config.apiKey) {
+    config.apiKey = encryptValue(config.apiKey, 'aioStreams apiKey');
   }
 
   if (config.addons) {
@@ -595,14 +603,6 @@ function decryptValue(value: any, label: string): any {
     logger.error(error, { func: 'decryptValue' });
     throw new Error('Failed to decrypt config');
   }
-}
-
-function isValueEncrypted(value: string | undefined): boolean {
-  if (!value) return false;
-  const tests =
-    /^E2-[^-]+-[^-]+$/.test(value) ||
-    /^E-[0-9a-fA-F]{32}-[0-9a-fA-F]+$/.test(value);
-  return tests;
 }
 
 const rootUrl = (req: Request) =>
