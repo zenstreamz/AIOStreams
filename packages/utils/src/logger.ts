@@ -64,17 +64,15 @@ export const createLogger = (module: string) => {
             const coloredLevel = winston.format
               .colorize()
               .colorize(level, `${level}`);
+            const formatLine = (line: unknown) => {
+              return `${emoji} [${timestamp}] | ${coloredLevel} | ${formattedModule}${
+                func ? ' (' + func + ')' : ''
+              } > ${line}`;
+            };
             if (typeof message === 'string') {
-              return message
-                .split('\n')
-                .map((line) => {
-                  return `${emoji} [${timestamp}] | ${coloredLevel} | ${formattedModule}${
-                    func ? ' (' + func + ')' : ''
-                  } | ${line}`;
-                })
-                .join('\n');
+              return message.split('\n').map(formatLine).join('\n');
             }
-            return `${emoji} [${timestamp}] | ${coloredLevel} | ${formattedModule}${func ? ' (' + func + ')' : ''} | ${message}`;
+            return formatLine(message);
           })
         ),
     transports: [new winston.transports.Console()],
