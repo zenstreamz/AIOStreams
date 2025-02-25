@@ -36,17 +36,6 @@ const emojiLevelMap: { [key: string]: string } = {
 // Apply colors to Winston
 winston.addColors(levelColors);
 
-const cfWorkerCheck = async () => {
-  try {
-    const response = await fetch('disable-winston-logs');
-    if (response.status === 200) {
-      return true;
-    }
-  } catch (e) {
-    return false;
-  }
-};
-
 export const createLogger = (module: string) => {
   // cloudflare workers do not play nice with winston
   // so we disable winston logs in cloudflare workers
