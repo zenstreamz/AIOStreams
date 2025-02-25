@@ -28,8 +28,8 @@ const levelColors: { [key: string]: string } = {
 
 const emojiLevelMap: { [key: string]: string } = {
   error: '🛑',
-  warn: '⚠️',
-  info: '🟢',
+  warn: '⚠️ ',
+  info: '🔵',
   debug: '🐞',
 };
 
