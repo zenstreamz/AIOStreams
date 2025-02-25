@@ -1,8 +1,10 @@
 import { AddonDetail, StreamRequest } from '@aiostreams/types';
 import { ParsedStream, Config } from '@aiostreams/types';
 import { BaseWrapper } from './base';
-import { addonDetails } from '@aiostreams/utils';
+import { addonDetails, createLogger } from '@aiostreams/utils';
 import { Settings } from '@aiostreams/utils';
+
+const logger = createLogger('wrappers');
 
 // name, title, url
 export class Jackettio extends BaseWrapper {
@@ -156,9 +158,9 @@ export async function getJackettioStreams(
   }
 
   const streamPromises = servicesToUse.map(async (service) => {
-    console.log(
-      `|INF| wrappers > jackettio: Getting Jackettio streams for ${service.name}`
-    );
+    logger.info(`Getting Jackettio streams for ${service.name}`, {
+      func: 'jackettio',
+    });
     const configString = getJackettioConfigString(
       service.id,
       service.credentials.apiKey

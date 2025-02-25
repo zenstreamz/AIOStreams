@@ -4,7 +4,7 @@ import path from 'path';
 try {
   dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 } catch (error) {
-  console.error('Error loading .env file:', error);
+  console.error('Error loading .env file', error);
 }
 
 export class Settings {
@@ -40,6 +40,12 @@ export class Settings {
   public static readonly DISABLE_TORRENTIO_MESSAGE =
     process.env.DISABLE_TORRENTIO_MESSAGE ||
     'The Torrentio addon has been disabled, please remove it to use this addon.';
+  public static readonly LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+  public static readonly LOG_FORMAT = process.env.LOG_FORMAT
+    ? process.env.LOG_FORMAT === 'json'
+      ? 'json'
+      : 'text'
+    : 'text';
 
   // Cache settings
   public static readonly CACHE_STREAM_RESULTS = process.env.CACHE_STREAM_RESULTS

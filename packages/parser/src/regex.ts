@@ -45,6 +45,7 @@ export const PARSE_REGEX = {
     '3D': createRegex('(bd)?(3|three)[ .\\-_]?(d(imension)?(al)?)'),
     IMAX: createRegex('imax'),
     AI: createRegex('ai[ .\\-_]?(upscale|enhanced|remaster)?'),
+    SDR: createRegex('sdr'),
   },
   audioTags: {
     Atmos: createRegex('atmos'),

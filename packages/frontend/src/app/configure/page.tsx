@@ -69,6 +69,7 @@ const defaultVisualTags: VisualTag[] = [
   { '3D': true },
   { IMAX: true },
   { AI: true },
+  { SDR: true },
 ];
 
 const defaultAudioTags: AudioTag[] = [
@@ -487,6 +488,7 @@ export default function Configure() {
 
     function loadFromConfig(decodedConfig: Config) {
       console.log('Loaded config', decodedConfig);
+      setOverrideName(decodedConfig.overrideName || '');
       setStreamTypes(
         loadValidValuesFromObject(decodedConfig.streamTypes, defaultStreamTypes)
       );
