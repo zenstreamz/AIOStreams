@@ -125,11 +125,13 @@ export class BaseWrapper {
 
   protected getLoggableUrl(url: string): string {
     let urlObj = new URL(url);
-    return `${urlObj.protocol}//${urlObj.hostname}/${urlObj.pathname
-      .split('/')
-      .slice(1, -3)
+    const pathParts = urlObj.pathname.split('/');
+    const redactedParts = pathParts.length > 3 ? pathParts.slice(1, -3) : [];
+    return `${urlObj.protocol}//${urlObj.hostname}/${redactedParts
       .map((part) => (Settings.LOG_SENSITIVE_INFO ? part : '<redacted>'))
-      .join('/')}/${urlObj.pathname.split('/').slice(-3).join('/')}`;
+      .join(
+        '/'
+      )}${redactedParts.length ? '/' : ''}${pathParts.slice(-3).join('/')}`;
   }
 
   protected makeRequest(url: string): Promise<any> {

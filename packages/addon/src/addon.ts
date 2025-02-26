@@ -506,7 +506,7 @@ export class AIOStreams {
       '╚═══════════════════════╧════════════╝',
     ];
 
-    logger.info('\n' + reportLines.join('\n'));
+    if (totalSkipped > 0) logger.info('\n' + reportLines.join('\n'));
 
     // Create stream objects
     const streamsStartTime = new Date().getTime();

@@ -62,7 +62,7 @@ if (Settings.CUSTOM_CONFIGS) {
 
 // attempt to load the secret key
 try {
-  if (Settings.SECRET_KEY) loadSecretKey();
+  if (Settings.SECRET_KEY) loadSecretKey(true);
 } catch (error: any) {
   // determine command to run based on system OS
   const command =
