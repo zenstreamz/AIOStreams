@@ -2,7 +2,7 @@
 <h1 align="center" id="title">AIOStreams</h1>
 
 ## Table of Contents
-
+ 
 - [Description](#description)
 - [FAQ](#faq)
   - [How does it work?](#how-does-it-work)
